@@ -56,15 +56,7 @@ This document maintains a chronological record of all features, architecture upd
 
 ---
 
-### [COMMIT #004] - Refactoring: Clean Reusable Widget-Based Architecture
-- **Date & Time:** February 24, 2026 | 05:15 PM
-- **Feature Name:** `auth-modular-widgets`
-- **What Was Done:**
-  - Created reusable components for auth screens.
-
----
-
-### [COMMIT #005] - Architecture Refactoring: Decoupling Widgets to Core Layer
+### [COMMIT #004] & [COMMIT #005] - Architecture Refactoring: Decoupling Widgets to Core Layer
 - **Date & Time:** February 24, 2026 | 06:00 PM
 - **Feature Name:** `core-widgets-decoupling`
 - **Git Additions:**
@@ -73,6 +65,23 @@ This document maintains a chronological record of all features, architecture upd
   - `lib/core/widgets/custom_button.dart`
   - `lib/core/widgets/custom_footer.dart`
 - **What Was Done:**
-  - Moved generic reusable UI components out of the `auth` feature and into the global `lib/core/widgets/` layer.
-  - Ensured widgets are completely feature-agnostic, allowing any changes to propagate across all pages (Login, Register, etc.) globally.
-  - Verified code with static analysis (`flutter analyze`) and test suite (`flutter test`) passing with zero errors or warnings.
+  - Moved generic reusable UI components into the global `lib/core/widgets/` layer.
+  - Ensured widgets are completely feature-agnostic.
+
+---
+
+### [COMMIT #006] - Feature Implementation: Mobile-Friendly Dashboard & Navigation
+- **Date & Time:** February 24, 2026 | 07:30 PM
+- **Feature Name:** `dashboard-feature`
+- **Git Additions:**
+  - `lib/features/dashboard/presentation/pages/dashboard_page.dart`
+  - `lib/features/dashboard/presentation/providers/dashboard_provider.dart`
+  - `lib/features/dashboard/presentation/widgets/dashboard_drawer.dart`
+  - `lib/features/dashboard/presentation/widgets/metric_card.dart`
+  - `lib/features/dashboard/presentation/widgets/quick_actions_card.dart`
+  - `lib/features/dashboard/presentation/widgets/recent_activity_list.dart`
+  - `lib/features/dashboard/presentation/widgets/income_expense_card.dart`
+- **What Was Done:**
+  - Developed feature-based modular Dashboard architecture.
+  - Replicated web dashboard design into a mobile-friendly responsive layout with sidebar navigation drawer, metric cards (Tax Invoices, E-Way Bills, Purchase Invoices, Credit Notes), date range dropdown matching the exact web reference options, quick actions, income vs expense summary, and recent activity logs.
+  - Integrated Riverpod state management and verified zero errors via static analysis and test suite.

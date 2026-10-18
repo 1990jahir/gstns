@@ -10,6 +10,7 @@ import '../../../../core/widgets/custom_button.dart';
 import '../../../../core/widgets/custom_footer.dart';
 import '../../../../core/widgets/custom_header.dart';
 import '../../../../core/widgets/custom_text_field.dart';
+import '../../../dashboard/presentation/pages/dashboard_page.dart';
 import '../providers/auth_provider.dart';
 import 'register_page.dart';
 
@@ -39,7 +40,10 @@ class _LoginPageState extends ConsumerState<LoginPage> {
       Future.delayed(const Duration(seconds: 1), () {
         if (mounted) {
           ref.read(authNotifierProvider.notifier).setLoading(false);
-          context.showSnackBar('Successfully signed in as ${_emailController.text}');
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const DashboardPage()),
+          );
         }
       });
     }
