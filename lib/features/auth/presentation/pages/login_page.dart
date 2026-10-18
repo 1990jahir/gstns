@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import '../../../../core/res/color_manager.dart';
 import '../../../../core/res/font_manager.dart';
 import '../../../../core/res/string_manager.dart';
 import '../../../../core/res/styles_manager.dart';
+import '../../../../core/router/app_router.dart';
 import '../../../../core/utils/extensions.dart';
 import '../../../../core/utils/validators.dart';
 import '../../../../core/widgets/custom_button.dart';
 import '../../../../core/widgets/custom_footer.dart';
 import '../../../../core/widgets/custom_header.dart';
 import '../../../../core/widgets/custom_text_field.dart';
-import '../../../dashboard/presentation/pages/dashboard_page.dart';
 import '../providers/auth_provider.dart';
-import 'register_page.dart';
 
-/// Login Page using clean, globally shared decoupled core widgets.
+/// Login Page using clean, globally shared decoupled core widgets and GoRouter.
 class LoginPage extends ConsumerStatefulWidget {
   const LoginPage({super.key});
 
@@ -40,10 +40,8 @@ class _LoginPageState extends ConsumerState<LoginPage> {
       Future.delayed(const Duration(seconds: 1), () {
         if (mounted) {
           ref.read(authNotifierProvider.notifier).setLoading(false);
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => const DashboardPage()),
-          );
+          context.showSnackBar('Successfully signed in as ${_emailController.text}');
+          context.go(AppRouter.dashboard);
         }
       });
     }
@@ -86,14 +84,11 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    // Global Reusable Header
                     const CustomHeader(
                       title: StringManager.welcomeBack,
                       subtitle: StringManager.signInSubtitle,
                     ),
                     const SizedBox(height: 32),
-
-                    // Email Field
                     CustomTextField(
                       label: StringManager.emailLabel,
                       hintText: StringManager.emailHint,
@@ -107,8 +102,6 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                       ),
                     ),
                     const SizedBox(height: 20),
-
-                    // Password Field
                     CustomTextField(
                       label: StringManager.passwordLabel,
                       hintText: StringManager.passwordHint,
@@ -134,8 +127,6 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                       ),
                     ),
                     const SizedBox(height: 16),
-
-                    // Remember Me & Forgot Password Row
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -191,8 +182,6 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                       ],
                     ),
                     const SizedBox(height: 24),
-
-                    // Sign In Button
                     CustomButton(
                       text: StringManager.signIn,
                       isLoading: authState.isLoading,
@@ -200,8 +189,6 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                       onPressed: _onSignIn,
                     ),
                     const SizedBox(height: 28),
-
-                    // Divider "or continue with"
                     Row(
                       children: [
                         Expanded(
@@ -229,34 +216,22 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                       ],
                     ),
                     const SizedBox(height: 24),
-
-                    // Social Logins (Google & WhatsApp)
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
                         OutlinedButton(
-                          onPressed: () {
-                            context.showSnackBar('Google login clicked');
-                          },
+                          onPressed: () => context.showSnackBar('Google login clicked'),
                           style: OutlinedButton.styleFrom(
                             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                            side: BorderSide(
-                              color: isDark ? ColorManager.darkBorder : ColorManager.lightBorder,
-                            ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
+                            side: BorderSide(color: isDark ? ColorManager.darkBorder : ColorManager.lightBorder),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                             backgroundColor: isDark ? ColorManager.darkCard : ColorManager.lightCard,
                           ),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              const Icon(
-                                Icons.g_mobiledata_rounded,
-                                size: 28,
-                                color: Colors.red,
-                              ),
+                              const Icon(Icons.g_mobiledata_rounded, size: 28, color: Colors.red),
                               const SizedBox(width: 8),
                               FittedBox(
                                 fit: BoxFit.scaleDown,
@@ -273,28 +248,18 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                         ),
                         const SizedBox(height: 12),
                         OutlinedButton(
-                          onPressed: () {
-                            context.showSnackBar('WhatsApp login clicked');
-                          },
+                          onPressed: () => context.showSnackBar('WhatsApp login clicked'),
                           style: OutlinedButton.styleFrom(
                             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                            side: BorderSide(
-                              color: isDark ? ColorManager.darkBorder : ColorManager.lightBorder,
-                            ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
+                            side: BorderSide(color: isDark ? ColorManager.darkBorder : ColorManager.lightBorder),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                             backgroundColor: isDark ? ColorManager.darkCard : ColorManager.lightCard,
                           ),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              const Icon(
-                                Icons.chat_bubble_outline_rounded,
-                                size: 20,
-                                color: Colors.green,
-                              ),
+                              const Icon(Icons.chat_bubble_outline_rounded, size: 20, color: Colors.green),
                               const SizedBox(width: 8),
                               FittedBox(
                                 fit: BoxFit.scaleDown,
@@ -312,17 +277,10 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                       ],
                     ),
                     const SizedBox(height: 36),
-
-                    // Global Reusable Footer
                     CustomFooter(
                       text: StringManager.newToPlatform,
                       actionText: StringManager.createAnAccount,
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => const RegisterPage()),
-                        );
-                      },
+                      onTap: () => context.push(AppRouter.register),
                     ),
                   ],
                 ),

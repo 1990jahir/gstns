@@ -1,5 +1,5 @@
 class StringManager {
-  static const String appTitle = 'GSTSOF App';
+  static const String appTitle = 'GSTSOF';
   static const String welcomeBack = 'Welcome Back!';
   static const String signInSubtitle = 'Sign in to continue to your GSTSOF account';
   static const String emailLabel = 'Email Address';
@@ -35,6 +35,82 @@ class StringManager {
   static const String alreadyHaveAccount = 'Already have an account? ';
   static const String signInLink = 'Sign in';
 
+  // Dashboard strings
+  static const String dashboardTitle = 'Dashboard';
+  static const String supportPhone = '+91 8112 8112 70';
+  static const String welcomeUser = 'Welcome back, SB';
+  static const String welcomeSubtitle = "Here's what's happening with your business today.";
+  static const String selectRange = 'Select a range';
+  static const String customRange = '-- Custom Range --';
+  static const String totalTaxInvoices = 'Total Tax Invoices';
+  static const String totalEWayBills = 'Total E-Way Bills';
+  static const String totalPurchaseInvoices = 'Total Purchase Invoices';
+  static const String totalCreditNotes = 'Total Credit Notes';
+  static const String invoicesCount = '0 Invoices';
+  static const String billsCount = '0 Bills';
+  static const String notesCount = '0 Notes';
+  static const String vsLastMonth = 'vs last month';
+  static const String flowTitle = 'Sale, Purchase & Credit Note Flow';
+  static const String last12Months = 'Last 12 Months';
+  static const String graphFlowVisualizer = 'Graph Flow Visualizer\n(No data available for selected period)';
+  static const String quickActions = 'Quick Actions';
+  static const String createInvoice = 'Create Invoice';
+  static const String createPurchase = 'Create Purchase';
+  static const String recordPayment = 'Record Payment';
+  static const String recentActivity = 'Recent Activity';
+  static const String viewAll = 'View All >';
+  static const String userRole = 'User';
+  static const String incomeVsExpense = 'Income vs Expense';
+  static const String thisMonth = 'This Month';
+  static const String totalIncome = 'Total Income';
+  static const String totalExpense = 'Total Expense';
+  static const String profitMargin = 'Profit Margin';
+  static const String upgradeYourPlan = 'Upgrade Your Plan';
+  static const String unlockPremium = 'Unlock premium features and grow your business.';
+  static const String upgradeNow = 'Upgrade Now';
+  static const String masters = 'Masters';
+  static const String sales = 'Sales';
+  static const String purchase = 'Purchase';
+  static const String cashAndBank = 'Cash & Bank';
+  static const String expensesAndIncome = 'Expenses & Income';
+  static const String expenses = 'Expenses';
+  static const String income = 'Income';
+  static const String reports = 'Reports';
+  static const String footerCopyright = '2026 © GSTSOF is a product by GOOASK DIGITAL PRIVATE LIMITED.';
+
+  // Profile strings
+  static const String profileDetailsTitle = 'Profile Details';
+  static const String profileNameLabel = 'Profile Name';
+  static const String profileNameValue = 'SB USER4';
+  static const String profileIdLabel = 'Profile ID';
+  static const String profileIdValue = 'GT771';
+  static const String profileCompanyLabel = 'Company Name';
+  static const String profileCompanyValue = 'SB USER4';
+  static const String profileGstinLabel = 'GSTIN';
+  static const String profileGstinValue = 'N/A';
+  static const String profileEmailLabel = 'Email';
+  static const String profileEmailValue = 'suser4@gstsof.com';
+  static const String profileContactLabel = 'Contact No';
+  static const String profileContactValue = '9477317208';
+  static const String profilePanLabel = 'PAN';
+  static const String profilePanValue = 'CGHP0707E';
+  static const String profileWalletLabel = 'API Wallet Balance';
+  static const String profileWalletValue = '0';
+  static const String profileSupportCode = 'Support Code: 783154';
+  static const String copyText = 'Copy';
+  static const String changePasswordText = 'Change Password';
+  static const String logoutText = 'Logout';
+  static const String supportCodeCopied = 'Support code copied';
+  static const String changePasswordTriggered = 'Change password triggered';
+  static const String loggedOutSuccessfully = 'Logged out successfully';
+
+  // Actions & Feedbacks
+  static const String forgotPasswordClicked = 'Forgot password clicked';
+  static const String googleLoginClicked = 'Google login clicked';
+  static const String whatsAppLoginClicked = 'WhatsApp login clicked';
+  static const String createAccountClicked = 'Create account clicked';
+  static const String accountRegisteredSuccessfully = 'Account registered successfully!';
+
   // Validation messages
   static const String emailRequired = 'Please enter your email address';
   static const String emailInvalid = 'Please enter a valid email address';
@@ -42,4 +118,15 @@ class StringManager {
   static const String passwordTooShort = 'Password must be at least 6 characters';
   static const String fieldRequired = 'This field is required';
   static const String passwordsDoNotMatch = 'Passwords do not match';
+  static const String enterValidPhone = 'Enter valid phone';
+
+  // API Exception messages
+  static const String unexpectedError = 'An unexpected error occurred';
+  static const String connectionTimeout = 'Connection timeout. Please check your internet connection.';
+  static const String serverError = 'Server error';
+  static const String serverErrorOccurred = 'Server error occurred';
+  static const String requestCancelled = 'Request was cancelled';
+  static const String noInternetConnection = 'No internet connection available.';
+  static const String securityCertificateError = 'Security certificate error.';
+  static const String networkConnectionFailed = 'Network connection failed. Please try again.';
 }

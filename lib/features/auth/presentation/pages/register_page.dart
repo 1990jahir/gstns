@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import '../../../../core/res/color_manager.dart';
 import '../../../../core/res/font_manager.dart';
 import '../../../../core/res/string_manager.dart';
 import '../../../../core/res/styles_manager.dart';
+import '../../../../core/router/app_router.dart';
 import '../../../../core/utils/extensions.dart';
 import '../../../../core/utils/validators.dart';
 import '../../../../core/widgets/custom_button.dart';
@@ -12,9 +14,8 @@ import '../../../../core/widgets/custom_header.dart';
 import '../../../../core/widgets/custom_text_field.dart';
 import '../providers/register_provider.dart';
 import '../widgets/step_indicator.dart';
-import 'login_page.dart';
 
-/// Multi-step Register Page using clean, globally shared decoupled core widgets.
+/// Multi-step Register Page using clean, globally shared decoupled core widgets and GoRouter.
 class RegisterPage extends ConsumerStatefulWidget {
   const RegisterPage({super.key});
 
@@ -72,6 +73,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
         if (mounted) {
           ref.read(registerNotifierProvider.notifier).setLoading(false);
           context.showSnackBar('Account registered successfully!');
+          context.go(AppRouter.dashboard);
         }
       });
     }
@@ -91,7 +93,10 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                 icon: Icon(Icons.arrow_back, color: isDark ? ColorManager.white : ColorManager.lightTextPrimary),
                 onPressed: _onBack,
               )
-            : null,
+            : IconButton(
+                icon: Icon(Icons.arrow_back, color: isDark ? ColorManager.white : ColorManager.lightTextPrimary),
+                onPressed: () => context.go(AppRouter.login),
+              ),
       ),
       body: SafeArea(
         child: Center(
@@ -139,7 +144,6 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
             const SizedBox(height: 28),
             const StepIndicator(currentStep: 0),
             const SizedBox(height: 32),
-
             Row(
               children: [
                 Expanded(
@@ -187,7 +191,6 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
               ],
             ),
             const SizedBox(height: 20),
-
             CustomTextField(
               label: StringManager.companyName,
               hintText: 'Company Name',
@@ -195,7 +198,6 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
               validator: (v) => v == null || v.isEmpty ? StringManager.fieldRequired : null,
             ),
             const SizedBox(height: 20),
-
             Row(
               children: [
                 Expanded(
@@ -218,23 +220,16 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
               ],
             ),
             const SizedBox(height: 32),
-
             CustomButton(
               text: StringManager.continueBtn,
               icon: Icons.arrow_forward_rounded,
               onPressed: _onContinue,
             ),
             const SizedBox(height: 28),
-
             CustomFooter(
               text: StringManager.alreadyHaveAccount,
               actionText: StringManager.signInLink,
-              onTap: () {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (context) => const LoginPage()),
-                );
-              },
+              onTap: () => context.go(AppRouter.login),
             ),
           ],
         ),
@@ -257,7 +252,6 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
             const SizedBox(height: 28),
             const StepIndicator(currentStep: 1),
             const SizedBox(height: 32),
-
             Row(
               children: [
                 Expanded(
@@ -282,7 +276,6 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
               ],
             ),
             const SizedBox(height: 20),
-
             Row(
               children: [
                 Expanded(
@@ -323,14 +316,12 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
               ],
             ),
             const SizedBox(height: 20),
-
             CustomTextField(
               label: StringManager.referralCode,
               hintText: 'Optional Code',
               controller: _referralController,
             ),
             const SizedBox(height: 32),
-
             Row(
               children: [
                 Expanded(
@@ -367,16 +358,10 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
               ],
             ),
             const SizedBox(height: 28),
-
             CustomFooter(
               text: StringManager.alreadyHaveAccount,
               actionText: StringManager.signInLink,
-              onTap: () {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (context) => const LoginPage()),
-                );
-              },
+              onTap: () => context.go(AppRouter.login),
             ),
           ],
         ),

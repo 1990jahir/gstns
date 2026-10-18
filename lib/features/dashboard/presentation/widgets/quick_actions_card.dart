@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../core/res/color_manager.dart';
 import '../../../../core/res/font_manager.dart';
+import '../../../../core/res/string_manager.dart';
 import '../../../../core/res/styles_manager.dart';
 
 /// Quick Actions widget matching the web dashboard quick action tiles.
@@ -29,7 +30,7 @@ class QuickActionsCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Quick Actions',
+            StringManager.quickActions,
             style: getBoldStyle(
               fontSize: FontManager.s18,
               color: isDark ? ColorManager.darkTextPrimary : ColorManager.lightTextPrimary,
@@ -44,9 +45,9 @@ class QuickActionsCard extends StatelessWidget {
             mainAxisSpacing: 12,
             childAspectRatio: 0.9,
             children: [
-              _buildActionTile(context, icon: Icons.description_outlined, label: 'Create Invoice', color: Colors.green, isDark: isDark),
-              _buildActionTile(context, icon: Icons.shopping_cart_outlined, label: 'Create Purchase', color: Colors.blue, isDark: isDark),
-              _buildActionTile(context, icon: Icons.payments_outlined, label: 'Record Payment', color: Colors.teal, isDark: isDark),
+              _buildActionTile(context, icon: Icons.description_outlined, label: StringManager.createInvoice, color: Colors.green, isDark: isDark),
+              _buildActionTile(context, icon: Icons.shopping_cart_outlined, label: StringManager.createPurchase, color: Colors.blue, isDark: isDark),
+              _buildActionTile(context, icon: Icons.payments_outlined, label: StringManager.recordPayment, color: Colors.teal, isDark: isDark),
             ],
           ),
         ],

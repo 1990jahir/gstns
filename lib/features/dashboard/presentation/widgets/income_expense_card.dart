@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../core/res/color_manager.dart';
 import '../../../../core/res/font_manager.dart';
+import '../../../../core/res/string_manager.dart';
 import '../../../../core/res/styles_manager.dart';
 
 /// Income vs Expense widget matching the second screenshot.
@@ -32,7 +33,7 @@ class IncomeExpenseCard extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Income vs Expense',
+                StringManager.incomeVsExpense,
                 style: getBoldStyle(
                   fontSize: FontManager.s18,
                   color: isDark ? ColorManager.darkTextPrimary : ColorManager.lightTextPrimary,
@@ -46,7 +47,7 @@ class IncomeExpenseCard extends StatelessWidget {
                 ),
                 child: Row(
                   children: [
-                    Text('This Month', style: getMediumStyle(fontSize: FontManager.s12, color: isDark ? ColorManager.darkTextPrimary : ColorManager.lightTextPrimary)),
+                    Text(StringManager.thisMonth, style: getMediumStyle(fontSize: FontManager.s12, color: isDark ? ColorManager.darkTextPrimary : ColorManager.lightTextPrimary)),
                     const SizedBox(width: 4),
                     const Icon(Icons.keyboard_arrow_down, size: 16),
                   ],
@@ -55,9 +56,9 @@ class IncomeExpenseCard extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 20),
-          _buildItem(title: 'Total Income', amount: '₹ 0.00', dotColor: Colors.green, isDark: isDark),
+          _buildItem(title: StringManager.totalIncome, amount: '₹ 0.00', dotColor: Colors.green, isDark: isDark),
           const SizedBox(height: 16),
-          _buildItem(title: 'Total Expense', amount: '₹ 0.00', dotColor: Colors.red, isDark: isDark),
+          _buildItem(title: StringManager.totalExpense, amount: '₹ 0.00', dotColor: Colors.red, isDark: isDark),
           const SizedBox(height: 20),
           Container(
             padding: const EdgeInsets.all(16),
@@ -73,7 +74,7 @@ class IncomeExpenseCard extends StatelessWidget {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Profit Margin', style: getMediumStyle(fontSize: FontManager.s12, color: isDark ? ColorManager.darkTextSecondary : ColorManager.lightTextSecondary)),
+                    Text(StringManager.profitMargin, style: getMediumStyle(fontSize: FontManager.s12, color: isDark ? ColorManager.darkTextSecondary : ColorManager.lightTextSecondary)),
                     const SizedBox(height: 2),
                     Text('0%', style: getBoldStyle(fontSize: FontManager.s18, color: ColorManager.primaryGreen)),
                   ],

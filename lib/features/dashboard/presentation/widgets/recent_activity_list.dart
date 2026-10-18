@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../core/res/color_manager.dart';
 import '../../../../core/res/font_manager.dart';
+import '../../../../core/res/string_manager.dart';
 import '../../../../core/res/styles_manager.dart';
 
 /// Recent Activity widget matching the screenshot.
@@ -40,7 +41,7 @@ class RecentActivityList extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Recent Activity',
+                StringManager.recentActivity,
                 style: getBoldStyle(
                   fontSize: FontManager.s18,
                   color: isDark ? ColorManager.darkTextPrimary : ColorManager.lightTextPrimary,
@@ -49,7 +50,7 @@ class RecentActivityList extends StatelessWidget {
               TextButton(
                 onPressed: () {},
                 child: Text(
-                  'View All >',
+                  StringManager.viewAll,
                   style: getMediumStyle(fontSize: FontManager.s14, color: ColorManager.primaryGreen),
                 ),
               ),
@@ -98,7 +99,7 @@ class RecentActivityList extends StatelessWidget {
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Text(
-                        'User',
+                        StringManager.userRole,
                         style: getMediumStyle(fontSize: FontManager.s12, color: Colors.purple),
                       ),
                     ),
