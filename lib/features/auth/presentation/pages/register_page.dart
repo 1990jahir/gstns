@@ -12,10 +12,11 @@ import '../../../../core/widgets/custom_button.dart';
 import '../../../../core/widgets/custom_footer.dart';
 import '../../../../core/widgets/custom_header.dart';
 import '../../../../core/widgets/custom_text_field.dart';
+import '../../../../core/widgets/global_loader.dart';
 import '../providers/register_provider.dart';
 import '../widgets/step_indicator.dart';
 
-/// Multi-step Register Page using clean, globally shared decoupled core widgets and GoRouter.
+/// Modern Professional Multi-step Register Page using clean card container layout, GoRouter, and GlobalLoader.
 class RegisterPage extends ConsumerStatefulWidget {
   const RegisterPage({super.key});
 
@@ -69,10 +70,12 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
         return;
       }
       ref.read(registerNotifierProvider.notifier).setLoading(true);
+      GlobalLoader.show(context, message: 'Creating account...');
       Future.delayed(const Duration(seconds: 1), () {
         if (mounted) {
           ref.read(registerNotifierProvider.notifier).setLoading(false);
-          context.showSnackBar('Account registered successfully!');
+          GlobalLoader.hide(context);
+          context.showSnackBar(StringManager.accountRegisteredSuccessfully);
           context.go(AppRouter.dashboard);
         }
       });
@@ -82,45 +85,61 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
   @override
   Widget build(BuildContext context) {
     final regState = ref.watch(registerNotifierProvider);
-    final isDark = context.theme.brightness == Brightness.dark;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
+      backgroundColor: isDark ? const Color(0xFF0F172A) : const Color(0xFFF7F8FA),
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        leading: regState.currentStep == 1
-            ? IconButton(
-                icon: Icon(Icons.arrow_back, color: isDark ? ColorManager.white : ColorManager.lightTextPrimary),
-                onPressed: _onBack,
-              )
-            : IconButton(
-                icon: Icon(Icons.arrow_back, color: isDark ? ColorManager.white : ColorManager.lightTextPrimary),
-                onPressed: () => context.go(AppRouter.login),
-              ),
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back_rounded,
+            color: isDark ? ColorManager.white : ColorManager.lightTextPrimary,
+          ),
+          onPressed: regState.currentStep == 1 ? _onBack : () => context.go(AppRouter.login),
+        ),
       ),
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
+            padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 24.0),
             child: ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 520),
-              child: AnimatedSwitcher(
-                duration: const Duration(milliseconds: 350),
-                transitionBuilder: (child, animation) {
-                  return FadeTransition(
-                    opacity: animation,
-                    child: SlideTransition(
-                      position: Tween<Offset>(
-                        begin: const Offset(0.05, 0),
-                        end: Offset.zero,
-                      ).animate(animation),
-                      child: child,
+              child: Container(
+                padding: const EdgeInsets.all(28.0),
+                decoration: BoxDecoration(
+                  color: isDark ? const Color(0xFF1E293B) : Colors.white,
+                  borderRadius: BorderRadius.circular(28),
+                  border: Border.all(
+                    color: isDark ? const Color(0xFF334155) : Colors.grey.withValues(alpha: 0.15),
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: isDark ? 0.4 : 0.06),
+                      blurRadius: 30,
+                      offset: const Offset(0, 10),
                     ),
-                  );
-                },
-                child: regState.currentStep == 0
-                    ? _buildBusinessInfoStep(isDark, regState)
-                    : _buildPersonalInfoStep(isDark, regState),
+                  ],
+                ),
+                child: AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 350),
+                  transitionBuilder: (child, animation) {
+                    return FadeTransition(
+                      opacity: animation,
+                      child: SlideTransition(
+                        position: Tween<Offset>(
+                          begin: const Offset(0.05, 0),
+                          end: Offset.zero,
+                        ).animate(animation),
+                        child: child,
+                      ),
+                    );
+                  },
+                  child: regState.currentStep == 0
+                      ? _buildBusinessInfoStep(isDark, regState)
+                      : _buildPersonalInfoStep(isDark, regState),
+                ),
               ),
             ),
           ),
@@ -269,7 +288,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                     label: StringManager.phoneNumber,
                     hintText: '9876543210',
                     controller: _phoneController,
-                    validator: (v) => v == null || v.length < 10 ? 'Enter valid phone' : null,
+                    validator: (v) => v == null || v.length < 10 ? StringManager.enterValidPhone : null,
                     keyboardType: TextInputType.phone,
                   ),
                 ),

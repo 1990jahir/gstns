@@ -47,33 +47,31 @@ class OtpVerifyRequest {
 }
 
 @JsonSerializable()
+class Company {
+  final int id;
+  final String name;
+  final String? gstin;
+
+  Company({required this.id, required this.name, this.gstin});
+
+  factory Company.fromJson(Map<String, dynamic> json) => _$CompanyFromJson(json);
+  Map<String, dynamic> toJson() => _$CompanyToJson(this);
+}
+
+@JsonSerializable()
 class User {
   final int id;
+  final String name;
   final String email;
-  final String? name;
   final String? mobile;
-  @JsonKey(name: 'profile_id')
-  final String? profileId;
-  @JsonKey(name: 'company_name')
-  final String? companyName;
-  final String? gstin;
-  final String? pan;
-  @JsonKey(name: 'api_wallet_balance')
-  final String? apiWalletBalance;
-  @JsonKey(name: 'support_code')
-  final String? supportCode;
+  final Company? company;
 
   User({
     required this.id,
+    required this.name,
     required this.email,
-    this.name,
     this.mobile,
-    this.profileId,
-    this.companyName,
-    this.gstin,
-    this.pan,
-    this.apiWalletBalance,
-    this.supportCode,
+    this.company,
   });
 
   factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
@@ -82,19 +80,28 @@ class User {
 
 @JsonSerializable()
 class AuthData {
+  @JsonKey(name: 'token_type')
+  final String tokenType;
   @JsonKey(name: 'access_token')
   final String accessToken;
+  @JsonKey(name: 'expires_in')
+  final int expiresIn;
+  @JsonKey(name: 'expires_at')
+  final String expiresAt;
   @JsonKey(name: 'refresh_token')
   final String refreshToken;
+  @JsonKey(name: 'refresh_token_expires_in')
+  final int refreshTokenExpiresIn;
   final User? user;
-  @JsonKey(name: 'otp_session_token')
-  final String? otpSessionToken;
 
   AuthData({
+    required this.tokenType,
     required this.accessToken,
+    required this.expiresIn,
+    required this.expiresAt,
     required this.refreshToken,
+    required this.refreshTokenExpiresIn,
     this.user,
-    this.otpSessionToken,
   });
 
   factory AuthData.fromJson(Map<String, dynamic> json) => _$AuthDataFromJson(json);
@@ -104,10 +111,17 @@ class AuthData {
 @JsonSerializable()
 class AuthResponse {
   final String status;
+  @JsonKey(name: 'status_code')
+  final int statusCode;
   final String? message;
   final AuthData? data;
 
-  AuthResponse({required this.status, this.message, this.data});
+  AuthResponse({
+    required this.status,
+    required this.statusCode,
+    this.message,
+    this.data,
+  });
 
   factory AuthResponse.fromJson(Map<String, dynamic> json) => _$AuthResponseFromJson(json);
   Map<String, dynamic> toJson() => _$AuthResponseToJson(this);

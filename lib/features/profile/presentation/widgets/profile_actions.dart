@@ -8,12 +8,14 @@ import '../../../../core/router/app_router.dart';
 import '../../../../core/utils/extensions.dart';
 import '../../../../core/widgets/custom_button.dart';
 
-/// Reusable Profile Actions widget (Change Password & Logout).
+/// Modern Profile Actions widget (Change Password & Logout).
 class ProfileActions extends StatelessWidget {
   const ProfileActions({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final isDark = context.theme.brightness == Brightness.dark;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -27,7 +29,8 @@ class ProfileActions extends StatelessWidget {
           style: OutlinedButton.styleFrom(
             padding: const EdgeInsets.symmetric(vertical: 14),
             side: const BorderSide(color: ColorManager.primaryGreen),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+            backgroundColor: isDark ? ColorManager.darkCard : ColorManager.white,
           ),
         ),
         const SizedBox(height: 12),

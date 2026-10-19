@@ -4,7 +4,7 @@ import '../../../../core/res/font_manager.dart';
 import '../../../../core/res/string_manager.dart';
 import '../../../../core/res/styles_manager.dart';
 
-/// Reusable Profile Header Card widget with gradient background and avatar.
+/// Modern Profile Header Hero Card with gradient background and avatar badge.
 class ProfileHeaderCard extends StatelessWidget {
   const ProfileHeaderCard({super.key});
 
@@ -13,26 +13,35 @@ class ProfileHeaderCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [ColorManager.primaryGreen, ColorManager.primaryGreen.withValues(alpha: 0.7)],
+        gradient: const LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [Color(0xFF047857), Color(0xFF059669), Color(0xFF10B981)],
         ),
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: ColorManager.primaryGreen.withValues(alpha: 0.3),
-            blurRadius: 12,
-            offset: const Offset(0, 6),
+            color: ColorManager.primaryGreen.withValues(alpha: 0.35),
+            blurRadius: 15,
+            offset: const Offset(0, 8),
           ),
         ],
       ),
       child: Row(
         children: [
-          const CircleAvatar(
-            radius: 32,
-            backgroundColor: Colors.white,
-            child: Text(
-              'SB',
-              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: ColorManager.primaryGreen),
+          Container(
+            padding: const EdgeInsets.all(3),
+            decoration: const BoxDecoration(
+              color: Colors.white,
+              shape: BoxShape.circle,
+            ),
+            child: const CircleAvatar(
+              radius: 30,
+              backgroundColor: ColorManager.primaryGreen,
+              child: Text(
+                'SB',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),
+              ),
             ),
           ),
           const SizedBox(width: 16),
@@ -42,12 +51,19 @@ class ProfileHeaderCard extends StatelessWidget {
               children: [
                 Text(
                   StringManager.profileNameValue,
-                  style: getBoldStyle(fontSize: FontManager.s20, color: ColorManager.white),
+                  style: getBoldStyle(fontSize: FontManager.s20, color: Colors.white),
                 ),
                 const SizedBox(height: 4),
-                Text(
-                  '${StringManager.profileIdLabel}: ${StringManager.profileIdValue}',
-                  style: getRegularStyle(fontSize: FontManager.s14, color: ColorManager.white.withValues(alpha: 0.9)),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.2),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Text(
+                    '${StringManager.profileIdLabel}: ${StringManager.profileIdValue}',
+                    style: getMediumStyle(fontSize: FontManager.s12, color: Colors.white),
+                  ),
                 ),
               ],
             ),

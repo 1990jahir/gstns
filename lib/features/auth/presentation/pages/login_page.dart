@@ -1,20 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../../../core/res/color_manager.dart';
-import '../../../../core/res/font_manager.dart';
 import '../../../../core/res/string_manager.dart';
-import '../../../../core/res/styles_manager.dart';
 import '../../../../core/router/app_router.dart';
 import '../../../../core/utils/extensions.dart';
 import '../../../../core/utils/validators.dart';
-import '../../../../core/widgets/custom_button.dart';
-import '../../../../core/widgets/custom_footer.dart';
-import '../../../../core/widgets/custom_header.dart';
-import '../../../../core/widgets/custom_text_field.dart';
+import '../../../../core/widgets/global_loader.dart';
 import '../providers/auth_provider.dart';
+import '../widgets/login_header.dart';
+import '../widgets/login_input_field.dart';
+import '../widgets/login_social_button.dart';
 
-/// Login Page using clean, globally shared decoupled core widgets and GoRouter.
+/// Modern Professional Login Page with card container layout, glowing logo aura, and real API authentication.
 class LoginPage extends ConsumerStatefulWidget {
   const LoginPage({super.key});
 
@@ -24,8 +21,8 @@ class LoginPage extends ConsumerStatefulWidget {
 
 class _LoginPageState extends ConsumerState<LoginPage> {
   final _formKey = GlobalKey<FormState>();
-  final _emailController = TextEditingController(text: 'suser4@gstsof.com');
-  final _passwordController = TextEditingController(text: 'password123');
+  final _emailController = TextEditingController(text: 'sbuser1@gstsof.com');
+  final _passwordController = TextEditingController(text: 'Abc123@@');
 
   @override
   void dispose() {
@@ -34,16 +31,23 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     super.dispose();
   }
 
-  void _onSignIn() {
+  Future<void> _onSignIn() async {
     if (_formKey.currentState?.validate() ?? false) {
-      ref.read(authNotifierProvider.notifier).setLoading(true);
-      Future.delayed(const Duration(seconds: 1), () {
-        if (mounted) {
-          ref.read(authNotifierProvider.notifier).setLoading(false);
-          context.showSnackBar('Successfully signed in as ${_emailController.text}');
-          context.go(AppRouter.dashboard);
-        }
-      });
+      GlobalLoader.show(context, message: 'Signing in...');
+      final success = await ref.read(authNotifierProvider.notifier).login(
+            _emailController.text.trim(),
+            _passwordController.text,
+          );
+      if (!mounted) return;
+      GlobalLoader.hide(context);
+
+      if (success) {
+        context.showSnackBar('Successfully signed in as ${_emailController.text}');
+        context.go(AppRouter.dashboard);
+      } else {
+        final errorMsg = ref.read(authNotifierProvider).errorMessage ?? 'Login failed';
+        context.showSnackBar(errorMsg, isError: true);
+      }
     }
   }
 
@@ -51,239 +55,249 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   Widget build(BuildContext context) {
     final authState = ref.watch(authNotifierProvider);
     final isDarkMode = ref.watch(themeModeProvider);
-    final isDark = context.theme.brightness == Brightness.dark;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 16.0),
-            child: IconButton(
-              icon: Icon(
-                isDarkMode ? Icons.light_mode : Icons.dark_mode,
-                color: isDark ? ColorManager.white : ColorManager.lightTextPrimary,
-              ),
-              onPressed: () {
-                ref.read(themeModeProvider.notifier).state = !isDarkMode;
-              },
-              tooltip: 'Toggle Theme',
-            ),
-          ),
-        ],
-      ),
+      backgroundColor: isDark ? const Color(0xFF0F172A) : const Color(0xFFF7F8FA),
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
+            padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 24.0),
             child: ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 440),
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    const CustomHeader(
-                      title: StringManager.welcomeBack,
-                      subtitle: StringManager.signInSubtitle,
-                    ),
-                    const SizedBox(height: 32),
-                    CustomTextField(
-                      label: StringManager.emailLabel,
-                      hintText: StringManager.emailHint,
-                      controller: _emailController,
-                      validator: Validators.validateEmail,
-                      keyboardType: TextInputType.emailAddress,
-                      prefixIcon: const Icon(
-                        Icons.mail_outline_rounded,
-                        color: ColorManager.primaryGreen,
-                        size: 20,
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-                    CustomTextField(
-                      label: StringManager.passwordLabel,
-                      hintText: StringManager.passwordHint,
-                      controller: _passwordController,
-                      validator: Validators.validatePassword,
-                      obscureText: authState.obscurePassword,
-                      prefixIcon: const Icon(
-                        Icons.lock_outline_rounded,
-                        color: ColorManager.primaryGreen,
-                        size: 20,
-                      ),
-                      suffixIcon: IconButton(
-                        icon: Icon(
-                          authState.obscurePassword
-                              ? Icons.visibility_off_outlined
-                              : Icons.visibility_outlined,
-                          color: ColorManager.grey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  // Top Action (Theme Mode Toggle)
+                  Align(
+                    alignment: Alignment.topRight,
+                    child: GestureDetector(
+                      onTap: () {
+                        ref.read(themeModeProvider.notifier).state = !isDarkMode;
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          color: isDark ? const Color(0xFF1E293B) : Colors.white,
+                          shape: BoxShape.circle,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withValues(alpha: 0.08),
+                              blurRadius: 12,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
+                        ),
+                        child: Icon(
+                          isDarkMode ? Icons.light_mode_rounded : Icons.nightlight_round,
                           size: 20,
+                          color: isDarkMode ? Colors.amber : Colors.black87,
                         ),
-                        onPressed: () {
-                          ref.read(authNotifierProvider.notifier).toggleObscurePassword();
-                        },
                       ),
                     ),
-                    const SizedBox(height: 16),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Expanded(
-                          child: Row(
-                            children: [
-                              SizedBox(
-                                width: 24,
-                                height: 24,
-                                child: Checkbox(
-                                  value: authState.rememberMe,
-                                  onChanged: (value) {
-                                    ref.read(authNotifierProvider.notifier).toggleRememberMe(value);
-                                  },
-                                  activeColor: ColorManager.primaryGreen,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(4),
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(width: 8),
-                              Flexible(
-                                child: Text(
-                                  StringManager.rememberMe,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: getMediumStyle(
-                                    fontSize: FontManager.s14,
-                                    color: isDark ? ColorManager.darkTextPrimary : ColorManager.lightTextPrimary,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
+                  ),
+                  const SizedBox(height: 10),
+
+                  // Professional Card Container holding Login form
+                  Container(
+                    padding: const EdgeInsets.all(28.0),
+                    decoration: BoxDecoration(
+                      color: isDark ? const Color(0xFF1E293B) : Colors.white,
+                      borderRadius: BorderRadius.circular(28),
+                      border: Border.all(
+                        color: isDark ? const Color(0xFF334155) : Colors.grey.withValues(alpha: 0.15),
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: isDark ? 0.4 : 0.06),
+                          blurRadius: 30,
+                          offset: const Offset(0, 10),
                         ),
-                        const SizedBox(width: 8),
-                        TextButton(
-                          onPressed: () {
-                            context.showSnackBar('Forgot password clicked');
-                          },
-                          style: TextButton.styleFrom(
-                            padding: EdgeInsets.zero,
-                            minimumSize: const Size(0, 0),
-                            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      ],
+                    ),
+                    child: Form(
+                      key: _formKey,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          const LoginHeader(),
+                          const SizedBox(height: 32),
+                          LoginInputField(
+                            label: StringManager.emailLabel,
+                            hintText: StringManager.emailHint,
+                            icon: Icons.mail_outline_rounded,
+                            obscureText: false,
+                            controller: _emailController,
+                            validator: Validators.validateEmail,
+                            keyboardType: TextInputType.emailAddress,
                           ),
-                          child: Text(
-                            StringManager.forgotPassword,
-                            style: getMediumStyle(
-                              fontSize: FontManager.s14,
-                              color: ColorManager.primaryGreen,
+                          const SizedBox(height: 20),
+                          LoginInputField(
+                            label: StringManager.passwordLabel,
+                            hintText: StringManager.passwordHint,
+                            icon: Icons.lock_outline_rounded,
+                            obscureText: authState.obscurePassword,
+                            controller: _passwordController,
+                            validator: Validators.validatePassword,
+                            suffixIcon: IconButton(
+                              icon: Icon(
+                                authState.obscurePassword ? Icons.visibility_off_outlined : Icons.visibility_outlined,
+                                color: const Color(0xFF9CA3AF),
+                                size: 20,
+                              ),
+                              onPressed: () {
+                                ref.read(authNotifierProvider.notifier).toggleObscurePassword();
+                              },
                             ),
                           ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 24),
-                    CustomButton(
-                      text: StringManager.signIn,
-                      isLoading: authState.isLoading,
-                      icon: Icons.arrow_forward_rounded,
-                      onPressed: _onSignIn,
-                    ),
-                    const SizedBox(height: 28),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Divider(
-                            color: isDark ? ColorManager.darkBorder : ColorManager.lightBorder,
-                            thickness: 1,
+                          const SizedBox(height: 14),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Row(
+                                children: [
+                                  SizedBox(
+                                    height: 20,
+                                    width: 20,
+                                    child: Checkbox(
+                                      value: authState.rememberMe,
+                                      activeColor: const Color(0xFF10B981),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(4),
+                                      ),
+                                      onChanged: (value) {
+                                        ref.read(authNotifierProvider.notifier).toggleRememberMe(value);
+                                      },
+                                    ),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Text(
+                                    StringManager.rememberMe,
+                                    style: TextStyle(
+                                      fontSize: 13,
+                                      color: isDark ? const Color(0xFF94A3B8) : const Color(0xFF4B5563),
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              GestureDetector(
+                                onTap: () => context.showSnackBar(StringManager.forgotPasswordClicked),
+                                child: const Text(
+                                  StringManager.forgotPassword,
+                                  style: TextStyle(
+                                    fontSize: 13,
+                                    color: Color(0xFF10B981),
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                          child: Text(
-                            StringManager.orContinueWith,
-                            style: getRegularStyle(
-                              fontSize: FontManager.s13,
-                              color: isDark ? ColorManager.darkTextSecondary : ColorManager.lightTextSecondary,
+                          const SizedBox(height: 28),
+
+                          // Sign In Button
+                          Container(
+                            width: double.infinity,
+                            height: 52,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(16),
+                              gradient: const LinearGradient(
+                                colors: [Color(0xFF059669), Color(0xFF10B981)],
+                              ),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: const Color(0xFF10B981).withValues(alpha: 0.35),
+                                  blurRadius: 15,
+                                  offset: const Offset(0, 6),
+                                ),
+                              ],
+                            ),
+                            child: ElevatedButton(
+                              onPressed: authState.isLoading ? null : _onSignIn,
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.transparent,
+                                shadowColor: Colors.transparent,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(16),
+                                ),
+                              ),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    StringManager.signIn,
+                                    style: const TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w600,
+                                      color: Colors.white,
+                                      fontFamily: 'Inter',
+                                    ),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  const Icon(Icons.arrow_forward_rounded, color: Colors.white, size: 18),
+                                ],
+                              ),
                             ),
                           ),
-                        ),
-                        Expanded(
-                          child: Divider(
-                            color: isDark ? ColorManager.darkBorder : ColorManager.lightBorder,
-                            thickness: 1,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 24),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        OutlinedButton(
-                          onPressed: () => context.showSnackBar('Google login clicked'),
-                          style: OutlinedButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                            side: BorderSide(color: isDark ? ColorManager.darkBorder : ColorManager.lightBorder),
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                            backgroundColor: isDark ? ColorManager.darkCard : ColorManager.lightCard,
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            mainAxisSize: MainAxisSize.min,
+                          const SizedBox(height: 24),
+
+                          // Divider
+                          Row(
                             children: [
-                              const Icon(Icons.g_mobiledata_rounded, size: 28, color: Colors.red),
-                              const SizedBox(width: 8),
-                              FittedBox(
-                                fit: BoxFit.scaleDown,
+                              Expanded(child: Divider(color: isDark ? const Color(0xFF334155) : const Color(0xFFE5E7EB), thickness: 1)),
+                              Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 16),
                                 child: Text(
-                                  StringManager.googleLogin,
-                                  style: getMediumStyle(
-                                    fontSize: FontManager.s14,
-                                    color: isDark ? ColorManager.darkTextPrimary : ColorManager.lightTextPrimary,
-                                  ),
+                                  StringManager.orContinueWith,
+                                  style: TextStyle(fontSize: 12, color: isDark ? const Color(0xFF94A3B8) : const Color(0xFF9CA3AF), fontWeight: FontWeight.w500),
                                 ),
                               ),
+                              Expanded(child: Divider(color: isDark ? const Color(0xFF334155) : const Color(0xFFE5E7EB), thickness: 1)),
                             ],
                           ),
-                        ),
-                        const SizedBox(height: 12),
-                        OutlinedButton(
-                          onPressed: () => context.showSnackBar('WhatsApp login clicked'),
-                          style: OutlinedButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                            side: BorderSide(color: isDark ? ColorManager.darkBorder : ColorManager.lightBorder),
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                            backgroundColor: isDark ? ColorManager.darkCard : ColorManager.lightCard,
+                          const SizedBox(height: 20),
+
+                          // Social Buttons
+                          LoginSocialButton(
+                            assetPath: 'assets/png_images/google.png',
+                            text: StringManager.googleLogin,
+                            onTap: () => context.showSnackBar(StringManager.googleLoginClicked),
                           ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              const Icon(Icons.chat_bubble_outline_rounded, size: 20, color: Colors.green),
-                              const SizedBox(width: 8),
-                              FittedBox(
-                                fit: BoxFit.scaleDown,
-                                child: Text(
-                                  StringManager.whatsappLogin,
-                                  style: getMediumStyle(
-                                    fontSize: FontManager.s14,
-                                    color: isDark ? ColorManager.darkTextPrimary : ColorManager.lightTextPrimary,
-                                  ),
-                                ),
-                              ),
-                            ],
+                          const SizedBox(height: 12),
+                          LoginSocialButton(
+                            assetPath: 'assets/png_images/whatsapp.png',
+                            text: StringManager.whatsappLogin,
+                            onTap: () => context.showSnackBar(StringManager.whatsAppLoginClicked),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+
+                  // Register Footer
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        StringManager.newToPlatform,
+                        style: TextStyle(fontSize: 14, color: isDark ? const Color(0xFF94A3B8) : const Color(0xFF6B7280)),
+                      ),
+                      GestureDetector(
+                        onTap: () => context.push(AppRouter.register),
+                        child: const Text(
+                          StringManager.createAnAccount,
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            color: Color(0xFF10B981),
                           ),
                         ),
-                      ],
-                    ),
-                    const SizedBox(height: 36),
-                    CustomFooter(
-                      text: StringManager.newToPlatform,
-                      actionText: StringManager.createAnAccount,
-                      onTap: () => context.push(AppRouter.register),
-                    ),
-                  ],
-                ),
+                      ),
+                    ],
+                  ),
+                ],
               ),
             ),
           ),

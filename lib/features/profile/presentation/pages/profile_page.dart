@@ -4,11 +4,12 @@ import '../../../../core/res/font_manager.dart';
 import '../../../../core/res/string_manager.dart';
 import '../../../../core/res/styles_manager.dart';
 import '../widgets/profile_actions.dart';
-import '../widgets/profile_field_item.dart';
+import '../widgets/profile_field_tile.dart';
 import '../widgets/profile_header_card.dart';
+import '../widgets/profile_section_card.dart';
 import '../widgets/profile_support_box.dart';
 
-/// Dedicated Profile Page composed of clean, reusable modular widgets.
+/// Dedicated Profile Page redesigned to match the latest modern fintech/tax app UI trends.
 class ProfilePage extends ConsumerWidget {
   const ProfilePage({super.key});
 
@@ -31,50 +32,84 @@ class ProfilePage extends ConsumerWidget {
       ),
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(20.0),
+          padding: const EdgeInsets.fromLTRB(20, 16, 20, 100), // Bottom padding for floating navbar
           child: Center(
             child: ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 600),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  const ProfileHeaderCard(),
-                  const SizedBox(height: 24),
-                  Row(
+                children: const [
+                  ProfileHeaderCard(),
+                  SizedBox(height: 24),
+                  ProfileSectionCard(
+                    title: 'Personal Information',
                     children: [
-                      Expanded(child: ProfileFieldItem(label: StringManager.profileNameLabel, value: StringManager.profileNameValue)),
-                      const SizedBox(width: 16),
-                      Expanded(child: ProfileFieldItem(label: StringManager.profileIdLabel, value: StringManager.profileIdValue)),
+                      ProfileFieldTile(
+                        icon: Icons.person_outline_rounded,
+                        label: StringManager.profileNameLabel,
+                        value: StringManager.profileNameValue,
+                        color: Colors.blue,
+                      ),
+                      ProfileFieldTile(
+                        icon: Icons.badge_outlined,
+                        label: StringManager.profileIdLabel,
+                        value: StringManager.profileIdValue,
+                        color: Colors.purple,
+                      ),
+                      ProfileFieldTile(
+                        icon: Icons.email_outlined,
+                        label: StringManager.profileEmailLabel,
+                        value: StringManager.profileEmailValue,
+                        color: Colors.teal,
+                      ),
+                      ProfileFieldTile(
+                        icon: Icons.phone_outlined,
+                        label: StringManager.profileContactLabel,
+                        value: StringManager.profileContactValue,
+                        color: Colors.green,
+                      ),
                     ],
                   ),
-                  const SizedBox(height: 16),
-                  Row(
+                  SizedBox(height: 20),
+                  ProfileSectionCard(
+                    title: 'Business & Tax Details',
                     children: [
-                      Expanded(child: ProfileFieldItem(label: StringManager.profileCompanyLabel, value: StringManager.profileCompanyValue)),
-                      const SizedBox(width: 16),
-                      Expanded(child: ProfileFieldItem(label: StringManager.profileGstinLabel, value: StringManager.profileGstinValue)),
+                      ProfileFieldTile(
+                        icon: Icons.business_rounded,
+                        label: StringManager.profileCompanyLabel,
+                        value: StringManager.profileCompanyValue,
+                        color: Colors.orange,
+                      ),
+                      ProfileFieldTile(
+                        icon: Icons.receipt_long_outlined,
+                        label: StringManager.profileGstinLabel,
+                        value: StringManager.profileGstinValue,
+                        color: Colors.indigo,
+                      ),
+                      ProfileFieldTile(
+                        icon: Icons.credit_card_rounded,
+                        label: StringManager.profilePanLabel,
+                        value: StringManager.profilePanValue,
+                        color: Colors.red,
+                      ),
                     ],
                   ),
-                  const SizedBox(height: 16),
-                  Row(
+                  SizedBox(height: 20),
+                  ProfileSectionCard(
+                    title: 'Financial Overview',
                     children: [
-                      Expanded(child: ProfileFieldItem(label: StringManager.profileEmailLabel, value: StringManager.profileEmailValue)),
-                      const SizedBox(width: 16),
-                      Expanded(child: ProfileFieldItem(label: StringManager.profileContactLabel, value: StringManager.profileContactValue)),
+                      ProfileFieldTile(
+                        icon: Icons.account_balance_wallet_outlined,
+                        label: StringManager.profileWalletLabel,
+                        value: StringManager.profileWalletValue,
+                        color: Colors.amber,
+                      ),
                     ],
                   ),
-                  const SizedBox(height: 16),
-                  Row(
-                    children: [
-                      Expanded(child: ProfileFieldItem(label: StringManager.profilePanLabel, value: StringManager.profilePanValue)),
-                      const SizedBox(width: 16),
-                      Expanded(child: ProfileFieldItem(label: StringManager.profileWalletLabel, value: StringManager.profileWalletValue)),
-                    ],
-                  ),
-                  const SizedBox(height: 24),
-                  const ProfileSupportBox(),
-                  const SizedBox(height: 24),
-                  const ProfileActions(),
+                  SizedBox(height: 24),
+                  ProfileSupportBox(),
+                  SizedBox(height: 24),
+                  ProfileActions(),
                 ],
               ),
             ),

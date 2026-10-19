@@ -8,14 +8,13 @@ import '../../../../core/res/styles_manager.dart';
 import '../../../../core/router/app_router.dart';
 import '../../../../core/utils/extensions.dart';
 import '../providers/dashboard_provider.dart';
-import '../widgets/dashboard_drawer.dart';
+import '../widgets/flow_chart_card.dart';
 import '../widgets/income_expense_card.dart';
-import '../widgets/metric_card.dart';
+import '../widgets/metric_card_with_chart.dart';
 import '../widgets/quick_actions_card.dart';
 import '../widgets/recent_activity_list.dart';
 
-/// Mobile-friendly Dashboard Page replicating the web dashboard design with proper theming,
-/// pull-to-refresh, profile page navigation, and state management.
+/// Highly recommended modern UI Dashboard Page with gradient SliverAppBar, trend sparkline metric cards, and financial overview.
 class DashboardPage extends ConsumerWidget {
   const DashboardPage({super.key});
 
@@ -42,303 +41,272 @@ class DashboardPage extends ConsumerWidget {
     final isDark = context.theme.brightness == Brightness.dark;
 
     return Scaffold(
-      drawer: DashboardDrawer(
-        activeMenu: dashboardState.activeMenu,
-        onMenuSelected: (menu) {
-          ref.read(dashboardNotifierProvider.notifier).setActiveMenu(menu);
-          context.showSnackBar('Navigated to $menu');
+      body: RefreshIndicator(
+        color: ColorManager.primaryGreen,
+        onRefresh: () async {
+          await Future.delayed(const Duration(seconds: 1));
+          if (!context.mounted) return;
+          context.showSnackBar('Dashboard refreshed successfully');
         },
-      ),
-      appBar: AppBar(
-        backgroundColor: isDark ? ColorManager.darkSurface : ColorManager.white,
-        elevation: 0,
-        iconTheme: IconThemeData(color: isDark ? ColorManager.darkTextPrimary : ColorManager.lightTextPrimary),
-        title: Row(
-          children: [
-            Text(
-              StringManager.dashboardTitle,
-              style: getBoldStyle(
-                fontSize: FontManager.s18,
-                color: isDark ? ColorManager.darkTextPrimary : ColorManager.lightTextPrimary,
-              ),
-            ),
-          ],
-        ),
-        actions: [
-          Center(
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-              decoration: BoxDecoration(
-                color: Colors.green.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: Colors.green.withValues(alpha: 0.3)),
-              ),
-              child: Row(
-                children: [
-                  const Icon(Icons.phone_outlined, size: 14, color: Colors.green),
-                  const SizedBox(width: 4),
-                  Text(
-                    StringManager.supportPhone,
-                    style: getMediumStyle(fontSize: FontManager.s12, color: Colors.green),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          const SizedBox(width: 12),
-          IconButton(
-            icon: Stack(
-              children: [
-                const Icon(Icons.notifications_outlined),
-                Positioned(
-                  right: 0,
-                  top: 0,
-                  child: Container(
-                    padding: const EdgeInsets.all(4),
-                    decoration: const BoxDecoration(color: Colors.green, shape: BoxShape.circle),
-                    child: const Text('0', style: TextStyle(fontSize: 8, color: Colors.white)),
-                  ),
-                ),
-              ],
-            ),
-            onPressed: () {},
-          ),
-          Padding(
-            padding: const EdgeInsets.only(right: 16.0, left: 8.0),
-            child: GestureDetector(
-              onTap: () => context.push(AppRouter.profile),
-              child: CircleAvatar(
-                radius: 16,
-                backgroundColor: ColorManager.primaryGreen.withValues(alpha: 0.2),
-                child: Text('SB', style: getBoldStyle(fontSize: FontManager.s12, color: ColorManager.primaryGreen)),
-              ),
-            ),
-          ),
-        ],
-      ),
-      body: SafeArea(
-        child: RefreshIndicator(
-          color: ColorManager.primaryGreen,
-          onRefresh: () async {
-            await Future.delayed(const Duration(seconds: 1));
-            if (!context.mounted) return;
-            context.showSnackBar('Dashboard refreshed successfully');
-          },
-          child: ListView(
-            padding: const EdgeInsets.all(16.0),
-            children: [
-              LayoutBuilder(
-                builder: (context, constraints) {
-                  final isWide = constraints.maxWidth > 600;
-                  final welcomeBlock = Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Text(
-                            StringManager.welcomeUser,
-                            style: getBoldStyle(
-                              fontSize: FontManager.s24,
-                              color: isDark ? ColorManager.darkTextPrimary : ColorManager.lightTextPrimary,
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                          const Text('👋', style: TextStyle(fontSize: 22)),
-                        ],
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        StringManager.welcomeSubtitle,
-                        style: getRegularStyle(
-                          fontSize: FontManager.s14,
-                          color: isDark ? ColorManager.darkTextSecondary : ColorManager.lightTextSecondary,
-                        ),
-                      ),
-                    ],
-                  );
-
-                  final rangePicker = Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                    decoration: BoxDecoration(
-                      color: isDark ? ColorManager.darkCard : ColorManager.white,
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: ColorManager.primaryGreen.withValues(alpha: 0.5)),
+        child: CustomScrollView(
+          slivers: [
+            // Modern Gradient SliverAppBar with Collapsing Greeting & Quick Actions
+            SliverAppBar(
+              expandedHeight: 200.0,
+              floating: false,
+              pinned: true,
+              backgroundColor: ColorManager.primaryGreen,
+              flexibleSpace: FlexibleSpaceBar(
+                background: Container(
+                  decoration: const BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [Color(0xFF047857), Color(0xFF059669), Color(0xFF10B981)],
                     ),
-                    child: DropdownButtonHideUnderline(
-                      child: DropdownButton<String>(
-                        value: dashboardState.selectedDateRange,
-                        isDense: true,
-                        icon: const Icon(Icons.keyboard_arrow_down, color: ColorManager.primaryGreen),
-                        items: _dateRanges
-                            .map((range) => DropdownMenuItem(
-                                  value: range,
-                                  child: Row(
-                                    children: [
-                                      const Icon(Icons.calendar_today_outlined, size: 16, color: ColorManager.primaryGreen),
-                                      const SizedBox(width: 8),
-                                      Text(range, style: getMediumStyle(fontSize: FontManager.s13, color: isDark ? ColorManager.darkTextPrimary : ColorManager.lightTextPrimary)),
-                                    ],
-                                  ),
-                                ))
-                            .toList(),
-                        onChanged: (val) {
-                          if (val != null) {
-                            ref.read(dashboardNotifierProvider.notifier).setDateRange(val);
-                          }
-                        },
-                      ),
-                    ),
-                  );
-
-                  if (isWide) {
-                    return Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [welcomeBlock, rangePicker],
-                    );
-                  }
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      welcomeBlock,
-                      const SizedBox(height: 16),
-                      rangePicker,
-                    ],
-                  );
-                },
-              ),
-              const SizedBox(height: 24),
-
-              GridView.count(
-                crossAxisCount: MediaQuery.of(context).size.width > 700 ? 2 : 1,
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                crossAxisSpacing: 16,
-                mainAxisSpacing: 16,
-                childAspectRatio: 2.1,
-                children: const [
-                  MetricCard(
-                    title: StringManager.totalTaxInvoices,
-                    amount: '₹ 0.00',
-                    percentage: '0%',
-                    countLabel: StringManager.invoicesCount,
-                    icon: Icons.description_outlined,
-                    borderColor: ColorManager.primaryGreen,
-                    iconBackgroundColor: Color(0xFFE8F5E9),
                   ),
-                  MetricCard(
-                    title: StringManager.totalEWayBills,
-                    amount: '₹ 0.00',
-                    percentage: '0%',
-                    countLabel: StringManager.billsCount,
-                    icon: Icons.local_shipping_outlined,
-                    borderColor: Colors.blue,
-                    iconBackgroundColor: Color(0xFFE3F2FD),
-                  ),
-                  MetricCard(
-                    title: StringManager.totalPurchaseInvoices,
-                    amount: '₹ 0.00',
-                    percentage: '0%',
-                    countLabel: StringManager.invoicesCount,
-                    icon: Icons.shopping_bag_outlined,
-                    borderColor: Colors.orange,
-                    iconBackgroundColor: Color(0xFFFFF3E0),
-                  ),
-                  MetricCard(
-                    title: StringManager.totalCreditNotes,
-                    amount: '₹ 0.00',
-                    percentage: '0%',
-                    countLabel: StringManager.notesCount,
-                    icon: Icons.edit_note_rounded,
-                    borderColor: Colors.purple,
-                    iconBackgroundColor: Color(0xFFF3E5F5),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 24),
-
-              Container(
-                padding: const EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  color: isDark ? ColorManager.darkCard : ColorManager.white,
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: isDark ? ColorManager.darkBorder : ColorManager.lightBorder),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.04),
-                      blurRadius: 10,
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(20, 60, 20, 20),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.end,
                       children: [
-                        Text(
-                          StringManager.flowTitle,
-                          style: getBoldStyle(
-                            fontSize: FontManager.s16,
-                            color: isDark ? ColorManager.darkTextPrimary : ColorManager.lightTextPrimary,
-                          ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Row(
+                              children: [
+                                Text(
+                                  StringManager.welcomeUser,
+                                  style: getBoldStyle(fontSize: FontManager.s22, color: Colors.white),
+                                ),
+                                const SizedBox(width: 8),
+                                const Text('👋', style: TextStyle(fontSize: 20)),
+                              ],
+                            ),
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                              decoration: BoxDecoration(
+                                color: Colors.white.withValues(alpha: 0.2),
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: Row(
+                                children: [
+                                  const Icon(Icons.phone_outlined, size: 14, color: Colors.white),
+                                  const SizedBox(width: 4),
+                                  Text(
+                                    StringManager.supportPhone,
+                                    style: getMediumStyle(fontSize: FontManager.s12, color: Colors.white),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
                         ),
+                        const SizedBox(height: 6),
+                        Text(
+                          StringManager.welcomeSubtitle,
+                          style: getRegularStyle(fontSize: FontManager.s13, color: Colors.white.withValues(alpha: 0.9)),
+                        ),
+                        const SizedBox(height: 12),
+                        // Quick Status pill
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                           decoration: BoxDecoration(
-                            border: Border.all(color: isDark ? ColorManager.darkBorder : ColorManager.lightBorder),
-                            borderRadius: BorderRadius.circular(8),
+                            color: Colors.black.withValues(alpha: 0.15),
+                            borderRadius: BorderRadius.circular(10),
                           ),
                           child: Row(
+                            mainAxisSize: MainAxisSize.min,
                             children: [
-                              Text(dashboardState.selectedGraphFilter, style: getMediumStyle(fontSize: FontManager.s12, color: isDark ? ColorManager.darkTextPrimary : ColorManager.lightTextPrimary)),
-                              const SizedBox(width: 4),
-                              const Icon(Icons.keyboard_arrow_down, size: 16),
+                              const Icon(Icons.verified_rounded, size: 14, color: Colors.lightGreenAccent),
+                              const SizedBox(width: 6),
+                              Text('GSTIN: 05AAACG2115R1ZN', style: getMediumStyle(fontSize: FontManager.s12, color: Colors.white)),
                             ],
                           ),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 30),
-                    SizedBox(
-                      height: 180,
-                      child: Center(
-                        child: Text(
-                          StringManager.graphFlowVisualizer,
-                          textAlign: TextAlign.center,
-                          style: getRegularStyle(
-                            fontSize: FontManager.s13,
-                            color: isDark ? ColorManager.darkTextSecondary : ColorManager.lightTextSecondary,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 24),
-
-              const QuickActionsCard(),
-              const SizedBox(height: 24),
-              const IncomeExpenseCard(),
-              const SizedBox(height: 24),
-
-              const RecentActivityList(),
-              const SizedBox(height: 32),
-
-              Center(
-                child: Text(
-                  StringManager.footerCopyright,
-                  textAlign: TextAlign.center,
-                  style: getRegularStyle(
-                    fontSize: FontManager.s12,
-                    color: isDark ? ColorManager.darkTextSecondary : ColorManager.lightTextSecondary,
                   ),
                 ),
               ),
-              const SizedBox(height: 16),
-            ],
-          ),
+              actions: [
+                IconButton(
+                  icon: Stack(
+                    children: [
+                      const Icon(Icons.notifications_outlined, color: Colors.white),
+                      Positioned(
+                        right: 0,
+                        top: 0,
+                        child: Container(
+                          padding: const EdgeInsets.all(4),
+                          decoration: const BoxDecoration(color: Colors.orange, shape: BoxShape.circle),
+                          child: const Text('0', style: TextStyle(fontSize: 8, color: Colors.white)),
+                        ),
+                      ),
+                    ],
+                  ),
+                  onPressed: () {},
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(right: 16.0, left: 4.0),
+                  child: GestureDetector(
+                    onTap: () => context.push(AppRouter.profile),
+                    child: const CircleAvatar(
+                      radius: 16,
+                      backgroundColor: Colors.white,
+                      child: Text('SB', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: ColorManager.primaryGreen)),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+
+            // Dashboard Content Body
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(16, 16, 16, 100), // Bottom padding for floating navbar
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    // Date Range Selector Banner
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                      decoration: BoxDecoration(
+                        color: isDark ? ColorManager.darkCard : ColorManager.white,
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(color: ColorManager.primaryGreen.withValues(alpha: 0.3)),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.04),
+                            blurRadius: 10,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Row(
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.all(8),
+                                decoration: BoxDecoration(
+                                  color: ColorManager.primaryGreen.withValues(alpha: 0.1),
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: const Icon(Icons.calendar_today_outlined, size: 18, color: ColorManager.primaryGreen),
+                              ),
+                              const SizedBox(width: 12),
+                              Text(
+                                'Financial Period',
+                                style: getMediumStyle(fontSize: FontManager.s14, color: isDark ? ColorManager.darkTextSecondary : ColorManager.lightTextSecondary),
+                              ),
+                            ],
+                          ),
+                          DropdownButtonHideUnderline(
+                            child: DropdownButton<String>(
+                              value: dashboardState.selectedDateRange,
+                              isDense: true,
+                              icon: const Icon(Icons.keyboard_arrow_down, color: ColorManager.primaryGreen),
+                              items: _dateRanges
+                                  .map((range) => DropdownMenuItem(
+                                        value: range,
+                                        child: Text(range, style: getBoldStyle(fontSize: FontManager.s13, color: isDark ? ColorManager.darkTextPrimary : ColorManager.lightTextPrimary)),
+                                      ))
+                                  .toList(),
+                              onChanged: (val) {
+                                if (val != null) {
+                                  ref.read(dashboardNotifierProvider.notifier).setDateRange(val);
+                                }
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+
+                    // Modern GridView for Metric Cards with Trend Sparklines
+                    GridView.count(
+                      crossAxisCount: MediaQuery.of(context).size.width > 700 ? 2 : 1,
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      crossAxisSpacing: 16,
+                      mainAxisSpacing: 16,
+                      childAspectRatio: 1.8,
+                      children: const [
+                        MetricCardWithChart(
+                          title: StringManager.totalTaxInvoices,
+                          amount: '₹ 0.00',
+                          percentage: '0%',
+                          countLabel: StringManager.invoicesCount,
+                          icon: Icons.description_outlined,
+                          accentColor: ColorManager.primaryGreen,
+                          iconBackgroundColor: Color(0xFFE8F5E9),
+                        ),
+                        MetricCardWithChart(
+                          title: StringManager.totalEWayBills,
+                          amount: '₹ 0.00',
+                          percentage: '0%',
+                          countLabel: StringManager.billsCount,
+                          icon: Icons.local_shipping_outlined,
+                          accentColor: Colors.blue,
+                          iconBackgroundColor: Color(0xFFE3F2FD),
+                        ),
+                        MetricCardWithChart(
+                          title: StringManager.totalPurchaseInvoices,
+                          amount: '₹ 0.00',
+                          percentage: '0%',
+                          countLabel: StringManager.invoicesCount,
+                          icon: Icons.shopping_bag_outlined,
+                          accentColor: Colors.orange,
+                          iconBackgroundColor: Color(0xFFFFF3E0),
+                        ),
+                        MetricCardWithChart(
+                          title: StringManager.totalCreditNotes,
+                          amount: '₹ 0.00',
+                          percentage: '0%',
+                          countLabel: StringManager.notesCount,
+                          icon: Icons.edit_note_rounded,
+                          accentColor: Colors.purple,
+                          iconBackgroundColor: Color(0xFFF3E5F5),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 24),
+
+                    // Sale, Purchase & Credit Note Flow Card
+                    FlowChartCard(selectedFilter: dashboardState.selectedGraphFilter),
+                    const SizedBox(height: 24),
+
+                    // Quick Actions & Income vs Expense
+                    const QuickActionsCard(),
+                    const SizedBox(height: 24),
+                    const IncomeExpenseCard(),
+                    const SizedBox(height: 24),
+
+                    // Recent Activity
+                    const RecentActivityList(),
+                    const SizedBox(height: 32),
+
+                    // Footer Copyright
+                    Center(
+                      child: Text(
+                        StringManager.footerCopyright,
+                        textAlign: TextAlign.center,
+                        style: getRegularStyle(
+                          fontSize: FontManager.s12,
+                          color: isDark ? ColorManager.darkTextSecondary : ColorManager.lightTextSecondary,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+                  ],
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );

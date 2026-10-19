@@ -1,9 +1,8 @@
-import 'dart:convert';
 import 'package:dio/dio.dart';
 import '../api_endpoints.dart';
 
-/// Interceptor managing Basic Auth for auth endpoints and Bearer tokens for authenticated endpoints,
-/// with automatic token refreshing on 401 Unauthorized responses.
+/// Interceptor managing Basic Auth for auth endpoints (using exact Postman code snippet token)
+/// and Bearer tokens for authenticated endpoints, with automatic token refreshing on 401 Unauthorized.
 class AuthInterceptor extends Interceptor {
   final Dio _dio;
   static String? accessToken;
@@ -17,8 +16,7 @@ class AuthInterceptor extends Interceptor {
         options.path.contains('/auth/token/refresh') ||
         options.path.contains('/auth/otp/send') ||
         options.path.contains('/auth/otp/verify')) {
-      final basicAuth = 'Basic ${base64Encode(utf8.encode('${ApiEndpoints.defaultClientId}:${ApiEndpoints.defaultClientSecret}'))}';
-      options.headers['Authorization'] = basicAuth;
+      options.headers['Authorization'] = 'Basic ${ApiEndpoints.basicAuthToken}';
     } else if (accessToken != null) {
       options.headers['Authorization'] = 'Bearer $accessToken';
     }
