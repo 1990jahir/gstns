@@ -131,31 +131,62 @@ class DashboardPage extends ConsumerWidget {
                 ),
               ),
               actions: [
-                IconButton(
-                  icon: Stack(
-                    children: [
-                      const Icon(Icons.notifications_outlined, color: Colors.white),
-                      Positioned(
-                        right: 0,
-                        top: 0,
-                        child: Container(
-                          padding: const EdgeInsets.all(4),
-                          decoration: const BoxDecoration(color: Colors.orange, shape: BoxShape.circle),
-                          child: const Text('0', style: TextStyle(fontSize: 8, color: Colors.white)),
-                        ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 4.0),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.2),
+                      shape: BoxShape.circle,
+                    ),
+                    child: IconButton(
+                      icon: Stack(
+                        clipBehavior: Clip.none,
+                        children: [
+                          const Icon(Icons.notifications_outlined, color: Colors.white, size: 20),
+                          Positioned(
+                            right: -2,
+                            top: -2,
+                            child: Container(
+                              padding: const EdgeInsets.all(4),
+                              decoration: const BoxDecoration(
+                                color: Colors.orangeAccent,
+                                shape: BoxShape.circle,
+                              ),
+                              child: const Text(
+                                '2',
+                                style: TextStyle(fontSize: 8, fontWeight: FontWeight.bold, color: Colors.white),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
-                    ],
+                      onPressed: () => context.showSnackBar('Notifications clicked'),
+                      tooltip: 'Notifications',
+                    ),
                   ),
-                  onPressed: () {},
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(right: 16.0, left: 4.0),
+                  padding: const EdgeInsets.only(right: 16.0, left: 4.0, top: 8.0, bottom: 8.0),
                   child: GestureDetector(
                     onTap: () => context.push(AppRouter.profile),
-                    child: const CircleAvatar(
-                      radius: 16,
-                      backgroundColor: Colors.white,
-                      child: Text('SB', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: ColorManager.primaryGreen)),
+                    child: Container(
+                      padding: const EdgeInsets.all(2),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.15),
+                            blurRadius: 8,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: const CircleAvatar(
+                        radius: 16,
+                        backgroundColor: ColorManager.primaryGreen,
+                        child: Text('SB', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.white)),
+                      ),
                     ),
                   ),
                 ),
