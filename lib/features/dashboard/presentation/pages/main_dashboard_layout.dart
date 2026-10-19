@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../profile/presentation/pages/profile_page.dart';
+import '../../../customer/presentation/pages/customers_page.dart';
+import '../../../invoice/presentation/pages/invoices_page.dart';
 import '../widgets/menu_bottom_sheet.dart';
 import '../widgets/modern_bottom_nav_bar.dart';
 import 'dashboard_page.dart';
 
-/// Modern UI Navbar-based layout integrating Dashboard, Invoices, Reports, Profile, and Menu sheet.
+/// Modern UI Navbar-based layout integrating Dashboard, Invoices, Reports, Customers, and Menu sheet.
 class MainDashboardLayout extends ConsumerStatefulWidget {
   const MainDashboardLayout({super.key});
 
@@ -18,9 +19,9 @@ class _MainDashboardLayoutState extends ConsumerState<MainDashboardLayout> {
 
   final List<Widget> _pages = const [
     DashboardPage(),
-    Center(child: Text('Invoices Module')),
+    InvoicesPage(), // Invoices tab page
     Center(child: Text('Reports Module')),
-    ProfilePage(), // Profile page integrated directly into bottom navbar index 3
+    CustomersPage(),
   ];
 
   void _onTabTapped(int index) {

@@ -3,7 +3,9 @@ import '../../features/auth/presentation/pages/login_page.dart';
 import '../../features/auth/presentation/pages/onboarding_page.dart';
 import '../../features/auth/presentation/pages/register_page.dart';
 import '../../features/auth/presentation/pages/splash_page.dart';
+import '../../features/customer/presentation/pages/add_customer_page.dart';
 import '../../features/dashboard/presentation/pages/main_dashboard_layout.dart';
+import '../../features/invoice/presentation/pages/create_invoice_page.dart';
 import '../../features/profile/presentation/pages/profile_page.dart';
 
 /// GoRouter configuration for declarative routing and navigation across the app.
@@ -14,6 +16,8 @@ class AppRouter {
   static const String register = '/register';
   static const String dashboard = '/dashboard';
   static const String profile = '/profile';
+  static const String addCustomer = '/add_customer';
+  static const String createInvoice = '/create_invoice';
 
   static final GoRouter router = GoRouter(
     initialLocation: splash,
@@ -47,6 +51,16 @@ class AppRouter {
         path: profile,
         name: 'profile',
         builder: (context, state) => const ProfilePage(),
+      ),
+      GoRoute(
+        path: addCustomer,
+        name: 'add_customer',
+        builder: (context, state) => const AddCustomerPage(),
+      ),
+      GoRoute(
+        path: createInvoice,
+        name: 'create_invoice',
+        builder: (context, state) => const CreateInvoicePage(),
       ),
     ],
   );

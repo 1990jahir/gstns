@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import '../../../../core/res/color_manager.dart';
 import '../../../../core/res/font_manager.dart';
-import '../../../../core/res/string_manager.dart';
 import '../../../../core/res/styles_manager.dart';
 import '../../../../core/utils/extensions.dart';
 
-/// Professional Sale, Purchase & Credit Note Flow Card with gradient border, rich shadows, and chart visualization.
+/// Professional Sale, Purchase & Credit Note Flow Card with multi-series visualizer, legends, and axis lines.
 class FlowChartCard extends StatelessWidget {
   final String selectedFilter;
 
@@ -52,7 +51,7 @@ class FlowChartCard extends StatelessWidget {
             children: [
               Expanded(
                 child: Text(
-                  StringManager.flowTitle,
+                  'Sale, Purchase & Credit Note Flow',
                   overflow: TextOverflow.ellipsis,
                   style: getBoldStyle(
                     fontSize: FontManager.s18,
@@ -79,43 +78,133 @@ class FlowChartCard extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 24),
-          // Months visualization axis placeholder
+          const SizedBox(height: 16),
+
+          // Professional Financial Legend Pills
+          Row(
+            children: [
+              _buildLegendItem('Sales', const Color(0xFF10B981)),
+              const SizedBox(width: 16),
+              _buildLegendItem('Purchase', const Color(0xFFF97316)),
+              const SizedBox(width: 16),
+              _buildLegendItem('Credit Note', const Color(0xFF8B5CF6)),
+            ],
+          ),
+          const SizedBox(height: 20),
+
+          // Professional Financial Chart Visualizer
           SizedBox(
-            height: 180,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.end,
+            height: 200,
+            child: Stack(
               children: [
-                Expanded(
-                  child: Center(
-                    child: Text(
-                      StringManager.graphFlowVisualizer,
-                      textAlign: TextAlign.center,
-                      style: getRegularStyle(
-                        fontSize: FontManager.s13,
-                        color: isDark ? ColorManager.darkTextSecondary : ColorManager.lightTextSecondary,
-                      ),
-                    ),
-                  ),
+                // Horizontal Grid lines
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: ['₹2.0L', '₹1.5L', '₹1.0L', '₹0.5L', '₹0']
+                      .map((val) => Row(
+                            children: [
+                              Text(val, style: getRegularStyle(fontSize: FontManager.s10, color: ColorManager.grey)),
+                              const SizedBox(width: 8),
+                              Expanded(
+                                child: Divider(color: isDark ? const Color(0xFF334155) : const Color(0xFFE2E8F0), height: 1),
+                              ),
+                            ],
+                          ))
+                      .toList(),
                 ),
-                const SizedBox(height: 12),
-                // Month axis label row
-                SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Row(
-                    children: ['Jan 2026', 'Feb 2026', 'Mar 2026', 'Apr 2026', 'May 2026', 'Jun 2026', 'Jul 2026', 'Aug 2026', 'Sep 2026', 'Oct 2026', 'Nov 2026', 'Dec 2026']
-                        .map((month) => Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                              child: Text(month, style: getBoldStyle(fontSize: FontManager.s12, color: ColorManager.grey)),
-                            ))
-                        .toList(),
+                // Custom Multi-Series Trend Curves
+                Positioned.fill(
+                  child: CustomPaint(
+                    painter: FinancialFlowChartPainter(isDark: isDark),
                   ),
                 ),
               ],
+            ),
+          ),
+          const SizedBox(height: 10),
+
+          // Month axis label row
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              children: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+                  .map((month) => Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                        child: Text(month, style: getBoldStyle(fontSize: FontManager.s12, color: ColorManager.grey)),
+                      ))
+                  .toList(),
             ),
           ),
         ],
       ),
     );
   }
+
+  Widget _buildLegendItem(String label, Color color) {
+    return Row(
+      children: [
+        Container(
+          width: 10,
+          height: 10,
+          decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+        ),
+        const SizedBox(width: 6),
+        Text(
+          label,
+          style: getMediumStyle(fontSize: FontManager.s12, color: ColorManager.grey),
+        ),
+      ],
+    );
+  }
+}
+
+/// Custom painter for professional multi-series financial flow chart (Sales, Purchase, Credit Note)
+class FinancialFlowChartPainter extends CustomPainter {
+  final bool isDark;
+  FinancialFlowChartPainter({required this.isDark});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paintSales = Paint()
+      ..color = const Color(0xFF10B981)
+      ..strokeWidth = 3
+      ..strokeCap = StrokeCap.round
+      ..style = PaintingStyle.stroke;
+
+    final paintPurchase = Paint()
+      ..color = const Color(0xFFF97316)
+      ..strokeWidth = 3
+      ..strokeCap = StrokeCap.round
+      ..style = PaintingStyle.stroke;
+
+    final paintCredit = Paint()
+      ..color = const Color(0xFF8B5CF6)
+      ..strokeWidth = 2.5
+      ..strokeCap = StrokeCap.round
+      ..style = PaintingStyle.stroke;
+
+    // Sales Curve Path
+    final pathSales = Path()
+      ..moveTo(0, size.height * 0.7)
+      ..cubicTo(size.width * 0.2, size.height * 0.5, size.width * 0.4, size.height * 0.6, size.width * 0.6, size.height * 0.3)
+      ..cubicTo(size.width * 0.8, size.height * 0.4, size.width * 0.9, size.height * 0.2, size.width, size.height * 0.15);
+
+    // Purchase Curve Path
+    final pathPurchase = Path()
+      ..moveTo(0, size.height * 0.85)
+      ..cubicTo(size.width * 0.25, size.height * 0.7, size.width * 0.5, size.height * 0.5, size.width * 0.75, size.height * 0.45)
+      ..cubicTo(size.width * 0.85, size.height * 0.4, size.width * 0.95, size.height * 0.35, size.width, size.height * 0.3);
+
+    // Credit Note Curve Path
+    final pathCredit = Path()
+      ..moveTo(0, size.height * 0.95)
+      ..cubicTo(size.width * 0.3, size.height * 0.85, size.width * 0.6, size.height * 0.8, size.width, size.height * 0.7);
+
+    canvas.drawPath(pathSales, paintSales);
+    canvas.drawPath(pathPurchase, paintPurchase);
+    canvas.drawPath(pathCredit, paintCredit);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }

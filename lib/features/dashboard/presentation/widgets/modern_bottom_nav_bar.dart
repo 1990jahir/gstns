@@ -4,7 +4,7 @@ import '../../../../core/res/font_manager.dart';
 import '../../../../core/res/styles_manager.dart';
 import '../../../../core/utils/extensions.dart';
 
-/// Modern floating Bottom Navigation Bar widget with animated selection pill and modern styling.
+/// Modern floating Bottom Navigation Bar widget with animated selection pill and Customer tab instead of Profile.
 class ModernBottomNavBar extends StatelessWidget {
   final int currentIndex;
   final ValueChanged<int> onTap;
@@ -23,7 +23,7 @@ class ModernBottomNavBar extends StatelessWidget {
       {'icon': Icons.home_outlined, 'activeIcon': Icons.home_rounded, 'label': 'Home'},
       {'icon': Icons.description_outlined, 'activeIcon': Icons.description_rounded, 'label': 'Invoices'},
       {'icon': Icons.bar_chart_outlined, 'activeIcon': Icons.bar_chart_rounded, 'label': 'Reports'},
-      {'icon': Icons.person_outline_rounded, 'activeIcon': Icons.person_rounded, 'label': 'Profile'},
+      {'icon': Icons.people_outline_rounded, 'activeIcon': Icons.people_rounded, 'label': 'Customer'},
       {'icon': Icons.menu_rounded, 'activeIcon': Icons.menu_rounded, 'label': 'Menu'},
     ];
 

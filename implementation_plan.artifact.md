@@ -1,38 +1,31 @@
-# Implementation Plan: API Integration, Modern Mobile Dashboard & Animated Gradients
+# Implementation Plan: Invoices Section with Two Tabs (Purchase & Incoming Invoices)
 
-This plan outlines the implementation of real API integration using our Dio client and Postman/cURL specifications, a complete redesign of the Dashboard into a modern mobile-first UI with a gradient `SliverAppBar` and a sleek `GridView`, and the addition of **animated gradient buttons and selection states** across all interactive elements.
+This plan outlines the creation of a modern, mobile-optimized Invoices module featuring **two tabs** (`Purchase Invoice` and `Incoming Invoice`), matching the clean card-based design of the Customer section and the web reference screenshots.
 
 ## User Review Required
 
 > [!IMPORTANT]
-> **API Base URL & Credentials**: We will connect authentication calls to `https://gstsof.com` using the Basic Auth credentials (`01a14e3c-cf62-7271-b65e-9a822a42bd27:yMe1tn3mT71PYx4iR5HYAeYd1LMju0Hd1VtIxrk`) from your specification.
-
-> [!IMPORTANT]
-> **Animated Gradients & Selection Effects**: All primary buttons, quick action tiles, selection cards, and dropdown containers will feature rich gradients, dynamic box shadows, and smooth scale/tap press animations.
+> **Two-Tab Structure**: The Invoices screen will feature a sleek top tab bar allowing users to seamlessly switch between **Purchase Invoices** and **Incoming Invoices**.
+> **Create Invoice & Card Views**: Each invoice type will display professional mobile cards with Status badges, Invoice No, Date, EWB No, Company Name, Taxable Amount, and Total Amount, along with an "Add / Create Invoice" form.
 
 ## Proposed Changes
 
-### 1. API Integration Layer (`lib/features/auth/data/`)
-- **[NEW] [auth_remote_data_source.dart](file:///D:/Flutter%20BackUp/new_code/lib/features/auth/data/datasources/auth_remote_data_source.dart)**: Remote data source implementing login, token refresh, send OTP, verify OTP, and get me.
-- **[NEW] [auth_repository.dart](file:///D:/Flutter%20BackUp/new_code/lib/features/auth/domain/repositories/auth_repository.dart)**: Repository wrapper handling error mapping (`ApiException`) and session caching (`CacheService`).
-- **[MODIFY] [auth_provider.dart](file:///D:/Flutter%20BackUp/new_code/lib/features/auth/presentation/providers/auth_provider.dart)**: Wire up state notifier to invoke repository methods and manage loading/error/success states.
+### 1. Invoices Module (`lib/features/invoice/`)
+- **[NEW] [invoices_page.dart](file:///D:/Flutter%20BackUp/new_code/lib/features/invoice/presentation/pages/invoices_page.dart)**: Two-tab container page hosting `PurchaseInvoicesTab` and `IncomingInvoicesTab`.
+- **[NEW] [purchase_invoices_tab.dart](file:///D:/Flutter%20BackUp/new_code/lib/features/invoice/presentation/widgets/purchase_invoices_tab.dart)**: Purchase invoice list cards, search, date filters, and `+` create invoice button.
+- **[NEW] [incoming_invoices_tab.dart](file:///D:/Flutter%20BackUp/new_code/lib/features/invoice/presentation/widgets/incoming_invoices_tab.dart)**: Incoming invoice list cards, search, and filters.
+- **[NEW] [create_invoice_page.dart](file:///D:/Flutter%20BackUp/new_code/lib/features/invoice/presentation/pages/create_invoice_page.dart)**: Create invoice form mirroring the web reference ("Supply Type", "Vendor Name", "Item Details", "Invoice Summary", "Transportation Details", "Part B").
 
-### 2. Modern Mobile Dashboard UI Redesign (`lib/features/dashboard/presentation/pages/dashboard_page.dart`)
-- **[MODIFY] [dashboard_page.dart](file:///D:/Flutter%20BackUp/new_code/lib/features/dashboard/presentation/pages/dashboard_page.dart)**:
-  - Replace flat AppBar with a stunning **Gradient `SliverAppBar`** featuring collapsing behavior, welcome back greeting, support badge, notifications, and profile avatar.
-  - Implement a modern **`GridView.builder`** for metric cards with refined card shadows, rounded corners, and gradient accents.
-  - Reorganize Quick Actions, Income vs Expense, and Recent Activity into cohesive, modern card containers.
-
-### 3. Animated Gradient Buttons & Selection Elements (`lib/core/widgets/`)
-- **[MODIFY] [custom_button.dart](file:///D:/Flutter%20BackUp/new_code/lib/core/widgets/custom_button.dart)**: Enhance with scale-down tap animations (`GestureDetector` / `ScaleTransition`) and multi-stop vibrant gradients with depth shadows.
-- **[MODIFY] [quick_actions_card.dart](file:///D:/Flutter%20BackUp/new_code/lib/features/dashboard/presentation/widgets/quick_actions_card.dart)**: Add animated gradient selection states and press bounce effects.
+### 2. Navigation Integration (`lib/core/router/app_router.dart` & `MainDashboardLayout`)
+- **[MODIFY] [app_router.dart](file:///D:/Flutter%20BackUp/new_code/lib/core/router/app_router.dart)**: Add routes for `/invoices` and `/create_invoice`.
+- **[MODIFY] [main_dashboard_layout.dart](file:///D:/Flutter%20BackUp/new_code/lib/features/dashboard/presentation/pages/main_dashboard_layout.dart)**: Wire up the bottom navbar "Invoices" tab to `InvoicesPage`.
 
 ## Verification Plan
 
 ### Automated Tests
-- Run `flutter test` to ensure widget and unit tests pass.
+- Run `flutter test` to ensure tests pass.
 - Run `flutter analyze` to verify zero static analysis errors or warnings.
 
 ### Manual Verification
-- Test login with real API calls.
-- Inspect the animated gradient buttons and selection states across pages.
+- Test switching between Purchase Invoice and Incoming Invoice tabs.
+- Verify Create Invoice form and search functionality.

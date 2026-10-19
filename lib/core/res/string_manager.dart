@@ -104,6 +104,78 @@ class StringManager {
   static const String changePasswordTriggered = 'Change password triggered';
   static const String loggedOutSuccessfully = 'Logged out successfully';
 
+  // Customers strings
+  static const String manageCustomers = 'Manage Customers';
+  static const String addCustomerTitle = 'Add Customer';
+  static const String searchCustomerHint = 'Search customer, GSTIN or email...';
+  static const String importText = 'Import';
+  static const String filterText = 'Filter';
+  static const String refreshText = 'Refresh';
+  static const String totalLabel = 'Total';
+  static const String receivedLabel = 'Received';
+  static const String dueLabel = 'Due';
+  static const String activeStatus = 'Active';
+  static const String pendingStatus = 'Pending';
+  static const String gstTreatmentLabel = 'GST Treatment *';
+  static const String gstinUinLabel = 'GSTIN/UIN *';
+  static const String fetchGstin = 'Fetch GSTIN';
+  static const String customerTypeLabel = 'Customer Type *';
+  static const String titleFieldLabel = 'Title';
+  static const String displayNameLabel = 'Display Name';
+  static const String emailAddressLabel = 'Email Address';
+  static const String mobileNoLabel = 'Mobile No.';
+  static const String address1Label = 'Address Line 1 *';
+  static const String address2Label = 'Address Line 2 (Optional)';
+  static const String placeLabel = 'Place *';
+  static const String cityLabel = 'City';
+  static const String stateLabel = 'State *';
+  static const String pincodeLabel = 'Pincode *';
+  static const String paymentTermsLabel = 'Payment Terms';
+  static const String openingBalanceLabel = 'Opening Balance *';
+  static const String typeLabel = 'Type *';
+  static const String tdsApplicableLabel = 'TDS Applicable:';
+  static const String saveCustomer = 'Save Customer';
+  static const String closeBtn = 'Close';
+
+  // Invoices strings
+  static const String manageInvoices = 'Manage Invoices';
+  static const String purchaseInvoicesTab = 'Purchase Invoices';
+  static const String incomingInvoicesTab = 'Incoming Invoices';
+  static const String searchPurchaseHint = 'Search invoice no, vendor...';
+  static const String searchIncomingHint = 'Search incoming invoice no, ack no...';
+  static const String createInvoiceTitle = 'Create Purchase Invoice';
+  static const String supplyTypeLabel = 'Supply Type *';
+  static const String subTypeLabel = 'Sub Type *';
+  static const String documentTypeLabel = 'Document Type *';
+  static const String vendorNameLabel = 'Vendor Name *';
+  static const String invoiceNoLabel = 'Invoice No. *';
+  static const String invoiceDateLabel = 'Invoice Date *';
+  static const String dueDateLabel = 'Due Date *';
+  static const String rateLabel = 'Rate (₹) *';
+  static const String quantityLabel = 'Quantity *';
+  static const String transporterNameLabel = 'Transporter Name';
+  static const String distanceLabel = 'Distance (KM) *';
+  static const String cancelBtn = 'Cancel';
+  static const String saveInvoice = 'Save Invoice';
+  static const String invoiceDateHeader = 'Invoice Date';
+  static const String taxableAmountHeader = 'Taxable Amount';
+  static const String totalAmountHeader = 'Total Amount';
+  static const String approvedStatus = 'Approved';
+  static const String receivedStatus = 'Received';
+
+  // Onboarding strings
+  static const String skipText = 'Skip';
+  static const String nextText = 'Next';
+  static const String getStartedText = 'Get Started';
+  static const String masterHubTitle = 'Masters & Inventory Hub';
+  static const String masterHubSubtitle = 'Manage Item Groups, Categories, Item Lists, and Transporters in one centralized master database with lightning-fast search and complete customization.';
+  static const String salesInvoicingTitle = 'Sales & E-Way Invoicing';
+  static const String salesInvoicingSubtitle = 'Create Tax Invoices, manage Customers, generate Credit Notes/Sales Returns & Delivery Challans instantly with full GST compliance.';
+  static const String purchaseTrackingTitle = 'Purchase & Expense Tracking';
+  static const String purchaseTrackingSubtitle = 'Track Vendors, Purchase Invoices, Incoming Bills, Debit Notes, and monitor your day-to-day business Expenses & Income effortlessly.';
+  static const String gstReportsTitle = 'GST Reports & Compliance';
+  static const String gstReportsSubtitle = 'Generate accurate GSTR-1, GSTR-3B returns, Profit & Loss statements, and Balance Sheet financial reports at your fingertips.';
+
   // Actions & Feedbacks
   static const String forgotPasswordClicked = 'Forgot password clicked';
   static const String googleLoginClicked = 'Google login clicked';
