@@ -1,17 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/res/color_manager.dart';
 import '../../../../core/res/font_manager.dart';
 import '../../../../core/res/styles_manager.dart';
 import '../../../../core/router/app_router.dart';
 import '../../../../core/utils/extensions.dart';
+import '../../../../core/res/string_manager.dart';
+import '../../../auth/presentation/providers/auth_provider.dart';
 
 /// Profile Details Modal matching the user's reference screenshots.
-class ProfileModal extends StatelessWidget {
+class ProfileModal extends ConsumerWidget {
   const ProfileModal({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Dialog(
@@ -118,11 +121,14 @@ class ProfileModal extends StatelessWidget {
                     ),
                     const SizedBox(height: 12),
                     ElevatedButton.icon(
-                      onPressed: () {
+                      onPressed: () async {
                         Navigator.pop(context);
-                        context.go(AppRouter.login);
-                        context.showSnackBar('Logged out successfully');
-                      },
+                        await ref.read(authNotifierProvider.notifier).logout();
+                        if (context.mounted) {
+                          context.go(AppRouter.login);
+                          context.showSnackBar(StringManager.loggedOutSuccessfully);
+                        }
+                      },
                       icon: const Icon(Icons.logout_rounded, color: Colors.white),
                       label: Text('Logout', style: getBoldStyle(fontSize: FontManager.s14, color: Colors.white)),
                       style: ElevatedButton.styleFrom(

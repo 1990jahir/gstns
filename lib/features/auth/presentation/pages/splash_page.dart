@@ -46,9 +46,8 @@ class _SplashPageState extends State<SplashPage> with SingleTickerProviderStateM
       final refreshToken = cacheService.getRefreshToken();
 
       if (isLoggedIn && accessToken != null && accessToken.isNotEmpty) {
-        AuthInterceptor.accessToken = accessToken;
-        AuthInterceptor.refreshToken = refreshToken;
-        context.go(AppRouter.dashboard);
+        AuthInterceptor.setTokens(access: accessToken, refresh: refreshToken ?? '');
+        context.go(AppRouter.dashboard);
       } else {
         context.go(AppRouter.onboarding);
       }

@@ -34,7 +34,12 @@ class AuthRemoteDataSource {
 
   Future<Map<String, dynamic>> logout() async {
     try {
-      final response = await _dio.post(ApiEndpoints.logout);
+      final response = await _dio.post(
+        ApiEndpoints.logout,
+        options: Options(
+          validateStatus: (status) => status != null && status < 500,
+        ),
+      );
       return response.data;
     } on DioException catch (e) {
       throw ApiException.fromDioException(e);

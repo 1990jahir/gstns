@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/res/color_manager.dart';
 import '../../../../core/res/font_manager.dart';
@@ -7,13 +8,14 @@ import '../../../../core/res/styles_manager.dart';
 import '../../../../core/router/app_router.dart';
 import '../../../../core/utils/extensions.dart';
 import '../../../../core/widgets/custom_button.dart';
+import '../../../auth/presentation/providers/auth_provider.dart';
 
 /// Modern Profile Actions widget (Change Password & Logout).
-class ProfileActions extends StatelessWidget {
+class ProfileActions extends ConsumerWidget {
   const ProfileActions({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final isDark = context.theme.brightness == Brightness.dark;
 
     return Column(
@@ -37,9 +39,12 @@ class ProfileActions extends StatelessWidget {
         CustomButton(
           text: StringManager.logoutText,
           icon: Icons.logout_rounded,
-          onPressed: () {
-            context.go(AppRouter.login);
-            context.showSnackBar(StringManager.loggedOutSuccessfully);
+          onPressed: () async {
+            await ref.read(authNotifierProvider.notifier).logout();
+            if (context.mounted) {
+              context.go(AppRouter.login);
+              context.showSnackBar(StringManager.loggedOutSuccessfully);
+            }
           },
         ),
       ],

@@ -1,4 +1,5 @@
 import '../../../../core/network/api_exception.dart';
+import '../../../../core/network/interceptors/auth_interceptor.dart';
 import '../../../../core/services/cache_service.dart';
 import '../../data/datasources/auth_remote_data_source.dart';
 import '../../data/models/auth_models.dart';
@@ -14,6 +15,10 @@ class AuthRepository {
       final response = await _remoteDataSource.login(request);
       
       if (response.status == 'success' && response.data != null) {
+        AuthInterceptor.setTokens(
+          access: response.data!.accessToken,
+          refresh: response.data!.refreshToken,
+        );
         await _cacheService.saveAuthSession(
           accessToken: response.data!.accessToken,
           refreshToken: response.data!.refreshToken,
@@ -54,9 +59,15 @@ class AuthRepository {
 
       if (response['status'] == 'success' && response['data'] != null && response['data']['login_required'] == false) {
         final tokenData = response['data'];
+        final accessToken = tokenData['access_token'] ?? '';
+        final refreshToken = tokenData['refresh_token'] ?? '';
+        AuthInterceptor.setTokens(
+          access: accessToken,
+          refresh: refreshToken,
+        );
         await _cacheService.saveAuthSession(
-          accessToken: tokenData['access_token'] ?? '',
-          refreshToken: tokenData['refresh_token'] ?? '',
+          accessToken: accessToken,
+          refreshToken: refreshToken,
           email: data['email'] ?? '',
         );
       }
@@ -85,6 +96,10 @@ class AuthRepository {
       final response = await _remoteDataSource.verifyOtp(request);
 
       if (response.status == 'success' && response.data != null) {
+        AuthInterceptor.setTokens(
+          access: response.data!.accessToken,
+          refresh: response.data!.refreshToken,
+        );
         await _cacheService.saveAuthSession(
           accessToken: response.data!.accessToken,
           refreshToken: response.data!.refreshToken,
@@ -109,10 +124,21 @@ class AuthRepository {
     }
   }
 
+  bool _isLoggingOut = false;
+
   Future<void> logout() async {
+    if (_isLoggingOut) return;
+    _isLoggingOut = true;
+
     try {
-      await _remoteDataSource.logout();
-    } catch (_) {}
-    await _cacheService.clearSession();
+      if (AuthInterceptor.accessToken != null && AuthInterceptor.accessToken!.isNotEmpty) {
+        await _remoteDataSource.logout();
+      }
+    } catch (_) {
+    } finally {
+      AuthInterceptor.clearTokens();
+      await _cacheService.clearSession();
+      _isLoggingOut = false;
+    }
   }
 }

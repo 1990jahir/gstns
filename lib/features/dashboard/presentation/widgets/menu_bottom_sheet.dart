@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/res/color_manager.dart';
 import '../../../../core/res/font_manager.dart';
@@ -6,13 +7,14 @@ import '../../../../core/res/string_manager.dart';
 import '../../../../core/res/styles_manager.dart';
 import '../../../../core/router/app_router.dart';
 import '../../../../core/utils/extensions.dart';
+import '../../../auth/presentation/providers/auth_provider.dart';
 
 /// Redesigned Menu Bottom Sheet inspired by modern fintech app menus (Drivvo-style profile header & grouped card sections).
-class MenuBottomSheet extends StatelessWidget {
+class MenuBottomSheet extends ConsumerWidget {
   const MenuBottomSheet({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final isDark = context.theme.brightness == Brightness.dark;
 
     return Container(
@@ -165,9 +167,13 @@ class MenuBottomSheet extends StatelessWidget {
                     _buildExpandableGroup(context, icon: Icons.bar_chart_rounded, title: StringManager.reports, color: Colors.pink, isDark: isDark, subItems: ['GSTR-1', 'GSTR-3B', 'Profit & Loss', 'Balance Sheet']),
                     const SizedBox(height: 24),
 
-                    _buildMenuCard(context, icon: Icons.logout_rounded, title: StringManager.logoutText, color: Colors.red, isDark: isDark, onTap: () {
+                    _buildMenuCard(context, icon: Icons.logout_rounded, title: StringManager.logoutText, color: Colors.red, isDark: isDark, onTap: () async {
                       Navigator.pop(context);
-                      context.go(AppRouter.login);
+                      await ref.read(authNotifierProvider.notifier).logout();
+                      if (context.mounted) {
+                        context.go(AppRouter.login);
+                        context.showSnackBar(StringManager.loggedOutSuccessfully);
+                      }
                     }),
                     const SizedBox(height: 20),
                   ],

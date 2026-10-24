@@ -40,6 +40,16 @@ class CacheService {
   }
 
   String? getAccessToken() => _prefs?.getString(_keyAccessToken);
+
+  /// Atomically updates stored access and refresh tokens after successful token refresh.
+  Future<void> updateTokens({
+    required String accessToken,
+    required String refreshToken,
+  }) async {
+    final prefs = await _ensurePrefs;
+    await prefs.setString(_keyAccessToken, accessToken);
+    await prefs.setString(_keyRefreshToken, refreshToken);
+  }
   String? getRefreshToken() => _prefs?.getString(_keyRefreshToken);
   String? getUserEmail() => _prefs?.getString(_keyUserEmail);
   bool isLoggedIn() => _prefs?.getBool(_keyIsLoggedIn) ?? false;

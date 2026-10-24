@@ -60,6 +60,17 @@ class AuthNotifier extends StateNotifier<AuthState> {
       return false;
     }
   }
+
+  /// Performs complete logout, clearing backend session, local storage, and in-memory tokens
+  Future<void> logout() async {
+    if (state.isLoading) return;
+    state = state.copyWith(isLoading: true, errorMessage: null);
+    try {
+      await _repository.logout();
+    } finally {
+      state = AuthState();
+    }
+  }
 }
 
 final authNotifierProvider = StateNotifierProvider<AuthNotifier, AuthState>((ref) {
