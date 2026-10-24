@@ -1,24 +1,21 @@
-# Implementation Plan: Invoices Section with Two Tabs (Purchase & Incoming Invoices)
+# Implementation Plan: Trading, Profit & Loss Reports Page
 
-This plan outlines the creation of a modern, mobile-optimized Invoices module featuring **two tabs** (`Purchase Invoice` and `Incoming Invoice`), matching the clean card-based design of the Customer section and the web reference screenshots.
+This plan outlines the creation of a modern, mobile-optimized Reports module (`ReportsPage`) mirroring the Trading, Profit & Loss Report web view, complete with date range filters, "Download Report" action, and structured debit/credit financial breakdowns using Riverpod state management.
 
 ## User Review Required
 
 > [!IMPORTANT]
-> **Two-Tab Structure**: The Invoices screen will feature a sleek top tab bar allowing users to seamlessly switch between **Purchase Invoices** and **Incoming Invoices**.
-> **Create Invoice & Card Views**: Each invoice type will display professional mobile cards with Status badges, Invoice No, Date, EWB No, Company Name, Taxable Amount, and Total Amount, along with an "Add / Create Invoice" form.
+> **Profit & Loss Structure**: The report will display financial statements divided into debit (Expenses, Opening Stock, Purchases) and credit (Sales, Closing Stock, Incomes) sections, optimized for mobile cards with a "Download Report" action and date filtering.
 
 ## Proposed Changes
 
-### 1. Invoices Module (`lib/features/invoice/`)
-- **[NEW] [invoices_page.dart](file:///D:/Flutter%20BackUp/new_code/lib/features/invoice/presentation/pages/invoices_page.dart)**: Two-tab container page hosting `PurchaseInvoicesTab` and `IncomingInvoicesTab`.
-- **[NEW] [purchase_invoices_tab.dart](file:///D:/Flutter%20BackUp/new_code/lib/features/invoice/presentation/widgets/purchase_invoices_tab.dart)**: Purchase invoice list cards, search, date filters, and `+` create invoice button.
-- **[NEW] [incoming_invoices_tab.dart](file:///D:/Flutter%20BackUp/new_code/lib/features/invoice/presentation/widgets/incoming_invoices_tab.dart)**: Incoming invoice list cards, search, and filters.
-- **[NEW] [create_invoice_page.dart](file:///D:/Flutter%20BackUp/new_code/lib/features/invoice/presentation/pages/create_invoice_page.dart)**: Create invoice form mirroring the web reference ("Supply Type", "Vendor Name", "Item Details", "Invoice Summary", "Transportation Details", "Part B").
+### 1. Reports Module (`lib/features/reports/`)
+- **[NEW] [reports_page.dart](file:///D:/Flutter%20BackUp/new_code/lib/features/reports/presentation/pages/reports_page.dart)**: Modern mobile Reports screen with date range filters, Download Report button, and accordion/card financial sections for Profit & Loss.
+- **[NEW] [reports_provider.dart](file:///D:/Flutter%20BackUp/new_code/lib/features/reports/presentation/providers/reports_provider.dart)**: Riverpod state provider managing P&L data and date filter states.
 
 ### 2. Navigation Integration (`lib/core/router/app_router.dart` & `MainDashboardLayout`)
-- **[MODIFY] [app_router.dart](file:///D:/Flutter%20BackUp/new_code/lib/core/router/app_router.dart)**: Add routes for `/invoices` and `/create_invoice`.
-- **[MODIFY] [main_dashboard_layout.dart](file:///D:/Flutter%20BackUp/new_code/lib/features/dashboard/presentation/pages/main_dashboard_layout.dart)**: Wire up the bottom navbar "Invoices" tab to `InvoicesPage`.
+- **[MODIFY] [app_router.dart](file:///D:/Flutter%20BackUp/new_code/lib/core/router/app_router.dart)**: Add route for `/reports`.
+- **[MODIFY] [main_dashboard_layout.dart](file:///D:/Flutter%20BackUp/new_code/lib/features/dashboard/presentation/pages/main_dashboard_layout.dart)**: Wire up the bottom navbar "Reports" tab to `ReportsPage`.
 
 ## Verification Plan
 
@@ -27,5 +24,5 @@ This plan outlines the creation of a modern, mobile-optimized Invoices module fe
 - Run `flutter analyze` to verify zero static analysis errors or warnings.
 
 ### Manual Verification
-- Test switching between Purchase Invoice and Incoming Invoice tabs.
-- Verify Create Invoice form and search functionality.
+- Test date filtering and Download Report action.
+- Verify mobile card layout of Profit & Loss particulars.

@@ -163,6 +163,37 @@ class StringManager {
   static const String approvedStatus = 'Approved';
   static const String receivedStatus = 'Received';
 
+  // Reports strings
+  static const String profitLossReportTitle = 'Trading, Profit & Loss Report';
+  static const String downloadReportBtn = 'Download Report';
+  static const String downloadingPdfReport = 'Downloading PDF Report...';
+  static const String reportDownloadedSuccessfully = 'Profit & Loss Report downloaded successfully!';
+  static const String defaultStartDate = '01/04/2026';
+  static const String defaultEndDate = '24/10/2026';
+  static const String reportFilteredSuccessfully = 'Report filtered successfully';
+  static const String startDateLabel = 'Start Date';
+  static const String endDateLabel = 'End Date';
+  static const String filterReportTooltip = 'Filter Report';
+  static const String debitSideTitle = 'Particulars (Debit Side)';
+  static const String creditSideTitle = 'Particulars (Credit Side)';
+  static const String indirectAccountsTitle = 'Indirect Accounts';
+  static const String openingStockItem = 'Opening Stock';
+  static const String purchaseAccountsItem = 'Purchase Accounts';
+  static const String registeredPurchaseItem = 'Registered Purchase';
+  static const String unregisteredPurchaseItem = 'Unregistered Purchase';
+  static const String lessDebitNoteItem = 'Less: Debit Note';
+  static const String directIncomesItem = 'Direct Incomes';
+  static const String directExpensesItem = 'Direct Expenses';
+  static const String grossProfitCoItem = 'Gross Profit c/o';
+  static const String salesAccountsItem = 'Sales Accounts';
+  static const String registeredSalesItem = 'Registered Sales';
+  static const String unregisteredSalesItem = 'Unregistered Sales';
+  static const String lessCreditNoteItem = 'Less: Credit Note';
+  static const String closingStockItem = 'Closing Stock';
+  static const String indirectExpensesItem = 'Indirect Expenses';
+  static const String indirectIncomesItem = 'Indirect Incomes';
+  static const String defaultAmountZero = '0.00';
+
   // Onboarding strings
   static const String skipText = 'Skip';
   static const String nextText = 'Next';

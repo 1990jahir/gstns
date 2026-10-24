@@ -1,8 +1,11 @@
 import 'package:dio/dio.dart';
+import '../../res/string_manager.dart';
+import '../../services/connectivity_service.dart';
 import '../api_endpoints.dart';
+import '../api_exception.dart';
 
-/// Interceptor managing Basic Auth for auth endpoints (using exact Postman code snippet token)
-/// and Bearer tokens for authenticated endpoints, with automatic token refreshing on 401 Unauthorized.
+/// Interceptor managing Basic Auth for auth endpoints (using exact Postman code snippet token),
+/// Bearer tokens for authenticated endpoints, connectivity checks, and automatic token refreshing on 401 Unauthorized.
 class AuthInterceptor extends Interceptor {
   final Dio _dio;
   static String? accessToken;
@@ -11,7 +14,19 @@ class AuthInterceptor extends Interceptor {
   AuthInterceptor(this._dio);
 
   @override
-  void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
+  void onRequest(RequestOptions options, RequestInterceptorHandler handler) async {
+    final hasInternet = await ConnectivityService().hasInternetConnection();
+    if (!hasInternet) {
+      return handler.reject(
+        DioException(
+          requestOptions: options,
+          error: ApiException(message: StringManager.noInternetConnection),
+          type: DioExceptionType.connectionError,
+          message: StringManager.noInternetConnection,
+        ),
+      );
+    }
+
     if (options.path.contains('/auth/login') ||
         options.path.contains('/auth/token/refresh') ||
         options.path.contains('/auth/otp/send') ||
@@ -45,6 +60,9 @@ class AuthInterceptor extends Interceptor {
 
   Future<bool> _refreshTokenCall() async {
     try {
+      final hasInternet = await ConnectivityService().hasInternetConnection();
+      if (!hasInternet) return false;
+
       final response = await _dio.post(
         ApiEndpoints.refreshToken,
         data: {'refresh_token': refreshToken},

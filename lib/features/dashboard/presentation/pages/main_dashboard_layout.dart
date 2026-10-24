@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../customer/presentation/pages/customers_page.dart';
 import '../../../invoice/presentation/pages/invoices_page.dart';
+import '../../../reports/presentation/pages/reports_page.dart';
 import '../widgets/menu_bottom_sheet.dart';
 import '../widgets/modern_bottom_nav_bar.dart';
 import 'dashboard_page.dart';
@@ -19,8 +20,8 @@ class _MainDashboardLayoutState extends ConsumerState<MainDashboardLayout> {
 
   final List<Widget> _pages = const [
     DashboardPage(),
-    InvoicesPage(), // Invoices tab page
-    Center(child: Text('Reports Module')),
+    InvoicesPage(),
+    ReportsPage(), // Reports page integrated directly into bottom navbar index 2
     CustomersPage(),
   ];
 
