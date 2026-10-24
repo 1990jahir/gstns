@@ -5,13 +5,19 @@ class CacheService {
   static final CacheService _instance = CacheService._internal();
   factory CacheService() => _instance;
 
-  late SharedPreferences _prefs;
+  SharedPreferences? _prefs;
 
   CacheService._internal();
 
   /// Initializes SharedPreferences instance.
   Future<void> init() async {
     _prefs = await SharedPreferences.getInstance();
+  }
+
+  Future<SharedPreferences> get _ensurePrefs async {
+    if (_prefs != null) return _prefs!;
+    _prefs = await SharedPreferences.getInstance();
+    return _prefs!;
   }
 
   // Storage Keys
@@ -26,22 +32,24 @@ class CacheService {
     required String refreshToken,
     required String email,
   }) async {
-    await _prefs.setString(_keyAccessToken, accessToken);
-    await _prefs.setString(_keyRefreshToken, refreshToken);
-    await _prefs.setString(_keyUserEmail, email);
-    await _prefs.setBool(_keyIsLoggedIn, true);
+    final prefs = await _ensurePrefs;
+    await prefs.setString(_keyAccessToken, accessToken);
+    await prefs.setString(_keyRefreshToken, refreshToken);
+    await prefs.setString(_keyUserEmail, email);
+    await prefs.setBool(_keyIsLoggedIn, true);
   }
 
-  String? getAccessToken() => _prefs.getString(_keyAccessToken);
-  String? getRefreshToken() => _prefs.getString(_keyRefreshToken);
-  String? getUserEmail() => _prefs.getString(_keyUserEmail);
-  bool isLoggedIn() => _prefs.getBool(_keyIsLoggedIn) ?? false;
+  String? getAccessToken() => _prefs?.getString(_keyAccessToken);
+  String? getRefreshToken() => _prefs?.getString(_keyRefreshToken);
+  String? getUserEmail() => _prefs?.getString(_keyUserEmail);
+  bool isLoggedIn() => _prefs?.getBool(_keyIsLoggedIn) ?? false;
 
   /// Clears stored session data upon logout.
   Future<void> clearSession() async {
-    await _prefs.remove(_keyAccessToken);
-    await _prefs.remove(_keyRefreshToken);
-    await _prefs.remove(_keyUserEmail);
-    await _prefs.setBool(_keyIsLoggedIn, false);
+    final prefs = await _ensurePrefs;
+    await prefs.remove(_keyAccessToken);
+    await prefs.remove(_keyRefreshToken);
+    await prefs.remove(_keyUserEmail);
+    await prefs.setBool(_keyIsLoggedIn, false);
   }
 }

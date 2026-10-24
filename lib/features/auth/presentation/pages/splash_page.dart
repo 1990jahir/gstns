@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import '../../../../core/network/interceptors/auth_interceptor.dart';
 import '../../../../core/res/font_manager.dart';
 import '../../../../core/res/styles_manager.dart';
 import '../../../../core/router/app_router.dart';
+import '../../../../core/services/cache_service.dart';
 
-/// Modern Splash Page with logo icon, glowing aura, and automatic navigation to Onboarding.
+/// Modern Splash Page with session persistence check, auto-login, and navigation.
 class SplashPage extends StatefulWidget {
   const SplashPage({super.key});
 
@@ -35,10 +37,21 @@ class _SplashPageState extends State<SplashPage> with SingleTickerProviderStateM
 
     _controller.forward();
 
-    // Navigate to Onboarding after 2.5 seconds
-    Future.delayed(const Duration(milliseconds: 2500), () {
+    // Check session persistence & navigate accordingly
+    Future.delayed(const Duration(milliseconds: 2500), () async {
       if (!mounted) return;
-      context.go(AppRouter.onboarding);
+      final cacheService = CacheService();
+      final isLoggedIn = cacheService.isLoggedIn();
+      final accessToken = cacheService.getAccessToken();
+      final refreshToken = cacheService.getRefreshToken();
+
+      if (isLoggedIn && accessToken != null && accessToken.isNotEmpty) {
+        AuthInterceptor.accessToken = accessToken;
+        AuthInterceptor.refreshToken = refreshToken;
+        context.go(AppRouter.dashboard);
+      } else {
+        context.go(AppRouter.onboarding);
+      }
     });
   }
 

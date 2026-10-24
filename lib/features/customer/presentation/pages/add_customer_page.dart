@@ -3,13 +3,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/res/color_manager.dart';
 import '../../../../core/res/font_manager.dart';
+import '../../../../core/res/string_manager.dart';
 import '../../../../core/res/styles_manager.dart';
 import '../../../../core/utils/extensions.dart';
 import '../../../../core/widgets/custom_button.dart';
 import '../../../../core/widgets/custom_text_field.dart';
 import '../../../../core/widgets/global_loader.dart';
+import '../../../auth/presentation/providers/auth_provider.dart';
 
-/// Modern Add Customer Page featuring organized professional card sections and GSTIN auto-fetch.
+/// Modern Add Customer Page featuring organized professional card sections and GSTIN real-time verification.
 class AddCustomerPage extends ConsumerStatefulWidget {
   const AddCustomerPage({super.key});
 
@@ -64,24 +66,37 @@ class _AddCustomerPageState extends ConsumerState<AddCustomerPage> {
     super.dispose();
   }
 
-  void _onFetchGstin() {
+  void _onFetchGstin() async {
     if (_gstinController.text.isEmpty) {
-      context.showSnackBar('Please enter GSTIN to fetch details', isError: true);
+      context.showSnackBar(StringManager.pleaseEnterGstinToVerify, isError: true);
       return;
     }
-    GlobalLoader.show(context, message: 'Fetching GSTIN details...');
-    Future.delayed(const Duration(seconds: 1), () {
+    GlobalLoader.show(context, message: StringManager.verifyingGstin);
+    try {
+      final repository = ref.read(authRepositoryProvider);
+      final res = await repository.verifyGstin(_gstinController.text.trim());
       if (!mounted) return;
       GlobalLoader.hide(context);
-      setState(() {
-        _companyController.text = 'GE T&D INDIA LIMITED';
-        _address1Controller.text = 'Plot No. 12, Sector V, Salt Lake';
-        _cityController.text = 'Kolkata';
-        _state = 'West Bengal';
-        _pincodeController.text = '700091';
-      });
-      context.showSnackBar('GSTIN details fetched successfully!');
-    });
+
+      if (res['status'] == 'success' && res['data'] != null) {
+        final data = res['data'];
+        setState(() {
+          _companyController.text = data['company_name'] ?? data['name'] ?? '';
+          _address1Controller.text = data['address'] ?? '';
+          _cityController.text = data['city'] ?? '';
+          _state = data['state'] ?? 'West Bengal';
+          _pincodeController.text = data['pincode'] ?? '';
+        });
+        context.showSnackBar(StringManager.gstinVerifiedAutofilled);
+      } else {
+        final err = res['message'] ?? 'GSTIN verification failed';
+        context.showSnackBar(err, isError: true);
+      }
+    } catch (e) {
+      if (!mounted) return;
+      GlobalLoader.hide(context);
+      context.showSnackBar(e.toString().replaceAll('ApiException: ', ''), isError: true);
+    }
   }
 
   void _onSave() {
@@ -149,7 +164,7 @@ class _AddCustomerPageState extends ConsumerState<AddCustomerPage> {
                         child: ElevatedButton.icon(
                           onPressed: _onFetchGstin,
                           icon: const Icon(Icons.sync_rounded, size: 16, color: Colors.white),
-                          label: Text('Fetch GSTIN', style: getBoldStyle(fontSize: FontManager.s12, color: Colors.white)),
+                          label: Text(StringManager.verifyAndAutofillGstinBtn, style: getBoldStyle(fontSize: FontManager.s12, color: Colors.white)),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.orange.shade700,
                             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),

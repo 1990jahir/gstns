@@ -67,10 +67,15 @@ class AuthRemoteDataSource {
 
   Future<Map<String, dynamic>> getChallenge() async {
     try {
-      final response = await _dio.get(ApiEndpoints.challenge);
+      final response = await _dio.post(ApiEndpoints.challenge);
       return response.data;
-    } on DioException catch (e) {
-      throw ApiException.fromDioException(e);
+    } catch (_) {
+      try {
+        final response = await _dio.get(ApiEndpoints.challenge);
+        return response.data;
+      } on DioException catch (e) {
+        throw ApiException.fromDioException(e);
+      }
     }
   }
 

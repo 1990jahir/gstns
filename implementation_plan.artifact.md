@@ -1,24 +1,21 @@
-# Implementation Plan: GSTIN Real-Time Validation & OTP Verification (VerifyOTP)
+# Implementation Plan: PDF-Exact Dashboard & Navbar Redesign
 
-This plan outlines the implementation of instant GSTIN validation with auto-complete upon typing a valid GSTIN, strict regex validation for mobile number and GSTIN, and a dedicated **Verify OTP Page** (`VerifyOtpPage`) with modern UI styling, custom auto-submitting digit boxes, and Riverpod state management.
+This plan outlines the exact recreation of the dashboard and bottom navigation bar to match the reference screenshot from `B · Money-first Header.pdf`, incorporating the income vs. expense summary card, 4-grid overview metrics, quick action icons, import banner, period filter pills (`12M`, `6M`, `3M`, `7D`), and the 5-tab bottom navbar (Home, Invoices, [+], Purchase, More).
 
 ## User Review Required
 
 > [!IMPORTANT]
-> **Instant GSTIN Autocomplete & Verify OTP**:
-> 1. **GSTIN Real-Time Validation**: As soon as a 15-character GSTIN is entered, the app instantly triggers the `/api/v1/gstin/verify` API and populates the company name.
-> 2. **Mobile & GSTIN Validators**: Added strict regex validators for 10-digit mobile numbers and 15-character GSTIN format.
-> 3. **Verify OTP Page**: A gorgeous modern OTP verification screen with 6-digit pin entry boxes that automatically validates upon complete entry.
+> **PDF-Exact Dashboard & Navbar Alignment**:
+> 1. **Bottom Navbar**: 5 tabs matching the reference (`Home`, `Invoices`, `[+]`, `Purchase`, `More`).
+> 2. **Income vs Expense Card**: Profit margin, total income, and total expense summary.
+> 3. **Overview Metrics Grid**: 4 cards with exact values (`₹2.98 Cr`, `₹1.86 Cr`, `₹2.12 Cr`, `₹11.84 L`).
+> 4. **Flow Chart Period Pills**: `12M`, `6M`, `3M`, `7D` selectors.
 
 ## Proposed Changes
 
-### 1. Validation & API Layer (`lib/features/auth/`)
-- **[MODIFY] [validators.dart](file:///D:/Flutter%20BackUp/new_code/lib/core/utils/validators.dart)**: Add `validateGstin` and `validateMobile`.
-- **[MODIFY] [register_business_step.dart](file:///D:/Flutter%20BackUp/new_code/lib/features/auth/presentation/widgets/register_business_step.dart)**: Add `onChanged` listener on GSTIN field to instantly trigger API validation when 15 chars are entered.
-
-### 2. Verify OTP Page (`lib/features/auth/presentation/pages/`)
-- **[NEW] [verify_otp_page.dart](file:///D:/Flutter%20BackUp/new_code/lib/features/auth/presentation/pages/verify_otp_page.dart)**: Modern OTP verification screen with 6-digit PIN boxes and auto-submit.
-- **[MODIFY] [app_router.dart](file:///D:/Flutter%20BackUp/new_code/lib/core/router/app_router.dart)**: Add route for `/verify_otp`.
+### 1. Dashboard & Navbar Module (`lib/features/dashboard/`)
+- **[MODIFY] [modern_bottom_nav_bar.dart](file:///D:/Flutter%20BackUp/new_code/lib/features/dashboard/presentation/widgets/modern_bottom_nav_bar.dart)**: Update bottom navbar to have the exact 5 tabs (`Home`, `Invoices`, `[+]`, `Purchase`, `More`).
+- **[MODIFY] [dashboard_page.dart](file:///D:/Flutter%20BackUp/new_code/lib/features/dashboard/presentation/pages/dashboard_page.dart)**: Revamp layout to match the reference screenshot (Income vs Expense card, Overview grid, Quick Actions, Flow Chart with period pills, Recent Activity).
 
 ## Verification Plan
 
@@ -27,5 +24,4 @@ This plan outlines the implementation of instant GSTIN validation with auto-comp
 - Run `flutter analyze` to verify zero static analysis errors or warnings.
 
 ### Manual Verification
-- Test typing a GSTIN and verifying instant autofill.
-- Test Verify OTP page with auto-submit.
+- Test bottom navbar tabs and dashboard layout against the PDF reference screenshot.

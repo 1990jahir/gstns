@@ -78,6 +78,15 @@ class StringManager {
   static const String reports = 'Reports';
   static const String footerCopyright = '2026 © GSTSOF is a product by GOOASK DIGITAL PRIVATE LIMITED.';
 
+  // Money-First Dashboard strings
+  static const String totalNetBalance = 'Total Net Balance';
+  static const String netBalanceAmount = '₹ 4,54,54,545.00';
+  static const String quickCollectBtn = 'Quick Collect';
+  static const String sendPaymentBtn = 'Send Payment';
+  static const String viewLedgerBtn = 'View Ledger';
+  static const String exportBtn = 'Export';
+  static const String entityNameLabel = 'GE T&D INDIA LIMITED (HQ)';
+
   // Profile / Settings strings
   static const String profileDetailsTitle = 'Profile Details';
   static const String profileNameLabel = 'Profile Name';

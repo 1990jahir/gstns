@@ -3,341 +3,290 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/res/color_manager.dart';
 import '../../../../core/res/font_manager.dart';
-import '../../../../core/res/string_manager.dart';
 import '../../../../core/res/styles_manager.dart';
 import '../../../../core/router/app_router.dart';
 import '../../../../core/utils/extensions.dart';
 import '../providers/dashboard_provider.dart';
 import '../widgets/flow_chart_card.dart';
-import '../widgets/income_expense_card.dart';
-import '../widgets/metric_card_with_chart.dart';
+import '../widgets/income_expense_summary_card.dart';
+import '../widgets/overview_metrics_grid.dart';
 import '../widgets/quick_actions_card.dart';
 import '../widgets/recent_activity_list.dart';
 
-/// Highly recommended modern UI Dashboard Page with gradient SliverAppBar, trend sparkline metric cards, and financial overview.
+/// Client-Choice Revamped Dashboard Page with functional dropdowns and dynamic demo datasets.
 class DashboardPage extends ConsumerWidget {
   const DashboardPage({super.key});
-
-  final List<String> _dateRanges = const [
-    StringManager.selectRange,
-    StringManager.customRange,
-    '01 Mar 2027 - 31 Mar 2027',
-    '01 Feb 2027 - 28 Feb 2027',
-    '01 Jan 2027 - 31 Jan 2027',
-    '01 Dec 2026 - 31 Dec 2026',
-    '01 Nov 2026 - 30 Nov 2026',
-    '01 Oct 2026 - 31 Oct 2026',
-    '01 Sep 2026 - 30 Sep 2026',
-    '01 Aug 2026 - 31 Aug 2026',
-    '01 Jul 2026 - 31 Jul 2026',
-    '01 Jun 2026 - 30 Jun 2026',
-    '01 May 2026 - 31 May 2026',
-    '01 Apr 2026 - 30 Apr 2026',
-  ];
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final dashboardState = ref.watch(dashboardNotifierProvider);
     final isDark = context.theme.brightness == Brightness.dark;
 
+    final fyOptions = ['FY 2026-27', 'FY 2025-26', 'FY 2024-25'];
+
     return Scaffold(
+      backgroundColor: isDark ? ColorManager.darkBackgroundApp : const Color(0xFFF4F6F8),
       body: RefreshIndicator(
         color: ColorManager.primaryGreen,
         onRefresh: () async {
-          await Future.delayed(const Duration(seconds: 1));
+          await Future.delayed(const Duration(milliseconds: 600));
           if (!context.mounted) return;
-          context.showSnackBar('Dashboard refreshed successfully');
+          context.showSnackBar('Dashboard refreshed with latest data');
         },
-        child: CustomScrollView(
-          slivers: [
-            // Modern Gradient SliverAppBar with Collapsing Greeting & Quick Actions
-            SliverAppBar(
-              expandedHeight: 200.0,
-              floating: false,
-              pinned: true,
-              backgroundColor: ColorManager.primaryGreen,
-              flexibleSpace: FlexibleSpaceBar(
-                background: Container(
-                  decoration: const BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: [Color(0xFF047857), Color(0xFF059669), Color(0xFF10B981)],
-                    ),
-                  ),
+        child: SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics()),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              // Top Forest Green Header
+              Container(
+                color: ColorManager.primaryGreen,
+                child: SafeArea(
+                  bottom: false,
                   child: Padding(
-                    padding: const EdgeInsets.fromLTRB(20, 60, 20, 20),
+                    padding: const EdgeInsets.fromLTRB(16, 12, 16, 32),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.end,
                       children: [
+                        // Top Bar: Profile Avatar, Company, GSTIN, & Action Icons
                         Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Row(
-                              children: [
-                                Text(
-                                  StringManager.welcomeUser,
-                                  style: getBoldStyle(fontSize: FontManager.s22, color: Colors.white),
+                            // AS Avatar
+                            GestureDetector(
+                              onTap: () => context.push(AppRouter.profile),
+                              child: Container(
+                                width: 38,
+                                height: 38,
+                                decoration: const BoxDecoration(
+                                  color: ColorManager.mintAvatarBg,
+                                  shape: BoxShape.circle,
                                 ),
-                                const SizedBox(width: 8),
-                                const Text('👋', style: TextStyle(fontSize: 20)),
-                              ],
-                            ),
-                            Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                              decoration: BoxDecoration(
-                                color: Colors.white.withValues(alpha: 0.2),
-                                borderRadius: BorderRadius.circular(20),
+                                alignment: Alignment.center,
+                                child: Text(
+                                  'AS',
+                                  style: getBoldStyle(
+                                    fontSize: FontManager.s14,
+                                    color: ColorManager.mintAvatarText,
+                                  ),
+                                ),
                               ),
-                              child: Row(
+                            ),
+                            const SizedBox(width: 10),
+
+                            // Company Name & GSTIN
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  const Icon(Icons.phone_outlined, size: 14, color: Colors.white),
-                                  const SizedBox(width: 4),
                                   Text(
-                                    StringManager.supportPhone,
-                                    style: getMediumStyle(fontSize: FontManager.s12, color: Colors.white),
+                                    'Kumar Electricals',
+                                    style: getBoldStyle(
+                                      fontSize: FontManager.s15,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 2),
+                                  Text(
+                                    'GSTIN 19ABCDE1234F1Z5',
+                                    style: TextStyle(
+                                      fontSize: 11,
+                                      fontWeight: FontWeight.w400,
+                                      color: Colors.white.withValues(alpha: 0.85),
+                                    ),
                                   ),
                                 ],
                               ),
                             ),
+
+                            // Top Right Icons: Search, Notifications (with badge 3), Support
+                            Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                IconButton(
+                                  onPressed: () => context.showSnackBar('Search opened'),
+                                  icon: const Icon(Icons.search_rounded, color: Colors.white, size: 24),
+                                  padding: EdgeInsets.zero,
+                                  constraints: const BoxConstraints(minWidth: 36, minHeight: 36),
+                                ),
+                                const SizedBox(width: 6),
+                                Stack(
+                                  clipBehavior: Clip.none,
+                                  children: [
+                                    IconButton(
+                                      onPressed: () => context.showSnackBar('You have 3 notifications'),
+                                      icon: const Icon(Icons.notifications_none_rounded, color: Colors.white, size: 24),
+                                      padding: EdgeInsets.zero,
+                                      constraints: const BoxConstraints(minWidth: 36, minHeight: 36),
+                                    ),
+                                    Positioned(
+                                      top: 2,
+                                      right: 2,
+                                      child: Container(
+                                        padding: const EdgeInsets.all(3.5),
+                                        decoration: const BoxDecoration(
+                                          color: Color(0xFFEF4444),
+                                          shape: BoxShape.circle,
+                                        ),
+                                        child: const Text(
+                                          '3',
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 9,
+                                            fontWeight: FontWeight.bold,
+                                            height: 1,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(width: 6),
+                                IconButton(
+                                  onPressed: () => context.showSnackBar('Customer support assistant'),
+                                  icon: const Icon(Icons.headset_mic_outlined, color: Colors.white, size: 24),
+                                  padding: EdgeInsets.zero,
+                                  constraints: const BoxConstraints(minWidth: 36, minHeight: 36),
+                                ),
+                              ],
+                            ),
                           ],
                         ),
-                        const SizedBox(height: 6),
-                        Text(
-                          StringManager.welcomeSubtitle,
-                          style: getRegularStyle(fontSize: FontManager.s13, color: Colors.white.withValues(alpha: 0.9)),
-                        ),
-                        const SizedBox(height: 12),
-                        // Quick Status pill
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                          decoration: BoxDecoration(
-                            color: Colors.black.withValues(alpha: 0.15),
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              const Icon(Icons.verified_rounded, size: 14, color: Colors.lightGreenAccent),
-                              const SizedBox(width: 6),
-                              Text('GSTIN: 05AAACG2115R1ZN', style: getMediumStyle(fontSize: FontManager.s12, color: Colors.white)),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-              actions: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 4.0),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.2),
-                      shape: BoxShape.circle,
-                    ),
-                    child: IconButton(
-                      icon: Stack(
-                        clipBehavior: Clip.none,
-                        children: [
-                          const Icon(Icons.notifications_outlined, color: Colors.white, size: 20),
-                          Positioned(
-                            right: -2,
-                            top: -2,
-                            child: Container(
-                              padding: const EdgeInsets.all(4),
-                              decoration: const BoxDecoration(
-                                color: Colors.orangeAccent,
-                                shape: BoxShape.circle,
-                              ),
-                              child: const Text(
-                                '2',
-                                style: TextStyle(fontSize: 8, fontWeight: FontWeight.bold, color: Colors.white),
+                        const SizedBox(height: 22),
+
+                        // Welcome Greeting & Functional FY Dropdown
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Welcome back, Arpan',
+                                    style: getBoldStyle(
+                                      fontSize: 22,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    "Here's what's happening with your business today.",
+                                    style: TextStyle(
+                                      fontSize: 12.5,
+                                      color: Colors.white.withValues(alpha: 0.85),
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
-                          ),
-                        ],
-                      ),
-                      onPressed: () => context.showSnackBar('Notifications clicked'),
-                      tooltip: 'Notifications',
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(right: 16.0, left: 4.0, top: 8.0, bottom: 8.0),
-                  child: GestureDetector(
-                    onTap: () => context.push(AppRouter.profile),
-                    child: Container(
-                      padding: const EdgeInsets.all(2),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        shape: BoxShape.circle,
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.15),
-                            blurRadius: 8,
-                            offset: const Offset(0, 2),
-                          ),
-                        ],
-                      ),
-                      child: const CircleAvatar(
-                        radius: 16,
-                        backgroundColor: ColorManager.primaryGreen,
-                        child: Text('SB', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.white)),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
+                            const SizedBox(width: 10),
 
-            // Dashboard Content Body
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(16, 16, 16, 100), // Bottom padding for floating navbar
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    // Date Range Selector Banner
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                      decoration: BoxDecoration(
-                        color: isDark ? ColorManager.darkCard : ColorManager.white,
-                        borderRadius: BorderRadius.circular(16),
-                        border: Border.all(color: ColorManager.primaryGreen.withValues(alpha: 0.3)),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.04),
-                            blurRadius: 10,
-                            offset: const Offset(0, 4),
-                          ),
-                        ],
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Row(
-                            children: [
-                              Container(
-                                padding: const EdgeInsets.all(8),
-                                decoration: BoxDecoration(
-                                  color: ColorManager.primaryGreen.withValues(alpha: 0.1),
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                child: const Icon(Icons.calendar_today_outlined, size: 18, color: ColorManager.primaryGreen),
-                              ),
-                              const SizedBox(width: 12),
-                              Text(
-                                'Financial Period',
-                                style: getMediumStyle(fontSize: FontManager.s14, color: isDark ? ColorManager.darkTextSecondary : ColorManager.lightTextSecondary),
-                              ),
-                            ],
-                          ),
-                          DropdownButtonHideUnderline(
-                            child: DropdownButton<String>(
-                              value: dashboardState.selectedDateRange,
-                              isDense: true,
-                              icon: const Icon(Icons.keyboard_arrow_down, color: ColorManager.primaryGreen),
-                              items: _dateRanges
-                                  .map((range) => DropdownMenuItem(
-                                        value: range,
-                                        child: Text(range, style: getBoldStyle(fontSize: FontManager.s13, color: isDark ? ColorManager.darkTextPrimary : ColorManager.lightTextPrimary)),
-                                      ))
-                                  .toList(),
-                              onChanged: (val) {
-                                if (val != null) {
-                                  ref.read(dashboardNotifierProvider.notifier).setDateRange(val);
-                                }
+                            // Functional FY Dropdown Pill
+                            PopupMenuButton<String>(
+                              onSelected: (fy) {
+                                ref.read(dashboardNotifierProvider.notifier).setFY(fy);
+                                context.showSnackBar('Switched to $fy');
                               },
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                              color: isDark ? ColorManager.darkCard : Colors.white,
+                              elevation: 8,
+                              offset: const Offset(0, 36),
+                              itemBuilder: (context) => fyOptions.map((fy) {
+                                final isSelected = fy == dashboardState.selectedFY;
+                                return PopupMenuItem<String>(
+                                  value: fy,
+                                  child: Row(
+                                    children: [
+                                      if (isSelected)
+                                        const Icon(Icons.check_rounded, color: ColorManager.primaryGreen, size: 16)
+                                      else
+                                        const SizedBox(width: 16),
+                                      const SizedBox(width: 6),
+                                      Text(
+                                        fy,
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                                          color: isSelected
+                                              ? ColorManager.primaryGreen
+                                              : (isDark ? Colors.white : const Color(0xFF0F172A)),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              }).toList(),
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                                decoration: BoxDecoration(
+                                  color: ColorManager.darkForestGreen,
+                                  borderRadius: BorderRadius.circular(8),
+                                  border: Border.all(
+                                    color: Colors.white.withValues(alpha: 0.25),
+                                  ),
+                                ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text(
+                                      dashboardState.selectedFY,
+                                      style: const TextStyle(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w600,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 4),
+                                    const Icon(
+                                      Icons.keyboard_arrow_down_rounded,
+                                      size: 16,
+                                      color: Colors.white,
+                                    ),
+                                  ],
+                                ),
+                              ),
                             ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-
-                    // Modern GridView for Metric Cards with Trend Sparklines
-                    GridView.count(
-                      crossAxisCount: MediaQuery.of(context).size.width > 700 ? 2 : 1,
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      crossAxisSpacing: 16,
-                      mainAxisSpacing: 16,
-                      childAspectRatio: 1.8,
-                      children: const [
-                        MetricCardWithChart(
-                          title: StringManager.totalTaxInvoices,
-                          amount: '₹ 0.00',
-                          percentage: '0%',
-                          countLabel: StringManager.invoicesCount,
-                          icon: Icons.description_outlined,
-                          accentColor: ColorManager.primaryGreen,
-                          iconBackgroundColor: Color(0xFFE8F5E9),
-                        ),
-                        MetricCardWithChart(
-                          title: StringManager.totalEWayBills,
-                          amount: '₹ 0.00',
-                          percentage: '0%',
-                          countLabel: StringManager.billsCount,
-                          icon: Icons.local_shipping_outlined,
-                          accentColor: Colors.blue,
-                          iconBackgroundColor: Color(0xFFE3F2FD),
-                        ),
-                        MetricCardWithChart(
-                          title: StringManager.totalPurchaseInvoices,
-                          amount: '₹ 0.00',
-                          percentage: '0%',
-                          countLabel: StringManager.invoicesCount,
-                          icon: Icons.shopping_bag_outlined,
-                          accentColor: Colors.orange,
-                          iconBackgroundColor: Color(0xFFFFF3E0),
-                        ),
-                        MetricCardWithChart(
-                          title: StringManager.totalCreditNotes,
-                          amount: '₹ 0.00',
-                          percentage: '0%',
-                          countLabel: StringManager.notesCount,
-                          icon: Icons.edit_note_rounded,
-                          accentColor: Colors.purple,
-                          iconBackgroundColor: Color(0xFFF3E5F5),
+                          ],
                         ),
                       ],
                     ),
-                    const SizedBox(height: 24),
-
-                    // Sale, Purchase & Credit Note Flow Card
-                    FlowChartCard(selectedFilter: dashboardState.selectedGraphFilter),
-                    const SizedBox(height: 24),
-
-                    // Quick Actions & Income vs Expense
-                    const QuickActionsCard(),
-                    const SizedBox(height: 24),
-                    const IncomeExpenseCard(),
-                    const SizedBox(height: 24),
-
-                    // Recent Activity
-                    const RecentActivityList(),
-                    const SizedBox(height: 32),
-
-                    // Footer Copyright
-                    Center(
-                      child: Text(
-                        StringManager.footerCopyright,
-                        textAlign: TextAlign.center,
-                        style: getRegularStyle(
-                          fontSize: FontManager.s12,
-                          color: isDark ? ColorManager.darkTextSecondary : ColorManager.lightTextSecondary,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 24),
-                  ],
+                  ),
                 ),
               ),
-            ),
-          ],
+
+              // Overlapping Content Body
+              Transform.translate(
+                offset: const Offset(0, -18),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      // Income vs Expense Summary Card
+                      IncomeExpenseSummaryCard(isDark: isDark),
+                      const SizedBox(height: 20),
+
+                      // Overview Metrics Grid (Tax Invoices, E-Way Bills, Purchase, Credit Notes)
+                      OverviewMetricsGrid(isDark: isDark),
+                      const SizedBox(height: 20),
+
+                      // Quick Actions & Import Banner
+                      const QuickActionsCard(),
+                      const SizedBox(height: 20),
+
+                      // Sale, Purchase & Credit Note Flow Card
+                      FlowChartCard(selectedFilter: dashboardState.selectedFlowRange),
+                      const SizedBox(height: 20),
+
+                      // Recent Activity
+                      const RecentActivityList(),
+                      const SizedBox(height: 100), // Spacing for floating navbar
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

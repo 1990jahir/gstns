@@ -86,19 +86,6 @@ class _CustomersPageState extends ConsumerState<CustomersPage> {
         backgroundColor: isDark ? ColorManager.darkCard : Colors.white,
         elevation: 0,
         actions: [
-          // Add Customer (+) Button linked to AddCustomerPage
-          IconButton(
-            icon: Container(
-              padding: const EdgeInsets.all(6),
-              decoration: BoxDecoration(
-                color: ColorManager.primaryGreen,
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: const Icon(Icons.add, color: Colors.white, size: 18),
-            ),
-            onPressed: () => context.push(AppRouter.addCustomer),
-            tooltip: 'Add Customer',
-          ),
           // Filter Button
           IconButton(
             icon: Container(

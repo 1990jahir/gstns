@@ -1,10 +1,11 @@
+import 'package:flutter/foundation.dart';
 import 'package:dio/dio.dart';
 import '../../res/string_manager.dart';
 import '../../services/connectivity_service.dart';
 import '../api_endpoints.dart';
 import '../api_exception.dart';
 
-/// Interceptor managing Basic Auth for auth endpoints (using exact Postman code snippet token),
+/// Interceptor managing Basic Auth for auth & register endpoints (using exact Postman code snippet token),
 /// Bearer tokens for authenticated endpoints, connectivity checks, and automatic token refreshing on 401 Unauthorized.
 class AuthInterceptor extends Interceptor {
   final Dio _dio;
@@ -30,11 +31,16 @@ class AuthInterceptor extends Interceptor {
     if (options.path.contains('/auth/login') ||
         options.path.contains('/auth/token/refresh') ||
         options.path.contains('/auth/otp/send') ||
-        options.path.contains('/auth/otp/verify')) {
+        options.path.contains('/auth/otp/verify') ||
+        options.path.contains('/auth/challenge') ||
+        options.path.contains('/register') ||
+        options.path.contains('/gstin/verify')) {
       options.headers['Authorization'] = 'Basic ${ApiEndpoints.basicAuthToken}';
     } else if (accessToken != null) {
       options.headers['Authorization'] = 'Bearer $accessToken';
     }
+
+    debugPrint('[GSTSOF_DEBUG] -> REQUEST [${options.method}] => PATH: ${options.path} | AUTH: ${options.headers['Authorization']}');
 
     super.onRequest(options, handler);
   }

@@ -7,7 +7,12 @@ import '../widgets/menu_bottom_sheet.dart';
 import '../widgets/modern_bottom_nav_bar.dart';
 import 'dashboard_page.dart';
 
-/// Modern UI Navbar-based layout integrating Dashboard, Invoices, Reports, Customers, and Menu sheet.
+/// Modern Navbar layout matching user specifications:
+/// Index 0: Report (ReportsPage)
+/// Index 1: Invoices (InvoicesPage)
+/// Index 2: Home (DashboardPage, default active screen)
+/// Index 3: Customer (CustomersPage)
+/// Index 4: More (opens MenuBottomSheet)
 class MainDashboardLayout extends ConsumerStatefulWidget {
   const MainDashboardLayout({super.key});
 
@@ -16,18 +21,19 @@ class MainDashboardLayout extends ConsumerStatefulWidget {
 }
 
 class _MainDashboardLayoutState extends ConsumerState<MainDashboardLayout> {
-  int _currentIndex = 0;
+  // Index 2 is Home in the center of the bottom navigation bar
+  int _currentIndex = 2;
 
   final List<Widget> _pages = const [
-    DashboardPage(),
-    InvoicesPage(),
-    ReportsPage(), // Reports page integrated directly into bottom navbar index 2
-    CustomersPage(),
+    ReportsPage(),   // 0: Report with Report icon
+    InvoicesPage(),  // 1: Invoices
+    DashboardPage(), // 2: Home nav populates DashboardPage
+    CustomersPage(), // 3: Customer with Customer icon
   ];
 
   void _onTabTapped(int index) {
     if (index == 4) {
-      // Open Menu Bottom Sheet with curved top corners when tapping 'Menu'
+      // Open Menu Bottom Sheet when tapping 'More'
       showModalBottomSheet(
         context: context,
         isScrollControlled: true,
@@ -47,13 +53,12 @@ class _MainDashboardLayoutState extends ConsumerState<MainDashboardLayout> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      extendBody: true, // Allows content to flow behind floating bottom nav bar
       body: IndexedStack(
-        index: _currentIndex > 3 ? 0 : _currentIndex,
+        index: _currentIndex > 3 ? 2 : _currentIndex,
         children: _pages,
       ),
       bottomNavigationBar: ModernBottomNavBar(
-        currentIndex: _currentIndex > 3 ? 0 : _currentIndex,
+        currentIndex: _currentIndex,
         onTap: _onTabTapped,
       ),
     );

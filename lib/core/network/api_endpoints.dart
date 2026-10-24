@@ -17,8 +17,8 @@ class ApiEndpoints {
   static const String invoices = '/api/v1/invoices';
   static const String reportsProfitLoss = '/api/v1/reports/profit-loss';
 
-  // Correct Basic Auth token from Postman / register cURL specification
-  static const String basicAuthToken = 'MDFhMTRlM2MtY2Y2Mi03MjcxLWI2NWUtOWE4MjJhNDJiZDI3OnlNZTF0bjNtVDcxUFl4NGlSNUhZQWVZZDFMTWp1Y0hkMVZ0SXhycms=';
-  static const String defaultClientId = '01a14e3c-cf62-7271-b65e-9a822a42bd27';
-  static const String defaultClientSecret = 'yMe1tn3mT71PYx4iR5HYAeYd1LMju0Hd1VtIxrk';
+  // Correct working Basic Auth token from register cURL specification
+  static const String basicAuthToken = 'MDFhMTNhN2UtNjViNS03MWJlLWExNGYtZDNmOTk3OTY0MjAxOkM3TzliTXFlbWtab2t3RERGRzJpTng1UDNsVHBJOUJwUTVKVXpFTGM=';
+  static const String defaultClientId = '01a13a7e-65b5-71be-a14f-d3f997964201';
+  static const String defaultClientSecret = 'C7O9bMqemkZokwDDFG2iNx5P3lTpI9BpQ5JUzETLc';
 }

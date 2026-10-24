@@ -1,16 +1,21 @@
 import 'package:flutter/material.dart';
 
 class ColorManager {
-  // Primary Green Color from screenshot
-  static const Color primaryGreen = Color(0xFF00B050);
-  static const Color primaryGreenDark = Color(0xFF009640);
+  // Primary Forest Green Color from client choice screenshot
+  static const Color primaryGreen = Color(0xFF0F6E3E);
+  static const Color primaryGreenDark = Color(0xFF0C5A32);
+  static const Color forestGreen = Color(0xFF0F6E3E);
+  static const Color darkForestGreen = Color(0xFF0C5A32);
+  static const Color deepForestGreen = Color(0xFF094726);
   static const Color accentGreen = Color(0xFF10B981);
+  static const Color mintAvatarBg = Color(0xFFD1FAE5);
+  static const Color mintAvatarText = Color(0xFF065F46);
 
   // Light Theme Colors
   static const Color lightBackground = Color(0xFFFFFFFF);
   static const Color lightSurface = Color(0xFFFFFFFF);
   static const Color lightCard = Color(0xFFF9FAFB);
-  static const Color lightBackgroundApp = Color(0xFFF7F8FA);
+  static const Color lightBackgroundApp = Color(0xFFF4F6F8);
   static const Color lightTextPrimary = Color(0xFF111827);
   static const Color lightTextSecondary = Color(0xFF6B7280);
   static const Color lightBorder = Color(0xFFE5E7EB);

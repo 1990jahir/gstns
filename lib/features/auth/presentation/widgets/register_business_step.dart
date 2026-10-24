@@ -47,10 +47,10 @@ class RegisterBusinessStep extends ConsumerStatefulWidget {
 class _RegisterBusinessStepState extends ConsumerState<RegisterBusinessStep> {
   Future<void> _verifyAndAutofillGstin() async {
     if (widget.gstinController.text.isEmpty) {
-      context.showSnackBar('Please enter GSTIN to verify', isError: true);
+      context.showSnackBar(StringManager.pleaseEnterGstinToVerify, isError: true);
       return;
     }
-    GlobalLoader.show(context, message: 'Verifying GSTIN...');
+    GlobalLoader.show(context, message: StringManager.verifyingGstin);
     try {
       final repository = ref.read(authRepositoryProvider);
       final res = await repository.verifyGstin(widget.gstinController.text.trim());
@@ -60,22 +60,17 @@ class _RegisterBusinessStepState extends ConsumerState<RegisterBusinessStep> {
       if (res['status'] == 'success' && res['data'] != null) {
         final data = res['data'];
         setState(() {
-          widget.companyController.text = data['company_name'] ?? 'GE T&D INDIA LIMITED';
+          widget.companyController.text = data['company_name'] ?? data['name'] ?? '';
         });
-        context.showSnackBar('GSTIN verified & company details autofilled!');
+        context.showSnackBar(StringManager.gstinVerifiedAutofilled);
       } else {
-        setState(() {
-          widget.companyController.text = 'GE T&D INDIA LIMITED';
-        });
-        context.showSnackBar('GSTIN verified successfully!');
+        final err = res['message'] ?? 'GSTIN verification failed';
+        context.showSnackBar(err, isError: true);
       }
     } catch (e) {
       if (!mounted) return;
       GlobalLoader.hide(context);
-      setState(() {
-        widget.companyController.text = 'GE T&D INDIA LIMITED';
-      });
-      context.showSnackBar('GSTIN verified & company details autofilled!');
+      context.showSnackBar(e.toString().replaceAll('ApiException: ', ''), isError: true);
     }
   }
 
@@ -146,7 +141,7 @@ class _RegisterBusinessStepState extends ConsumerState<RegisterBusinessStep> {
             child: ElevatedButton.icon(
               onPressed: _verifyAndAutofillGstin,
               icon: const Icon(Icons.verified_rounded, size: 16, color: Colors.white),
-              label: Text('Verify & Autofill GSTIN', style: getBoldStyle(fontSize: FontManager.s12, color: Colors.white)),
+              label: Text(StringManager.verifyAndAutofillGstinBtn, style: getBoldStyle(fontSize: FontManager.s12, color: Colors.white)),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.orange.shade700,
                 padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
