@@ -3,7 +3,7 @@ import '../../../../core/res/color_manager.dart';
 import '../../../../core/res/font_manager.dart';
 import '../../../../core/res/string_manager.dart';
 import '../../../../core/res/styles_manager.dart';
-import '../../../../core/widgets/custom_text_field.dart';
+import '../../../../core/widgets/global_input_field.dart';
 import 'profile_dropdown_field.dart';
 
 /// Clean decoupled Profile Settings Form widget.
@@ -169,7 +169,7 @@ class ProfileSettingsForm extends StatelessWidget {
           Row(
             children: [
               Expanded(
-                child: CustomTextField(
+                child: GlobalInputField(
                   label: StringManager.firstNameLabel,
                   hintText: 'First Name',
                   controller: firstNameController,
@@ -177,7 +177,7 @@ class ProfileSettingsForm extends StatelessWidget {
               ),
               const SizedBox(width: 16),
               Expanded(
-                child: CustomTextField(
+                child: GlobalInputField(
                   label: StringManager.lastNameLabel,
                   hintText: 'Last Name',
                   controller: lastNameController,
@@ -189,7 +189,7 @@ class ProfileSettingsForm extends StatelessWidget {
           Row(
             children: [
               Expanded(
-                child: CustomTextField(
+                child: GlobalInputField(
                   label: StringManager.emailLabelProfile,
                   hintText: 'Email',
                   controller: emailController,
@@ -198,42 +198,28 @@ class ProfileSettingsForm extends StatelessWidget {
               ),
               const SizedBox(width: 16),
               Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      StringManager.mobileNumberLabel,
-                      style: getMediumStyle(
-                        fontSize: FontManager.s13,
-                        color: isDark ? ColorManager.darkTextPrimary : ColorManager.lightTextPrimary,
+                child: GlobalInputField(
+                  label: StringManager.mobileNumberLabel,
+                  hintText: 'Mobile Number',
+                  controller: mobileController,
+                  keyboardType: TextInputType.phone,
+                  suffixWidth: 84.0,
+                  suffixWidget: SizedBox(
+                    height: 38,
+                    child: ElevatedButton(
+                      onPressed: onChangeMobile,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: ColorManager.primaryGreen,
+                        padding: const EdgeInsets.symmetric(horizontal: 14),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                        elevation: 0,
+                      ),
+                      child: Text(
+                        StringManager.changeBtn,
+                        style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: Colors.white),
                       ),
                     ),
-                    const SizedBox(height: 8),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: TextField(
-                            controller: mobileController,
-                            style: TextStyle(fontSize: 14, color: isDark ? Colors.white : Colors.black87),
-                            decoration: InputDecoration(
-                              border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        ElevatedButton(
-                          onPressed: onChangeMobile,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.blue.shade600,
-                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                          ),
-                          child: Text(StringManager.changeBtn, style: getBoldStyle(fontSize: FontManager.s12, color: Colors.white)),
-                        ),
-                      ],
-                    ),
-                  ],
+                  ),
                 ),
               ),
             ],
@@ -252,7 +238,7 @@ class ProfileSettingsForm extends StatelessWidget {
               ),
               const SizedBox(width: 16),
               Expanded(
-                child: CustomTextField(
+                child: GlobalInputField(
                   label: StringManager.dobLabel,
                   hintText: 'DD/MM/YYYY',
                   controller: dobController,

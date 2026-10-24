@@ -6,7 +6,7 @@ import '../../../../core/res/styles_manager.dart';
 import '../../../../core/utils/validators.dart';
 import '../../../../core/widgets/custom_button.dart';
 import '../../../../core/widgets/custom_footer.dart';
-import '../../../../core/widgets/custom_text_field.dart';
+import '../../../../core/widgets/global_input_field.dart';
 import '../widgets/step_indicator.dart';
 import 'register_header.dart';
 
@@ -61,7 +61,7 @@ class RegisterPersonalStep extends StatelessWidget {
           Row(
             children: [
               Expanded(
-                child: CustomTextField(
+                child: GlobalInputField(
                   label: StringManager.email,
                   hintText: 'name@example.com',
                   controller: emailController,
@@ -71,7 +71,7 @@ class RegisterPersonalStep extends StatelessWidget {
               ),
               const SizedBox(width: 16),
               Expanded(
-                child: CustomTextField(
+                child: GlobalInputField(
                   label: StringManager.phoneNumber,
                   hintText: '9876543210',
                   controller: phoneController,
@@ -85,7 +85,7 @@ class RegisterPersonalStep extends StatelessWidget {
           Row(
             children: [
               Expanded(
-                child: CustomTextField(
+                child: GlobalInputField(
                   label: StringManager.passwordLabel,
                   hintText: '••••••••',
                   controller: passwordController,
@@ -103,7 +103,7 @@ class RegisterPersonalStep extends StatelessWidget {
               ),
               const SizedBox(width: 16),
               Expanded(
-                child: CustomTextField(
+                child: GlobalInputField(
                   label: StringManager.confirmPassword,
                   hintText: '••••••••',
                   controller: confirmPasswordController,
@@ -122,7 +122,7 @@ class RegisterPersonalStep extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 20),
-          CustomTextField(
+          GlobalInputField(
             label: StringManager.referralCode,
             hintText: 'Optional Code',
             controller: referralController,

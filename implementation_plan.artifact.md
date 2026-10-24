@@ -1,21 +1,17 @@
-# Implementation Plan: PDF-Exact Dashboard & Navbar Redesign
+# Implementation Plan: Global Shared Input Field (`GlobalInputField`)
 
-This plan outlines the exact recreation of the dashboard and bottom navigation bar to match the reference screenshot from `B · Money-first Header.pdf`, incorporating the income vs. expense summary card, 4-grid overview metrics, quick action icons, import banner, period filter pills (`12M`, `6M`, `3M`, `7D`), and the 5-tab bottom navbar (Home, Invoices, [+], Purchase, More).
+This plan outlines the extraction of the professional floating label input field into a global shared component (`GlobalInputField`) located in `lib/core/widgets/global_input_field.dart`, and replacing feature-specific text inputs across the app with this unified global component.
 
 ## User Review Required
 
 > [!IMPORTANT]
-> **PDF-Exact Dashboard & Navbar Alignment**:
-> 1. **Bottom Navbar**: 5 tabs matching the reference (`Home`, `Invoices`, `[+]`, `Purchase`, `More`).
-> 2. **Income vs Expense Card**: Profit margin, total income, and total expense summary.
-> 3. **Overview Metrics Grid**: 4 cards with exact values (`₹2.98 Cr`, `₹1.86 Cr`, `₹2.12 Cr`, `₹11.84 L`).
-> 4. **Flow Chart Period Pills**: `12M`, `6M`, `3M`, `7D` selectors.
+> **Global Input Field**: We will move `FloatingLabelInput` into `lib/core/widgets/global_input_field.dart` as `GlobalInputField`, ensuring consistent floating animations, fixed 56px height, and validation styling across all pages (Login, Register, Add Customer, Invoices, Settings).
 
 ## Proposed Changes
 
-### 1. Dashboard & Navbar Module (`lib/features/dashboard/`)
-- **[MODIFY] [modern_bottom_nav_bar.dart](file:///D:/Flutter%20BackUp/new_code/lib/features/dashboard/presentation/widgets/modern_bottom_nav_bar.dart)**: Update bottom navbar to have the exact 5 tabs (`Home`, `Invoices`, `[+]`, `Purchase`, `More`).
-- **[MODIFY] [dashboard_page.dart](file:///D:/Flutter%20BackUp/new_code/lib/features/dashboard/presentation/pages/dashboard_page.dart)**: Revamp layout to match the reference screenshot (Income vs Expense card, Overview grid, Quick Actions, Flow Chart with period pills, Recent Activity).
+### 1. Global Widgets (`lib/core/widgets/`)
+- **[NEW] [global_input_field.dart](file:///D:/Flutter%20BackUp/new_code/lib/core/widgets/global_input_field.dart)**: Unified global input field widget with floating label support, custom formatters (`UpperCaseTextFormatter`), and validation states.
+- **[MODIFY] Existing pages/widgets**: Adopt `GlobalInputField` where appropriate.
 
 ## Verification Plan
 
@@ -24,4 +20,4 @@ This plan outlines the exact recreation of the dashboard and bottom navigation b
 - Run `flutter analyze` to verify zero static analysis errors or warnings.
 
 ### Manual Verification
-- Test bottom navbar tabs and dashboard layout against the PDF reference screenshot.
+- Test input typing and floating label animation across login/register/customer forms.

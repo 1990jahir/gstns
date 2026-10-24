@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import '../../../../core/res/color_manager.dart';
-import '../../../../core/res/font_manager.dart';
-import '../../../../core/res/styles_manager.dart';
+import '../../../../core/widgets/global_input_field.dart';
 
-/// Reusable Custom Text Form Field widget with label, hint, icons, and validation.
+/// Reusable Custom Text Form Field widget powered by GlobalInputField.
 class AuthTextField extends StatelessWidget {
   final String label;
   final String hintText;
@@ -28,35 +26,20 @@ class AuthTextField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    IconData? extractedPrefixIcon;
+    if (prefixIcon is Icon) {
+      extractedPrefixIcon = (prefixIcon as Icon).icon;
+    }
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: getMediumStyle(
-            fontSize: FontManager.s14,
-            color: isDark ? ColorManager.darkTextPrimary : ColorManager.lightTextPrimary,
-          ),
-        ),
-        const SizedBox(height: 8),
-        TextFormField(
-          controller: controller,
-          validator: validator,
-          obscureText: obscureText,
-          keyboardType: keyboardType,
-          style: getRegularStyle(
-            fontSize: FontManager.s14,
-            color: isDark ? ColorManager.darkTextPrimary : ColorManager.lightTextPrimary,
-          ),
-          decoration: InputDecoration(
-            hintText: hintText,
-            prefixIcon: prefixIcon,
-            suffixIcon: suffixIcon,
-          ),
-        ),
-      ],
+    return GlobalInputField(
+      controller: controller,
+      label: label,
+      hintText: hintText,
+      prefixIcon: extractedPrefixIcon,
+      suffixWidget: suffixIcon,
+      validator: validator,
+      obscureText: obscureText,
+      keyboardType: keyboardType,
     );
   }
 }

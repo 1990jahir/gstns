@@ -6,7 +6,7 @@ import '../../../../core/res/font_manager.dart';
 import '../../../../core/res/styles_manager.dart';
 import '../../../../core/utils/extensions.dart';
 import '../../../../core/widgets/custom_button.dart';
-import '../../../../core/widgets/custom_text_field.dart';
+import '../../../../core/widgets/global_input_field.dart';
 import '../../../../core/widgets/global_loader.dart';
 
 /// Modern Create Invoice Page mirroring the web reference form ("Supply Type", "Vendor Name", "Item Details", "Summary", "Transport Details").
@@ -117,7 +117,7 @@ class _CreateInvoicePageState extends ConsumerState<CreateInvoicePage> {
                 title: 'Invoice Numbers & Dates',
                 isDark: isDark,
                 children: [
-                  CustomTextField(
+                  GlobalInputField(
                     label: 'Invoice No. *',
                     hintText: 'Invoice No.',
                     controller: _invoiceNoController,
@@ -127,7 +127,7 @@ class _CreateInvoicePageState extends ConsumerState<CreateInvoicePage> {
                   Row(
                     children: [
                       Expanded(
-                        child: CustomTextField(
+                        child: GlobalInputField(
                           label: 'Invoice Date *',
                           hintText: 'DD/MM/YYYY',
                           controller: _invoiceDateController,
@@ -135,7 +135,7 @@ class _CreateInvoicePageState extends ConsumerState<CreateInvoicePage> {
                       ),
                       const SizedBox(width: 12),
                       Expanded(
-                        child: CustomTextField(
+                        child: GlobalInputField(
                           label: 'Due Date *',
                           hintText: 'DD/MM/YYYY',
                           controller: _dueDateController,
@@ -152,14 +152,14 @@ class _CreateInvoicePageState extends ConsumerState<CreateInvoicePage> {
                 title: 'Item Details',
                 isDark: isDark,
                 children: [
-                  CustomTextField(
+                  GlobalInputField(
                     label: 'Rate (₹) *',
                     hintText: '0.00',
                     controller: _itemRateController,
                     keyboardType: TextInputType.number,
                   ),
                   const SizedBox(height: 16),
-                  CustomTextField(
+                  GlobalInputField(
                     label: 'Quantity *',
                     hintText: '1',
                     controller: _itemQtyController,
@@ -174,13 +174,13 @@ class _CreateInvoicePageState extends ConsumerState<CreateInvoicePage> {
                 title: 'Transportation Details',
                 isDark: isDark,
                 children: [
-                  CustomTextField(
+                  GlobalInputField(
                     label: 'Transporter Name',
                     hintText: 'Transporter',
                     controller: _transporterController,
                   ),
                   const SizedBox(height: 16),
-                  CustomTextField(
+                  GlobalInputField(
                     label: 'Distance (KM) *',
                     hintText: '0',
                     controller: _distanceController,

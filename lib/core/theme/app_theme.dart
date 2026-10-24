@@ -21,6 +21,11 @@ class AppTheme {
         bodyLarge: getRegularStyle(fontSize: FontManager.s16, color: ColorManager.lightTextPrimary),
         bodyMedium: getRegularStyle(fontSize: FontManager.s14, color: ColorManager.lightTextSecondary),
       ),
+      textSelectionTheme: TextSelectionThemeData(
+        cursorColor: ColorManager.primaryGreen,
+        selectionColor: ColorManager.primaryGreen.withValues(alpha: 0.25),
+        selectionHandleColor: ColorManager.primaryGreen,
+      ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: ColorManager.lightCard,
@@ -74,6 +79,11 @@ class AppTheme {
         headlineMedium: getBoldStyle(fontSize: FontManager.s24, color: ColorManager.darkTextPrimary),
         bodyLarge: getRegularStyle(fontSize: FontManager.s16, color: ColorManager.darkTextPrimary),
         bodyMedium: getRegularStyle(fontSize: FontManager.s14, color: ColorManager.darkTextSecondary),
+      ),
+      textSelectionTheme: TextSelectionThemeData(
+        cursorColor: ColorManager.primaryGreen,
+        selectionColor: ColorManager.primaryGreen.withValues(alpha: 0.25),
+        selectionHandleColor: ColorManager.primaryGreen,
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,

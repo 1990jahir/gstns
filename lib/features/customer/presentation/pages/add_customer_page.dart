@@ -7,7 +7,7 @@ import '../../../../core/res/string_manager.dart';
 import '../../../../core/res/styles_manager.dart';
 import '../../../../core/utils/extensions.dart';
 import '../../../../core/widgets/custom_button.dart';
-import '../../../../core/widgets/custom_text_field.dart';
+import '../../../../core/widgets/global_input_field.dart';
 import '../../../../core/widgets/global_loader.dart';
 import '../../../auth/presentation/providers/auth_provider.dart';
 
@@ -151,7 +151,7 @@ class _AddCustomerPageState extends ConsumerState<AddCustomerPage> {
                     children: [
                       Expanded(
                         flex: 2,
-                        child: CustomTextField(
+                        child: GlobalInputField(
                           label: 'GSTIN/UIN *',
                           hintText: '22AAAAA0000A1Z5',
                           controller: _gstinController,
@@ -193,7 +193,7 @@ class _AddCustomerPageState extends ConsumerState<AddCustomerPage> {
                       ),
                       const SizedBox(width: 12),
                       Expanded(
-                        child: CustomTextField(
+                        child: GlobalInputField(
                           label: 'First Name *',
                           hintText: 'First Name',
                           controller: _firstNameController,
@@ -206,7 +206,7 @@ class _AddCustomerPageState extends ConsumerState<AddCustomerPage> {
                   Row(
                     children: [
                       Expanded(
-                        child: CustomTextField(
+                        child: GlobalInputField(
                           label: 'Last Name *',
                           hintText: 'Last Name',
                           controller: _lastNameController,
@@ -215,7 +215,7 @@ class _AddCustomerPageState extends ConsumerState<AddCustomerPage> {
                       ),
                       const SizedBox(width: 12),
                       Expanded(
-                        child: CustomTextField(
+                        child: GlobalInputField(
                           label: 'Company Name *',
                           hintText: 'Company Name',
                           controller: _companyController,
@@ -225,7 +225,7 @@ class _AddCustomerPageState extends ConsumerState<AddCustomerPage> {
                     ],
                   ),
                   const SizedBox(height: 16),
-                  CustomTextField(
+                  GlobalInputField(
                     label: 'Display Name',
                     hintText: 'Display Name on Invoices',
                     controller: _displayNameController,
@@ -242,7 +242,7 @@ class _AddCustomerPageState extends ConsumerState<AddCustomerPage> {
                   Row(
                     children: [
                       Expanded(
-                        child: CustomTextField(
+                        child: GlobalInputField(
                           label: 'Email Address',
                           hintText: 'client@example.com',
                           controller: _emailController,
@@ -251,7 +251,7 @@ class _AddCustomerPageState extends ConsumerState<AddCustomerPage> {
                       ),
                       const SizedBox(width: 12),
                       Expanded(
-                        child: CustomTextField(
+                        child: GlobalInputField(
                           label: 'Mobile No.',
                           hintText: '9876543210',
                           controller: _mobileController,
@@ -269,14 +269,14 @@ class _AddCustomerPageState extends ConsumerState<AddCustomerPage> {
                 title: 'Billing Address',
                 isDark: isDark,
                 children: [
-                  CustomTextField(
+                  GlobalInputField(
                     label: 'Address Line 1 *',
                     hintText: 'Street address, building, etc.',
                     controller: _address1Controller,
                     validator: (v) => v == null || v.isEmpty ? 'Required' : null,
                   ),
                   const SizedBox(height: 16),
-                  CustomTextField(
+                  GlobalInputField(
                     label: 'Address Line 2 (Optional)',
                     hintText: 'Apartment, suite, unit, etc.',
                     controller: _address2Controller,
@@ -285,7 +285,7 @@ class _AddCustomerPageState extends ConsumerState<AddCustomerPage> {
                   Row(
                     children: [
                       Expanded(
-                        child: CustomTextField(
+                        child: GlobalInputField(
                           label: 'Place *',
                           hintText: 'Place',
                           controller: _placeController,
@@ -294,7 +294,7 @@ class _AddCustomerPageState extends ConsumerState<AddCustomerPage> {
                       ),
                       const SizedBox(width: 12),
                       Expanded(
-                        child: CustomTextField(
+                        child: GlobalInputField(
                           label: 'City',
                           hintText: 'City',
                           controller: _cityController,
@@ -310,7 +310,7 @@ class _AddCustomerPageState extends ConsumerState<AddCustomerPage> {
                       ),
                       const SizedBox(width: 12),
                       Expanded(
-                        child: CustomTextField(
+                        child: GlobalInputField(
                           label: 'Pincode *',
                           hintText: '700001',
                           controller: _pincodeController,
@@ -334,7 +334,7 @@ class _AddCustomerPageState extends ConsumerState<AddCustomerPage> {
                   Row(
                     children: [
                       Expanded(
-                        child: CustomTextField(
+                        child: GlobalInputField(
                           label: 'Opening Balance *',
                           hintText: '0.00',
                           controller: _openingBalanceController,

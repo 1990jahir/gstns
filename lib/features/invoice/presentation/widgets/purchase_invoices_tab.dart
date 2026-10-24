@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/res/color_manager.dart';
 import '../../../../core/res/font_manager.dart';
 import '../../../../core/res/styles_manager.dart';
+import '../../../../core/widgets/global_input_field.dart';
 import '../../../../core/router/app_router.dart';
 import '../../../../core/utils/extensions.dart';
 
@@ -22,28 +23,9 @@ class PurchaseInvoicesTab extends StatelessWidget {
           child: Row(
             children: [
               Expanded(
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: isDark ? ColorManager.darkCard : Colors.white,
-                    borderRadius: BorderRadius.circular(14),
-                    border: Border.all(color: isDark ? ColorManager.darkBorder : Colors.grey.withValues(alpha: 0.2)),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.03),
-                        blurRadius: 10,
-                        offset: const Offset(0, 3),
-                      ),
-                    ],
-                  ),
-                  child: const TextField(
-                    decoration: InputDecoration(
-                      hintText: 'Search invoice no, vendor...',
-                      hintStyle: TextStyle(color: Color(0xFF9CA3AF), fontSize: 14),
-                      prefixIcon: Icon(Icons.search_rounded, color: Color(0xFF9CA3AF)),
-                      border: InputBorder.none,
-                      contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                    ),
-                  ),
+                child: const GlobalInputField(
+                  label: 'Search invoice no, vendor...',
+                  prefixIcon: Icons.search_rounded,
                 ),
               ),
               const SizedBox(width: 12),

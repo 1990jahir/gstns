@@ -7,7 +7,7 @@ import '../../../../core/res/styles_manager.dart';
 import '../../../../core/utils/extensions.dart';
 import '../../../../core/widgets/custom_button.dart';
 import '../../../../core/widgets/custom_footer.dart';
-import '../../../../core/widgets/custom_text_field.dart';
+import '../../../../core/widgets/global_input_field.dart';
 import '../../../../core/widgets/global_loader.dart';
 import '../providers/auth_provider.dart';
 import '../widgets/step_indicator.dart';
@@ -126,7 +126,7 @@ class _RegisterBusinessStepState extends ConsumerState<RegisterBusinessStep> {
               ),
               const SizedBox(width: 16),
               Expanded(
-                child: CustomTextField(
+                child: GlobalInputField(
                   label: StringManager.gstin,
                   hintText: '19ABCDE...',
                   controller: widget.gstinController,
@@ -150,7 +150,7 @@ class _RegisterBusinessStepState extends ConsumerState<RegisterBusinessStep> {
             ),
           ),
           const SizedBox(height: 12),
-          CustomTextField(
+          GlobalInputField(
             label: StringManager.companyName,
             hintText: 'Company Name',
             controller: widget.companyController,
@@ -160,7 +160,7 @@ class _RegisterBusinessStepState extends ConsumerState<RegisterBusinessStep> {
           Row(
             children: [
               Expanded(
-                child: CustomTextField(
+                child: GlobalInputField(
                   label: StringManager.firstName,
                   hintText: 'First Name',
                   controller: widget.firstNameController,
@@ -169,7 +169,7 @@ class _RegisterBusinessStepState extends ConsumerState<RegisterBusinessStep> {
               ),
               const SizedBox(width: 16),
               Expanded(
-                child: CustomTextField(
+                child: GlobalInputField(
                   label: StringManager.lastName,
                   hintText: 'Last Name',
                   controller: widget.lastNameController,

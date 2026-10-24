@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../core/res/color_manager.dart';
 import '../../../../core/res/string_manager.dart';
+import '../../../../core/widgets/global_input_field.dart';
 
 /// Modern Report Filter Card widget for date range selection and searching.
 class ReportFilterCard extends StatelessWidget {
@@ -36,28 +37,18 @@ class ReportFilterCard extends StatelessWidget {
       child: Row(
         children: [
           Expanded(
-            child: TextField(
+            child: GlobalInputField(
               controller: startDateController,
-              style: TextStyle(fontSize: 14, color: isDark ? Colors.white : Colors.black87),
-              decoration: InputDecoration(
-                labelText: StringManager.startDateLabel,
-                labelStyle: const TextStyle(color: Color(0xFF9CA3AF), fontSize: 12),
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-                contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-              ),
+              label: StringManager.startDateLabel,
+              prefixIcon: Icons.calendar_today_rounded,
             ),
           ),
           const SizedBox(width: 12),
           Expanded(
-            child: TextField(
+            child: GlobalInputField(
               controller: endDateController,
-              style: TextStyle(fontSize: 14, color: isDark ? Colors.white : Colors.black87),
-              decoration: InputDecoration(
-                labelText: StringManager.endDateLabel,
-                labelStyle: const TextStyle(color: Color(0xFF9CA3AF), fontSize: 12),
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-                contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-              ),
+              label: StringManager.endDateLabel,
+              prefixIcon: Icons.calendar_today_rounded,
             ),
           ),
           const SizedBox(width: 12),

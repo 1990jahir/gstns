@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import '../res/color_manager.dart';
-import '../res/font_manager.dart';
-import '../res/styles_manager.dart';
+import 'global_input_field.dart';
 
-/// Global reusable Custom Text Form Field widget decoupled from any feature.
+/// Global reusable Custom Text Form Field widget powered by GlobalInputField.
+/// Retains full backward compatibility with existing forms while providing
+/// modern floating label styling, theme green focus glow, and dark mode support.
 class CustomTextField extends StatelessWidget {
   final String label;
   final String hintText;
@@ -28,35 +28,20 @@ class CustomTextField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    IconData? extractedPrefixIcon;
+    if (prefixIcon is Icon) {
+      extractedPrefixIcon = (prefixIcon as Icon).icon;
+    }
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: getMediumStyle(
-            fontSize: FontManager.s14,
-            color: isDark ? ColorManager.darkTextPrimary : ColorManager.lightTextPrimary,
-          ),
-        ),
-        const SizedBox(height: 8),
-        TextFormField(
-          controller: controller,
-          validator: validator,
-          obscureText: obscureText,
-          keyboardType: keyboardType,
-          style: getRegularStyle(
-            fontSize: FontManager.s14,
-            color: isDark ? ColorManager.darkTextPrimary : ColorManager.lightTextPrimary,
-          ),
-          decoration: InputDecoration(
-            hintText: hintText,
-            prefixIcon: prefixIcon,
-            suffixIcon: suffixIcon,
-          ),
-        ),
-      ],
+    return GlobalInputField(
+      controller: controller,
+      label: label,
+      hintText: hintText,
+      prefixIcon: extractedPrefixIcon,
+      suffixWidget: suffixIcon,
+      validator: validator,
+      obscureText: obscureText,
+      keyboardType: keyboardType,
     );
   }
 }

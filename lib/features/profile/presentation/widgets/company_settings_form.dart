@@ -3,7 +3,7 @@ import '../../../../core/res/color_manager.dart';
 import '../../../../core/res/font_manager.dart';
 import '../../../../core/res/string_manager.dart';
 import '../../../../core/res/styles_manager.dart';
-import '../../../../core/widgets/custom_text_field.dart';
+import '../../../../core/widgets/global_input_field.dart';
 import 'company_dropdown_field.dart';
 
 /// Clean decoupled Company Settings Form widget matching web reference screenshot.
@@ -158,7 +158,7 @@ class _CompanySettingsFormState extends State<CompanySettingsForm> {
               ),
               const SizedBox(width: 16),
               Expanded(
-                child: CustomTextField(
+                child: GlobalInputField(
                   label: StringManager.panLabel,
                   hintText: 'CGHP0707E',
                   controller: _panController,
@@ -167,7 +167,7 @@ class _CompanySettingsFormState extends State<CompanySettingsForm> {
             ],
           ),
           const SizedBox(height: 16),
-          CustomTextField(
+          GlobalInputField(
             label: StringManager.companyName,
             hintText: 'Company Name',
             controller: _companyController,
@@ -205,7 +205,7 @@ class _CompanySettingsFormState extends State<CompanySettingsForm> {
             isDark: widget.isDark,
           ),
           const SizedBox(height: 16),
-          CustomTextField(
+          GlobalInputField(
             label: StringManager.authorizedSignatoryPan,
             hintText: 'AAAAA9999A',
             controller: _authPanController,
@@ -214,7 +214,7 @@ class _CompanySettingsFormState extends State<CompanySettingsForm> {
           Row(
             children: [
               Expanded(
-                child: CustomTextField(
+                child: GlobalInputField(
                   label: StringManager.aadhaarNo,
                   hintText: 'Enter Aadhaar Number',
                   controller: _aadhaarController,
@@ -222,7 +222,7 @@ class _CompanySettingsFormState extends State<CompanySettingsForm> {
               ),
               const SizedBox(width: 16),
               Expanded(
-                child: CustomTextField(
+                child: GlobalInputField(
                   label: StringManager.tanLabel,
                   hintText: 'ENTER TAN',
                   controller: _tanController,
@@ -234,7 +234,7 @@ class _CompanySettingsFormState extends State<CompanySettingsForm> {
           Row(
             children: [
               Expanded(
-                child: CustomTextField(
+                child: GlobalInputField(
                   label: StringManager.cinLabel,
                   hintText: 'ENTER CIN',
                   controller: _cinController,
@@ -242,7 +242,7 @@ class _CompanySettingsFormState extends State<CompanySettingsForm> {
               ),
               const SizedBox(width: 16),
               Expanded(
-                child: CustomTextField(
+                child: GlobalInputField(
                   label: StringManager.cinValidityLabel,
                   hintText: 'DD/MM/YYYY',
                   controller: _cinValidityController,
@@ -264,7 +264,7 @@ class _CompanySettingsFormState extends State<CompanySettingsForm> {
           Row(
             children: [
               Expanded(
-                child: CustomTextField(
+                child: GlobalInputField(
                   label: StringManager.addressLine1Label,
                   hintText: 'Address Line 1',
                   controller: _address1Controller,
@@ -272,7 +272,7 @@ class _CompanySettingsFormState extends State<CompanySettingsForm> {
               ),
               const SizedBox(width: 16),
               Expanded(
-                child: CustomTextField(
+                child: GlobalInputField(
                   label: StringManager.addressLine2Label,
                   hintText: 'Address Line 2',
                   controller: _address2Controller,
@@ -294,7 +294,7 @@ class _CompanySettingsFormState extends State<CompanySettingsForm> {
               ),
               const SizedBox(width: 16),
               Expanded(
-                child: CustomTextField(
+                child: GlobalInputField(
                   label: StringManager.placeLabelCompany,
                   hintText: 'Place',
                   controller: _placeController,
@@ -306,7 +306,7 @@ class _CompanySettingsFormState extends State<CompanySettingsForm> {
           Row(
             children: [
               Expanded(
-                child: CustomTextField(
+                child: GlobalInputField(
                   label: StringManager.cityLabelCompany,
                   hintText: 'City',
                   controller: _cityController,
@@ -314,7 +314,7 @@ class _CompanySettingsFormState extends State<CompanySettingsForm> {
               ),
               const SizedBox(width: 16),
               Expanded(
-                child: CustomTextField(
+                child: GlobalInputField(
                   label: StringManager.pincodeLabelCompany,
                   hintText: 'Pincode',
                   controller: _pincodeController,

@@ -9,7 +9,7 @@ import '../../../../core/utils/validators.dart';
 import '../../../../core/widgets/global_loader.dart';
 import '../providers/auth_provider.dart';
 import '../widgets/login_header.dart';
-import '../widgets/login_input_field.dart';
+import '../../../../core/widgets/global_input_field.dart';
 import '../widgets/login_social_button.dart';
 
 /// Modern Professional Login Page with theme-colored shadows, glowing logo aura, and real API authentication.
@@ -123,24 +123,24 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                         children: [
                           const LoginHeader(),
                           const SizedBox(height: 32),
-                          LoginInputField(
+                          GlobalInputField(
                             label: StringManager.emailLabel,
                             hintText: StringManager.emailHint,
-                            icon: Icons.mail_outline_rounded,
+                            prefixIcon: Icons.mail_outline_rounded,
                             obscureText: false,
                             controller: _emailController,
                             validator: Validators.validateEmail,
                             keyboardType: TextInputType.emailAddress,
                           ),
                           const SizedBox(height: 20),
-                          LoginInputField(
+                          GlobalInputField(
                             label: StringManager.passwordLabel,
                             hintText: StringManager.passwordHint,
-                            icon: Icons.lock_outline_rounded,
+                            prefixIcon: Icons.lock_outline_rounded,
                             obscureText: authState.obscurePassword,
                             controller: _passwordController,
                             validator: Validators.validatePassword,
-                            suffixIcon: IconButton(
+                            suffixWidget: IconButton(
                               icon: Icon(
                                 authState.obscurePassword ? Icons.visibility_off_outlined : Icons.visibility_outlined,
                                 color: const Color(0xFF9CA3AF),

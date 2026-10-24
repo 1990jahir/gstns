@@ -6,6 +6,7 @@ import '../../../../core/res/font_manager.dart';
 import '../../../../core/res/styles_manager.dart';
 import '../../../../core/router/app_router.dart';
 import '../../../../core/utils/extensions.dart';
+import '../../../../core/widgets/global_input_field.dart';
 
 /// Professional Mobile-optimized Customers Page mirroring the web "Manage Customers" view with modern card approach and Floating Add Customer action.
 class CustomersPage extends ConsumerStatefulWidget {
@@ -130,30 +131,10 @@ class _CustomersPageState extends ConsumerState<CustomersPage> {
               child: Row(
                 children: [
                   Expanded(
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: isDark ? ColorManager.darkCard : Colors.white,
-                        borderRadius: BorderRadius.circular(14),
-                        border: Border.all(color: isDark ? ColorManager.darkBorder : Colors.grey.withValues(alpha: 0.2)),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.03),
-                            blurRadius: 10,
-                            offset: const Offset(0, 3),
-                          ),
-                        ],
-                      ),
-                      child: TextField(
-                        controller: _searchController,
-                        style: TextStyle(fontSize: 14, color: isDark ? Colors.white : Colors.black87),
-                        decoration: const InputDecoration(
-                          hintText: 'Search customer, GSTIN or email...',
-                          hintStyle: TextStyle(color: Color(0xFF9CA3AF), fontSize: 14),
-                          prefixIcon: Icon(Icons.search_rounded, color: Color(0xFF9CA3AF)),
-                          border: InputBorder.none,
-                          contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                        ),
-                      ),
+                    child: GlobalInputField(
+                      controller: _searchController,
+                      label: 'Search customer, GSTIN or email...',
+                      prefixIcon: Icons.search_rounded,
                     ),
                   ),
                   const SizedBox(width: 12),

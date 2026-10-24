@@ -5,7 +5,7 @@ import '../../../../core/res/font_manager.dart';
 import '../../../../core/res/string_manager.dart';
 import '../../../../core/res/styles_manager.dart';
 import '../../../../core/widgets/custom_button.dart';
-import '../../../../core/widgets/custom_text_field.dart';
+import '../../../../core/widgets/global_input_field.dart';
 import 'company_dropdown_field.dart';
 
 /// Clean decoupled Invoice Settings Form widget with iOS-style switches (CupertinoSwitch) matching web reference screenshot.
@@ -135,7 +135,7 @@ class _InvoiceSettingsFormState extends State<InvoiceSettingsForm> {
           Row(
             children: [
               Expanded(
-                child: CustomTextField(
+                child: GlobalInputField(
                   label: StringManager.companyName,
                   hintText: 'Company Name',
                   controller: _companyController,
@@ -143,7 +143,7 @@ class _InvoiceSettingsFormState extends State<InvoiceSettingsForm> {
               ),
               const SizedBox(width: 16),
               Expanded(
-                child: CustomTextField(
+                child: GlobalInputField(
                   label: StringManager.emailLabel,
                   hintText: 'Email',
                   controller: _emailController,
@@ -155,7 +155,7 @@ class _InvoiceSettingsFormState extends State<InvoiceSettingsForm> {
           Row(
             children: [
               Expanded(
-                child: CustomTextField(
+                child: GlobalInputField(
                   label: StringManager.phoneNumber,
                   hintText: 'Phone Number',
                   controller: _phoneController,
@@ -163,7 +163,7 @@ class _InvoiceSettingsFormState extends State<InvoiceSettingsForm> {
               ),
               const SizedBox(width: 16),
               Expanded(
-                child: CustomTextField(
+                child: GlobalInputField(
                   label: 'WhatsApp Number',
                   hintText: 'WhatsApp',
                   controller: _whatsappController,
@@ -175,7 +175,7 @@ class _InvoiceSettingsFormState extends State<InvoiceSettingsForm> {
           Row(
             children: [
               Expanded(
-                child: CustomTextField(
+                child: GlobalInputField(
                   label: StringManager.gstin,
                   hintText: 'GSTIN',
                   controller: _gstinController,
@@ -183,7 +183,7 @@ class _InvoiceSettingsFormState extends State<InvoiceSettingsForm> {
               ),
               const SizedBox(width: 16),
               Expanded(
-                child: CustomTextField(
+                child: GlobalInputField(
                   label: StringManager.panLabel,
                   hintText: 'PAN',
                   controller: _panController,
@@ -195,7 +195,7 @@ class _InvoiceSettingsFormState extends State<InvoiceSettingsForm> {
           Row(
             children: [
               Expanded(
-                child: CustomTextField(
+                child: GlobalInputField(
                   label: StringManager.address1Label,
                   hintText: 'Address 1',
                   controller: _address1Controller,
@@ -203,7 +203,7 @@ class _InvoiceSettingsFormState extends State<InvoiceSettingsForm> {
               ),
               const SizedBox(width: 16),
               Expanded(
-                child: CustomTextField(
+                child: GlobalInputField(
                   label: StringManager.address2Label,
                   hintText: 'Address 2',
                   controller: _address2Controller,
@@ -225,7 +225,7 @@ class _InvoiceSettingsFormState extends State<InvoiceSettingsForm> {
               ),
               const SizedBox(width: 16),
               Expanded(
-                child: CustomTextField(
+                child: GlobalInputField(
                   label: StringManager.placeLabelCompany,
                   hintText: 'Place / City',
                   controller: _placeController,
@@ -234,7 +234,7 @@ class _InvoiceSettingsFormState extends State<InvoiceSettingsForm> {
             ],
           ),
           const SizedBox(height: 16),
-          CustomTextField(
+          GlobalInputField(
             label: StringManager.pincodeLabelCompany,
             hintText: 'Pincode',
             controller: _pincodeController,

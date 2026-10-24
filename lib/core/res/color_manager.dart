@@ -34,6 +34,40 @@ class ColorManager {
   // Specific UI component colors
   static const Color otpInputFillLight = Color(0xFFF1F5F9);
 
+  // Modern Auth Revamp Tokens (Aligned with client's primary Forest Green theme)
+  static const Color authBrand = Color(0xFF0F6E3E);        // Primary Forest Green
+  static const Color authBrandLight = Color(0xFF10B981);   // Vibrant Accent Green
+  static const Color authBrandDark = Color(0xFF0C5A32);    // Dark Forest Green
+  static const Color authDeepGreen = Color(0xFF094726);    // Deep Forest Green
+  static const Color authSun = Color(0xFFFF7A1A);          // Orange (Verify chip & accent)
+  static const Color authError = Color(0xFFDC3F3F);        // Error Red
+  static const Color authTint = Color(0x1F0F6E3E);         // 12% Forest Green overlay
+  static const Color authTintDark = Color(0x2810B981);     // 16% Accent Green overlay
+  static const Color authBgLight = Color(0xFFF2F5F3);      // Light Background
+  static const Color authSurfaceLight = Color(0xFFFFFFFF); // Light Surface
+  static const Color authFieldLight = Color(0xFFFFFFFF);   // Light Field
+  static const Color authLineLight = Color(0xFFDCE4DF);    // Light Border Line
+  static const Color authTextLight = Color(0xFF0D1B15);    // Light Primary Text
+  static const Color authMutedLight = Color(0xFF66786F);   // Light Muted Text
+  static const Color authBgDark = Color(0xFF08110D);       // Dark Background
+  static const Color authSurfaceDark = Color(0xFF112019);  // Dark Surface
+  static const Color authFieldDark = Color(0xFF142720);    // Dark Field
+  static const Color authLineDark = Color(0xFF223A2F);     // Dark Border Line
+  static const Color authTextDark = Color(0xFFEAF4EF);     // Dark Primary Text
+  static const Color authMutedDark = Color(0xFF8AA597);    // Dark Muted Text
+  static const Color authBtnLight = Color(0xFF0F6E3E);     // Theme Forest Green Button
+  static const Color authBtnTextLight = Color(0xFFFFFFFF); // Button Text Light
+  static const Color authBtnDark = Color(0xFF10B981);      // Accent Green Button Dark
+  static const Color authBtnTextDark = Color(0xFFFFFFFF);  // Button Text Dark
+
+  // Digital Business ID Card Tokens (Theme Forest Green Palette)
+  static const Color authCardBgStart = Color(0xFF0F6E3E);  // Forest Green
+  static const Color authCardBgMid = Color(0xFF0C5A32);    // Dark Forest Green
+  static const Color authCardBgEnd = Color(0xFF094726);    // Deep Forest Green
+  static const Color flagOrange = Color(0xFFFF7A1A);
+  static const Color flagWhite = Color(0xFFFFFFFF);
+  static const Color flagGreen = Color(0xFF10B981);
+
   // Common Colors
   static const Color white = Color(0xFFFFFFFF);
   static const Color black = Color(0xFF000000);
