@@ -28,6 +28,16 @@ class AuthRepository {
     }
   }
 
+  Future<Map<String, dynamic>> verifyGstin(String gstin) async {
+    try {
+      return await _remoteDataSource.verifyGstin(gstin);
+    } on ApiException {
+      rethrow;
+    } catch (e) {
+      throw ApiException(message: e.toString());
+    }
+  }
+
   Future<Map<String, dynamic>> register(Map<String, dynamic> data) async {
     try {
       String? challenge;
@@ -89,7 +99,20 @@ class AuthRepository {
     }
   }
 
+  Future<AuthResponse> getMe() async {
+    try {
+      return await _remoteDataSource.getMe();
+    } on ApiException {
+      rethrow;
+    } catch (e) {
+      throw ApiException(message: e.toString());
+    }
+  }
+
   Future<void> logout() async {
+    try {
+      await _remoteDataSource.logout();
+    } catch (_) {}
     await _cacheService.clearSession();
   }
 }

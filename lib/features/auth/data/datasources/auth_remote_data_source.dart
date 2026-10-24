@@ -32,6 +32,15 @@ class AuthRemoteDataSource {
     }
   }
 
+  Future<Map<String, dynamic>> logout() async {
+    try {
+      final response = await _dio.post(ApiEndpoints.logout);
+      return response.data;
+    } on DioException catch (e) {
+      throw ApiException.fromDioException(e);
+    }
+  }
+
   Future<AuthResponse> sendOtp(OtpSendRequest request) async {
     try {
       final response = await _dio.post(
@@ -59,6 +68,18 @@ class AuthRemoteDataSource {
   Future<Map<String, dynamic>> getChallenge() async {
     try {
       final response = await _dio.get(ApiEndpoints.challenge);
+      return response.data;
+    } on DioException catch (e) {
+      throw ApiException.fromDioException(e);
+    }
+  }
+
+  Future<Map<String, dynamic>> verifyGstin(String gstin) async {
+    try {
+      final response = await _dio.post(
+        ApiEndpoints.verifyGstin,
+        data: {"gstin": gstin},
+      );
       return response.data;
     } on DioException catch (e) {
       throw ApiException.fromDioException(e);

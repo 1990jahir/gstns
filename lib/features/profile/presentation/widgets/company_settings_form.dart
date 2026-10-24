@@ -83,30 +83,34 @@ class _CompanySettingsFormState extends State<CompanySettingsForm> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // Header Row with Upload Logo
+          // Header Row with Upload Logo (Wrapped in Expanded to prevent overflow)
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    StringManager.companySettingsTitle,
-                    style: getBoldStyle(
-                      fontSize: FontManager.s18,
-                      color: widget.isDark ? ColorManager.darkTextPrimary : ColorManager.lightTextPrimary,
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      StringManager.companySettingsTitle,
+                      style: getBoldStyle(
+                        fontSize: FontManager.s18,
+                        color: widget.isDark ? ColorManager.darkTextPrimary : ColorManager.lightTextPrimary,
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    StringManager.updateCompanyDetails,
-                    style: getRegularStyle(
-                      fontSize: FontManager.s13,
-                      color: widget.isDark ? ColorManager.darkTextSecondary : ColorManager.lightTextSecondary,
+                    const SizedBox(height: 4),
+                    Text(
+                      StringManager.updateCompanyDetails,
+                      style: getRegularStyle(
+                        fontSize: FontManager.s13,
+                        color: widget.isDark ? ColorManager.darkTextSecondary : ColorManager.lightTextSecondary,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
+              const SizedBox(width: 12),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
@@ -117,7 +121,7 @@ class _CompanySettingsFormState extends State<CompanySettingsForm> {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: ColorManager.primaryGreen.withValues(alpha: 0.12),
                       elevation: 0,
-                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                     ),
                   ),

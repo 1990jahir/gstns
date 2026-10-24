@@ -161,6 +161,40 @@ class StringManager {
   static const String rubberBoardSubtitle = 'You can download and file Rubber Board returns directly from GSTSOF.';
   static const String cancelBtn = 'Cancel';
 
+  // Invoice Settings strings
+  static const String invoiceSettingsTitle = 'Invoice Settings';
+  static const String manageInvoiceLooks = 'Manage how your invoices look and the information displayed on them.';
+  static const String previewInvoiceBtn = 'Preview Invoice';
+  static const String businessInfoDisplayed = 'Business Information (Displayed on Invoice)';
+  static const String invoiceAppearanceTitle = 'Invoice Appearance';
+  static const String primaryColorLabel = 'Primary Color';
+  static const String fontFamilyLabel = 'Font Family';
+  static const String showCompanyLogoLabel = 'Show Company Logo';
+  static const String watermarkOnInvoiceLabel = 'Watermark on Invoice';
+  static const String watermarkOpacityLabel = 'Watermark Opacity';
+  static const String showBankDetailsInvoiceLabel = 'Show Bank Details on Invoice';
+  static const String signatureSettingsTitle = 'Signature Settings';
+  static const String signatoryNameLabel = 'Signatory Name';
+  static const String signatureTypeLabel = 'Signature Type';
+  static const String manualSignature = 'Manual Signature';
+  static const String uploadSignature = 'Upload Signature';
+  static const String signedWithDsc = 'Signed With DSC';
+  static const String signHereText = 'Sign here';
+  static const String additionalInfoTitle = 'Additional Information (Show on Invoice)';
+  static const String showEmailLabel = 'Show Email';
+  static const String showPhoneNumberLabel = 'Show Phone Number';
+  static const String showGstinLabel = 'Show GSTIN';
+  static const String showPanLabel = 'Show PAN';
+  static const String showBankDetailsLabel = 'Show Bank Details';
+  static const String documentTypeSettingsTitle = 'Document Type Settings';
+  static const String documentTypeSettingsSubtitle = 'Set prefix and running number for documents';
+  static const String documentTypeLabelInvoice = 'Document Type *';
+  static const String withPrefixLabel = 'With Prefix *';
+  static const String prefixLabel = 'Prefix *';
+  static const String numberLabel = 'Number *';
+  static const String addNowBtn = 'Add Now';
+  static const String saveInvoiceSettingsBtn = 'Save Invoice Settings';
+
   // Customers strings
   static const String manageCustomers = 'Manage Customers';
   static const String addCustomerTitle = 'Add Customer';
@@ -262,6 +296,28 @@ class StringManager {
   static const String purchaseTrackingSubtitle = 'Track Vendors, Purchase Invoices, Incoming Bills, Debit Notes, and monitor your day-to-day business Expenses & Income effortlessly.';
   static const String gstReportsTitle = 'GST Reports & Compliance';
   static const String gstReportsSubtitle = 'Generate accurate GSTR-1, GSTR-3B returns, Profit & Loss statements, and Balance Sheet financial reports at your fingertips.';
+
+  // OTP Verification strings
+  static const String verifyOtpTitle = 'Verify Authentication OTP';
+  static const String verifyOtpSubtitlePrefix = 'Please enter the 6-digit verification code sent to\n';
+  static const String verifyOtpBtn = 'Verify OTP';
+  static const String resendOtpBtn = 'Resend OTP';
+  static const String newOtpSentSuccessfully = 'New OTP sent successfully!';
+  static const String completeOtpRequired = 'Please enter complete 6-digit OTP';
+  static const String verifyingOtp = 'Verifying OTP...';
+  static const String otpVerifiedSuccessfully = 'OTP verified successfully!';
+  static const String invalidOtp = 'Invalid OTP';
+
+  // GSTIN & Mobile Validation strings
+  static const String verifyAndAutofillGstinBtn = 'Verify & Autofill GSTIN';
+  static const String pleaseEnterGstinToVerify = 'Please enter GSTIN to verify';
+  static const String verifyingGstin = 'Verifying GSTIN...';
+  static const String gstinVerifiedAutofilled = 'GSTIN verified & company details autofilled!';
+  static const String gstinVerifiedSuccessfully = 'GSTIN verified successfully!';
+  static const String gstinRequired = 'Please enter GSTIN';
+  static const String gstinLengthError = 'GSTIN must be exactly 15 characters';
+  static const String gstinFormatError = 'Please enter a valid GSTIN format';
+  static const String mobileRequired = 'Please enter mobile number';
 
   // Actions & Feedbacks
   static const String forgotPasswordClicked = 'Forgot password clicked';

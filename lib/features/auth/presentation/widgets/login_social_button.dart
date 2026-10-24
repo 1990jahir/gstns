@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import '../../../../core/res/color_manager.dart';
 
-/// High-fidelity Social Login Button widget using custom asset icons (Google & WhatsApp).
+/// High-fidelity Social Login Button widget using custom asset icons and theme-colored shadows.
 class LoginSocialButton extends StatelessWidget {
   final String assetPath;
   final String text;
@@ -15,16 +16,21 @@ class LoginSocialButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Container(
       width: double.infinity,
       height: 50,
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: isDark ? ColorManager.darkSurface : Colors.white,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: const Color(0xFFE5E7EB), width: 1),
+        border: Border.all(
+          color: isDark ? ColorManager.darkBorder : const Color(0xFFE5E7EB),
+          width: 1,
+        ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.02),
+            color: ColorManager.primaryGreen.withValues(alpha: isDark ? 0.12 : 0.03),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -47,10 +53,10 @@ class LoginSocialButton extends StatelessWidget {
               const SizedBox(width: 12),
               Text(
                 text,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
-                  color: Color(0xFF374151),
+                  color: isDark ? ColorManager.darkTextPrimary : const Color(0xFF374151),
                   fontFamily: 'Inter',
                 ),
               ),

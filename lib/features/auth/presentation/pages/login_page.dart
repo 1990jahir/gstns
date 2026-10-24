@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import '../../../../core/res/color_manager.dart';
 import '../../../../core/res/string_manager.dart';
 import '../../../../core/router/app_router.dart';
 import '../../../../core/utils/extensions.dart';
@@ -11,7 +12,7 @@ import '../widgets/login_header.dart';
 import '../widgets/login_input_field.dart';
 import '../widgets/login_social_button.dart';
 
-/// Modern Professional Login Page with card container layout, glowing logo aura, and real API authentication.
+/// Modern Professional Login Page with theme-colored shadows, glowing logo aura, and real API authentication.
 class LoginPage extends ConsumerStatefulWidget {
   const LoginPage({super.key});
 
@@ -58,7 +59,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: isDark ? const Color(0xFF0F172A) : const Color(0xFFF7F8FA),
+      backgroundColor: isDark ? ColorManager.darkBackgroundApp : ColorManager.lightBackgroundApp,
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
@@ -78,11 +79,11 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                       child: Container(
                         padding: const EdgeInsets.all(10),
                         decoration: BoxDecoration(
-                          color: isDark ? const Color(0xFF1E293B) : Colors.white,
+                          color: isDark ? ColorManager.darkCardSurface : Colors.white,
                           shape: BoxShape.circle,
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withValues(alpha: 0.08),
+                              color: ColorManager.primaryGreen.withValues(alpha: isDark ? 0.3 : 0.08),
                               blurRadius: 12,
                               offset: const Offset(0, 4),
                             ),
@@ -98,18 +99,18 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                   ),
                   const SizedBox(height: 10),
 
-                  // Professional Card Container holding Login form
+                  // Professional Card Container holding Login form with theme-colored shadow
                   Container(
                     padding: const EdgeInsets.all(28.0),
                     decoration: BoxDecoration(
-                      color: isDark ? const Color(0xFF1E293B) : Colors.white,
+                      color: isDark ? ColorManager.darkCardSurface : Colors.white,
                       borderRadius: BorderRadius.circular(28),
                       border: Border.all(
-                        color: isDark ? const Color(0xFF334155) : Colors.grey.withValues(alpha: 0.15),
+                        color: isDark ? ColorManager.darkBorderColor : Colors.grey.withValues(alpha: 0.15),
                       ),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withValues(alpha: isDark ? 0.4 : 0.06),
+                          color: ColorManager.primaryGreen.withValues(alpha: isDark ? 0.25 : 0.08),
                           blurRadius: 30,
                           offset: const Offset(0, 10),
                         ),
@@ -245,7 +246,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                           // Divider
                           Row(
                             children: [
-                              Expanded(child: Divider(color: isDark ? const Color(0xFF334155) : const Color(0xFFE5E7EB), thickness: 1)),
+                              Expanded(child: Divider(color: isDark ? ColorManager.darkBorderColor : const Color(0xFFE5E7EB), thickness: 1)),
                               Padding(
                                 padding: const EdgeInsets.symmetric(horizontal: 16),
                                 child: Text(
@@ -253,7 +254,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                                   style: TextStyle(fontSize: 12, color: isDark ? const Color(0xFF94A3B8) : const Color(0xFF9CA3AF), fontWeight: FontWeight.w500),
                                 ),
                               ),
-                              Expanded(child: Divider(color: isDark ? const Color(0xFF334155) : const Color(0xFFE5E7EB), thickness: 1)),
+                              Expanded(child: Divider(color: isDark ? ColorManager.darkBorderColor : const Color(0xFFE5E7EB), thickness: 1)),
                             ],
                           ),
                           const SizedBox(height: 20),

@@ -10,7 +10,7 @@ import '../providers/register_provider.dart';
 import '../widgets/register_business_step.dart';
 import '../widgets/register_personal_step.dart';
 
-/// Modern Professional Multi-step Register Page using clean decoupled widgets, GoRouter, and GlobalLoader.
+/// Modern Professional Multi-step Register Page using clean decoupled widgets, theme-colored shadows, GoRouter, and GlobalLoader.
 class RegisterPage extends ConsumerStatefulWidget {
   const RegisterPage({super.key});
 
@@ -122,7 +122,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withValues(alpha: isDark ? 0.4 : 0.06),
+                      color: ColorManager.primaryGreen.withValues(alpha: isDark ? 0.25 : 0.08),
                       blurRadius: 30,
                       offset: const Offset(0, 10),
                     ),

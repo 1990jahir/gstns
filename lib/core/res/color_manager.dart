@@ -10,17 +10,24 @@ class ColorManager {
   static const Color lightBackground = Color(0xFFFFFFFF);
   static const Color lightSurface = Color(0xFFFFFFFF);
   static const Color lightCard = Color(0xFFF9FAFB);
+  static const Color lightBackgroundApp = Color(0xFFF7F8FA);
   static const Color lightTextPrimary = Color(0xFF111827);
   static const Color lightTextSecondary = Color(0xFF6B7280);
   static const Color lightBorder = Color(0xFFE5E7EB);
 
   // Dark Theme Colors
   static const Color darkBackground = Color(0xFF121212);
+  static const Color darkBackgroundApp = Color(0xFF0F172A);
   static const Color darkSurface = Color(0xFF1E1E1E);
   static const Color darkCard = Color(0xFF242424);
+  static const Color darkCardSurface = Color(0xFF1E293B);
   static const Color darkTextPrimary = Color(0xFFF9FAFB);
   static const Color darkTextSecondary = Color(0xFF9CA3AF);
   static const Color darkBorder = Color(0xFF374151);
+  static const Color darkBorderColor = Color(0xFF334155);
+
+  // Specific UI component colors
+  static const Color otpInputFillLight = Color(0xFFF1F5F9);
 
   // Common Colors
   static const Color white = Color(0xFFFFFFFF);

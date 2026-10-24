@@ -59,6 +59,8 @@ class ProfileSettingsSidebar extends StatelessWidget {
                 onSelected(index);
                 if (index == 1) {
                   context.push(AppRouter.companySettings);
+                } else if (index == 2) {
+                  context.push(AppRouter.invoiceSettings);
                 }
               },
             ),

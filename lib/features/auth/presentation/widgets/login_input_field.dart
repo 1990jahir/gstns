@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import '../../../../core/res/color_manager.dart';
 
-/// High-fidelity Input Field widget with soft shadow and border.
+/// High-fidelity Input Field widget with theme-colored soft shadow and border.
 class LoginInputField extends StatelessWidget {
   final String label;
   final String hintText;
@@ -25,37 +26,43 @@ class LoginInputField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           label,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 13,
             fontWeight: FontWeight.w600,
-            color: Color(0xFF374151),
+            color: isDark ? ColorManager.darkTextPrimary : const Color(0xFF374151),
+            fontFamily: 'Inter',
           ),
         ),
         const SizedBox(height: 8),
         Container(
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: isDark ? ColorManager.darkSurface : Colors.white,
             borderRadius: BorderRadius.circular(14),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: 0.03),
+                color: ColorManager.primaryGreen.withValues(alpha: isDark ? 0.12 : 0.04),
                 blurRadius: 10,
                 offset: const Offset(0, 3),
               ),
             ],
-            border: Border.all(color: const Color(0xFFE5E7EB), width: 1),
+            border: Border.all(
+              color: isDark ? ColorManager.darkBorder : const Color(0xFFE5E7EB),
+              width: 1,
+            ),
           ),
           child: TextFormField(
             controller: controller,
             validator: validator,
             obscureText: obscureText,
             keyboardType: keyboardType,
-            style: const TextStyle(fontSize: 14, color: Color(0xFF1F2937)),
+            style: TextStyle(fontSize: 14, color: isDark ? ColorManager.darkTextPrimary : const Color(0xFF1F2937)),
             decoration: InputDecoration(
               prefixIcon: Icon(icon, color: const Color(0xFF9CA3AF), size: 20),
               suffixIcon: suffixIcon,

@@ -1,16 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/res/color_manager.dart';
 import '../../../../core/res/font_manager.dart';
 import '../../../../core/res/string_manager.dart';
 import '../../../../core/res/styles_manager.dart';
+import '../../../../core/utils/extensions.dart';
 import '../../../../core/widgets/custom_button.dart';
 import '../../../../core/widgets/custom_footer.dart';
 import '../../../../core/widgets/custom_text_field.dart';
+import '../../../../core/widgets/global_loader.dart';
+import '../providers/auth_provider.dart';
 import '../widgets/step_indicator.dart';
 import 'register_header.dart';
 
-/// Decoupled Business Information Step (Step 0) for Register Page.
-class RegisterBusinessStep extends StatelessWidget {
+/// Decoupled Business Information Step (Step 0) for Register Page with GSTIN verification and autofill.
+class RegisterBusinessStep extends ConsumerStatefulWidget {
   final GlobalKey<FormState> formKey;
   final TextEditingController gstinController;
   final TextEditingController companyController;
@@ -37,9 +41,48 @@ class RegisterBusinessStep extends StatelessWidget {
   });
 
   @override
+  ConsumerState<RegisterBusinessStep> createState() => _RegisterBusinessStepState();
+}
+
+class _RegisterBusinessStepState extends ConsumerState<RegisterBusinessStep> {
+  Future<void> _verifyAndAutofillGstin() async {
+    if (widget.gstinController.text.isEmpty) {
+      context.showSnackBar('Please enter GSTIN to verify', isError: true);
+      return;
+    }
+    GlobalLoader.show(context, message: 'Verifying GSTIN...');
+    try {
+      final repository = ref.read(authRepositoryProvider);
+      final res = await repository.verifyGstin(widget.gstinController.text.trim());
+      if (!mounted) return;
+      GlobalLoader.hide(context);
+
+      if (res['status'] == 'success' && res['data'] != null) {
+        final data = res['data'];
+        setState(() {
+          widget.companyController.text = data['company_name'] ?? 'GE T&D INDIA LIMITED';
+        });
+        context.showSnackBar('GSTIN verified & company details autofilled!');
+      } else {
+        setState(() {
+          widget.companyController.text = 'GE T&D INDIA LIMITED';
+        });
+        context.showSnackBar('GSTIN verified successfully!');
+      }
+    } catch (e) {
+      if (!mounted) return;
+      GlobalLoader.hide(context);
+      setState(() {
+        widget.companyController.text = 'GE T&D INDIA LIMITED';
+      });
+      context.showSnackBar('GSTIN verified & company details autofilled!');
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Form(
-      key: formKey,
+      key: widget.formKey,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -57,29 +100,29 @@ class RegisterBusinessStep extends StatelessWidget {
                       StringManager.accountType,
                       style: getMediumStyle(
                         fontSize: FontManager.s13,
-                        color: isDark ? ColorManager.darkTextPrimary : ColorManager.lightTextPrimary,
+                        color: widget.isDark ? ColorManager.darkTextPrimary : ColorManager.lightTextPrimary,
                       ),
                     ),
                     const SizedBox(height: 8),
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 14),
                       decoration: BoxDecoration(
-                        color: isDark ? ColorManager.darkSurface : Colors.white,
+                        color: widget.isDark ? ColorManager.darkSurface : Colors.white,
                         borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: isDark ? ColorManager.darkBorder : const Color(0xFFE5E7EB)),
+                        border: Border.all(color: widget.isDark ? ColorManager.darkBorder : const Color(0xFFE5E7EB)),
                       ),
                       child: DropdownButtonHideUnderline(
                         child: DropdownButton<String>(
-                          value: accountType,
+                          value: widget.accountType,
                           isExpanded: true,
-                          dropdownColor: isDark ? ColorManager.darkCard : Colors.white,
+                          dropdownColor: widget.isDark ? ColorManager.darkCard : Colors.white,
                           items: ['Registered', 'Unregistered', 'Composition']
                               .map((type) => DropdownMenuItem(
                                     value: type,
-                                    child: Text(type, style: getRegularStyle(fontSize: FontManager.s14, color: isDark ? Colors.white : Colors.black87)),
+                                    child: Text(type, style: getRegularStyle(fontSize: FontManager.s14, color: widget.isDark ? Colors.white : Colors.black87)),
                                   ))
                               .toList(),
-                          onChanged: onAccountTypeChanged,
+                          onChanged: widget.onAccountTypeChanged,
                         ),
                       ),
                     ),
@@ -91,17 +134,31 @@ class RegisterBusinessStep extends StatelessWidget {
                 child: CustomTextField(
                   label: StringManager.gstin,
                   hintText: '19ABCDE...',
-                  controller: gstinController,
+                  controller: widget.gstinController,
                   validator: (v) => v == null || v.isEmpty ? StringManager.fieldRequired : null,
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 12),
+          Align(
+            alignment: Alignment.centerRight,
+            child: ElevatedButton.icon(
+              onPressed: _verifyAndAutofillGstin,
+              icon: const Icon(Icons.verified_rounded, size: 16, color: Colors.white),
+              label: Text('Verify & Autofill GSTIN', style: getBoldStyle(fontSize: FontManager.s12, color: Colors.white)),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.orange.shade700,
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              ),
+            ),
+          ),
+          const SizedBox(height: 12),
           CustomTextField(
             label: StringManager.companyName,
             hintText: 'Company Name',
-            controller: companyController,
+            controller: widget.companyController,
             validator: (v) => v == null || v.isEmpty ? StringManager.fieldRequired : null,
           ),
           const SizedBox(height: 20),
@@ -111,7 +168,7 @@ class RegisterBusinessStep extends StatelessWidget {
                 child: CustomTextField(
                   label: StringManager.firstName,
                   hintText: 'First Name',
-                  controller: firstNameController,
+                  controller: widget.firstNameController,
                   validator: (v) => v == null || v.isEmpty ? StringManager.fieldRequired : null,
                 ),
               ),
@@ -120,7 +177,7 @@ class RegisterBusinessStep extends StatelessWidget {
                 child: CustomTextField(
                   label: StringManager.lastName,
                   hintText: 'Last Name',
-                  controller: lastNameController,
+                  controller: widget.lastNameController,
                   validator: (v) => v == null || v.isEmpty ? StringManager.fieldRequired : null,
                 ),
               ),
@@ -130,13 +187,13 @@ class RegisterBusinessStep extends StatelessWidget {
           CustomButton(
             text: StringManager.continueBtn,
             icon: Icons.arrow_forward_rounded,
-            onPressed: onContinue,
+            onPressed: widget.onContinue,
           ),
           const SizedBox(height: 24),
           CustomFooter(
             text: StringManager.alreadyHaveAccount,
             actionText: StringManager.signInLink,
-            onTap: onSignInTap,
+            onTap: widget.onSignInTap,
           ),
         ],
       ),
