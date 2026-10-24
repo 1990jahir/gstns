@@ -2,21 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/res/color_manager.dart';
-import '../../../../core/res/font_manager.dart';
 import '../../../../core/res/string_manager.dart';
-import '../../../../core/res/styles_manager.dart';
 import '../../../../core/router/app_router.dart';
 import '../../../../core/utils/extensions.dart';
-import '../../../../core/utils/validators.dart';
-import '../../../../core/widgets/custom_button.dart';
-import '../../../../core/widgets/custom_footer.dart';
-import '../../../../core/widgets/custom_header.dart';
-import '../../../../core/widgets/custom_text_field.dart';
 import '../../../../core/widgets/global_loader.dart';
 import '../providers/register_provider.dart';
-import '../widgets/step_indicator.dart';
+import '../widgets/register_business_step.dart';
+import '../widgets/register_personal_step.dart';
 
-/// Modern Professional Multi-step Register Page using clean card container layout, GoRouter, and GlobalLoader.
+/// Modern Professional Multi-step Register Page using clean decoupled widgets, GoRouter, and GlobalLoader.
 class RegisterPage extends ConsumerStatefulWidget {
   const RegisterPage({super.key});
 
@@ -63,22 +57,34 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
     ref.read(registerNotifierProvider.notifier).setStep(0);
   }
 
-  void _onRegister() {
+  void _onRegister() async {
     if (_personalFormKey.currentState?.validate() ?? false) {
       if (_passwordController.text != _confirmPasswordController.text) {
         context.showSnackBar(StringManager.passwordsDoNotMatch, isError: true);
         return;
       }
-      ref.read(registerNotifierProvider.notifier).setLoading(true);
       GlobalLoader.show(context, message: 'Creating account...');
-      Future.delayed(const Duration(seconds: 1), () {
-        if (mounted) {
-          ref.read(registerNotifierProvider.notifier).setLoading(false);
-          GlobalLoader.hide(context);
-          context.showSnackBar(StringManager.accountRegisteredSuccessfully);
-          context.go(AppRouter.dashboard);
-        }
-      });
+      final success = await ref.read(registerNotifierProvider.notifier).register(
+            signupToken: 'token_dummy_123',
+            panNo: 'ABCDE1234F',
+            companyName: _companyController.text,
+            firstName: _firstNameController.text,
+            lastName: _lastNameController.text,
+            email: _emailController.text.trim(),
+            password: _passwordController.text,
+            passwordConfirmation: _confirmPasswordController.text,
+            referralCode: _referralController.text,
+          );
+      if (!mounted) return;
+      GlobalLoader.hide(context);
+
+      if (success) {
+        context.showSnackBar(StringManager.accountRegisteredSuccessfully);
+        context.go(AppRouter.dashboard);
+      } else {
+        final err = ref.read(registerNotifierProvider).errorMessage ?? 'Registration failed';
+        context.showSnackBar(err, isError: true);
+      }
     }
   }
 
@@ -110,7 +116,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                 padding: const EdgeInsets.all(28.0),
                 decoration: BoxDecoration(
                   color: isDark ? const Color(0xFF1E293B) : Colors.white,
-                  borderRadius: BorderRadius.circular(28),
+                  borderRadius: BorderRadius.circular(32),
                   border: Border.all(
                     color: isDark ? const Color(0xFF334155) : Colors.grey.withValues(alpha: 0.15),
                   ),
@@ -137,252 +143,45 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                     );
                   },
                   child: regState.currentStep == 0
-                      ? _buildBusinessInfoStep(isDark, regState)
-                      : _buildPersonalInfoStep(isDark, regState),
+                      ? RegisterBusinessStep(
+                          key: const ValueKey(0),
+                          formKey: _businessFormKey,
+                          gstinController: _gstinController,
+                          companyController: _companyController,
+                          firstNameController: _firstNameController,
+                          lastNameController: _lastNameController,
+                          accountType: regState.accountType,
+                          onAccountTypeChanged: (val) {
+                            if (val != null) {
+                              ref.read(registerNotifierProvider.notifier).setAccountType(val);
+                            }
+                          },
+                          onContinue: _onContinue,
+                          onSignInTap: () => context.go(AppRouter.login),
+                          isDark: isDark,
+                        )
+                      : RegisterPersonalStep(
+                          key: const ValueKey(1),
+                          formKey: _personalFormKey,
+                          emailController: _emailController,
+                          phoneController: _phoneController,
+                          passwordController: _passwordController,
+                          confirmPasswordController: _confirmPasswordController,
+                          referralController: _referralController,
+                          obscurePassword: regState.obscurePassword,
+                          obscureConfirmPassword: regState.obscureConfirmPassword,
+                          onTogglePassword: () => ref.read(registerNotifierProvider.notifier).toggleObscurePassword(),
+                          onToggleConfirmPassword: () => ref.read(registerNotifierProvider.notifier).toggleObscureConfirmPassword(),
+                          onBack: _onBack,
+                          onRegister: _onRegister,
+                          onSignInTap: () => context.go(AppRouter.login),
+                          isLoading: regState.isLoading,
+                          isDark: isDark,
+                        ),
                 ),
               ),
             ),
           ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildBusinessInfoStep(bool isDark, RegisterState regState) {
-    return KeyedSubtree(
-      key: const ValueKey(0),
-      child: Form(
-        key: _businessFormKey,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            const CustomHeader(
-              title: StringManager.createYourAccount,
-              subtitle: StringManager.registerSubtitle,
-            ),
-            const SizedBox(height: 28),
-            const StepIndicator(currentStep: 0),
-            const SizedBox(height: 32),
-            Row(
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        StringManager.accountType,
-                        style: getMediumStyle(
-                          fontSize: FontManager.s14,
-                          color: isDark ? ColorManager.darkTextPrimary : ColorManager.lightTextPrimary,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      DropdownButtonFormField<String>(
-                        initialValue: regState.accountType,
-                        decoration: InputDecoration(
-                          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                        ),
-                        items: ['Registered', 'Unregistered', 'Composition']
-                            .map((type) => DropdownMenuItem(
-                                  value: type,
-                                  child: Text(type, style: getRegularStyle(fontSize: FontManager.s14, color: isDark ? ColorManager.white : ColorManager.black)),
-                                ))
-                            .toList(),
-                        onChanged: (val) {
-                          if (val != null) {
-                            ref.read(registerNotifierProvider.notifier).setAccountType(val);
-                          }
-                        },
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: CustomTextField(
-                    label: StringManager.gstin,
-                    hintText: '19ABCDE...',
-                    controller: _gstinController,
-                    validator: (v) => v == null || v.isEmpty ? StringManager.fieldRequired : null,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 20),
-            CustomTextField(
-              label: StringManager.companyName,
-              hintText: 'Company Name',
-              controller: _companyController,
-              validator: (v) => v == null || v.isEmpty ? StringManager.fieldRequired : null,
-            ),
-            const SizedBox(height: 20),
-            Row(
-              children: [
-                Expanded(
-                  child: CustomTextField(
-                    label: StringManager.firstName,
-                    hintText: 'First Name',
-                    controller: _firstNameController,
-                    validator: (v) => v == null || v.isEmpty ? StringManager.fieldRequired : null,
-                  ),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: CustomTextField(
-                    label: StringManager.lastName,
-                    hintText: 'Last Name',
-                    controller: _lastNameController,
-                    validator: (v) => v == null || v.isEmpty ? StringManager.fieldRequired : null,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 32),
-            CustomButton(
-              text: StringManager.continueBtn,
-              icon: Icons.arrow_forward_rounded,
-              onPressed: _onContinue,
-            ),
-            const SizedBox(height: 28),
-            CustomFooter(
-              text: StringManager.alreadyHaveAccount,
-              actionText: StringManager.signInLink,
-              onTap: () => context.go(AppRouter.login),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildPersonalInfoStep(bool isDark, RegisterState regState) {
-    return KeyedSubtree(
-      key: const ValueKey(1),
-      child: Form(
-        key: _personalFormKey,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            const CustomHeader(
-              title: StringManager.createYourAccount,
-              subtitle: StringManager.registerSubtitle,
-            ),
-            const SizedBox(height: 28),
-            const StepIndicator(currentStep: 1),
-            const SizedBox(height: 32),
-            Row(
-              children: [
-                Expanded(
-                  child: CustomTextField(
-                    label: StringManager.email,
-                    hintText: 'name@example.com',
-                    controller: _emailController,
-                    validator: Validators.validateEmail,
-                    keyboardType: TextInputType.emailAddress,
-                  ),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: CustomTextField(
-                    label: StringManager.phoneNumber,
-                    hintText: '9876543210',
-                    controller: _phoneController,
-                    validator: (v) => v == null || v.length < 10 ? StringManager.enterValidPhone : null,
-                    keyboardType: TextInputType.phone,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 20),
-            Row(
-              children: [
-                Expanded(
-                  child: CustomTextField(
-                    label: StringManager.passwordLabel,
-                    hintText: '••••••••',
-                    controller: _passwordController,
-                    validator: Validators.validatePassword,
-                    obscureText: regState.obscurePassword,
-                    suffixIcon: IconButton(
-                      icon: Icon(
-                        regState.obscurePassword ? Icons.visibility_off_outlined : Icons.visibility_outlined,
-                        size: 20,
-                        color: ColorManager.grey,
-                      ),
-                      onPressed: () => ref.read(registerNotifierProvider.notifier).toggleObscurePassword(),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: CustomTextField(
-                    label: StringManager.confirmPassword,
-                    hintText: '••••••••',
-                    controller: _confirmPasswordController,
-                    validator: Validators.validatePassword,
-                    obscureText: regState.obscureConfirmPassword,
-                    suffixIcon: IconButton(
-                      icon: Icon(
-                        regState.obscureConfirmPassword ? Icons.visibility_off_outlined : Icons.visibility_outlined,
-                        size: 20,
-                        color: ColorManager.grey,
-                      ),
-                      onPressed: () => ref.read(registerNotifierProvider.notifier).toggleObscureConfirmPassword(),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 20),
-            CustomTextField(
-              label: StringManager.referralCode,
-              hintText: 'Optional Code',
-              controller: _referralController,
-            ),
-            const SizedBox(height: 32),
-            Row(
-              children: [
-                Expanded(
-                  child: OutlinedButton(
-                    onPressed: _onBack,
-                    style: OutlinedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      side: BorderSide(color: isDark ? ColorManager.darkBorder : ColorManager.lightBorder),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Icon(Icons.arrow_back_rounded, size: 20, color: ColorManager.primaryGreen),
-                        const SizedBox(width: 8),
-                        Text(
-                          StringManager.backBtn,
-                          style: getBoldStyle(fontSize: FontManager.s16, color: ColorManager.primaryGreen),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  flex: 2,
-                  child: CustomButton(
-                    text: StringManager.registerBtn,
-                    isLoading: regState.isLoading,
-                    icon: Icons.arrow_forward_rounded,
-                    onPressed: _onRegister,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 28),
-            CustomFooter(
-              text: StringManager.alreadyHaveAccount,
-              actionText: StringManager.signInLink,
-              onTap: () => context.go(AppRouter.login),
-            ),
-          ],
         ),
       ),
     );

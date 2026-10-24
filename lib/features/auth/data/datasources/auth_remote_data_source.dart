@@ -56,6 +56,33 @@ class AuthRemoteDataSource {
     }
   }
 
+  Future<Map<String, dynamic>> getChallenge() async {
+    try {
+      final response = await _dio.get(ApiEndpoints.challenge);
+      return response.data;
+    } on DioException catch (e) {
+      throw ApiException.fromDioException(e);
+    }
+  }
+
+  Future<Map<String, dynamic>> register(Map<String, dynamic> data, {String? challenge, String? challengeNonce}) async {
+    try {
+      final response = await _dio.post(
+        ApiEndpoints.register,
+        data: data,
+        options: Options(
+          headers: {
+            if (challenge != null) ...{'X-Challenge': challenge},
+            if (challengeNonce != null) ...{'X-Challenge-Nonce': challengeNonce},
+          },
+        ),
+      );
+      return response.data;
+    } on DioException catch (e) {
+      throw ApiException.fromDioException(e);
+    }
+  }
+
   Future<AuthResponse> getMe() async {
     try {
       final response = await _dio.get(ApiEndpoints.me);

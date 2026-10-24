@@ -28,6 +28,36 @@ class AuthRepository {
     }
   }
 
+  Future<Map<String, dynamic>> register(Map<String, dynamic> data) async {
+    try {
+      String? challenge;
+      String? challengeNonce;
+      try {
+        final challengeRes = await _remoteDataSource.getChallenge();
+        if (challengeRes['data'] != null) {
+          challenge = challengeRes['data']['challenge'];
+          challengeNonce = challengeRes['data']['nonce'];
+        }
+      } catch (_) {}
+
+      final response = await _remoteDataSource.register(data, challenge: challenge, challengeNonce: challengeNonce);
+
+      if (response['status'] == 'success' && response['data'] != null && response['data']['login_required'] == false) {
+        final tokenData = response['data'];
+        await _cacheService.saveAuthSession(
+          accessToken: tokenData['access_token'] ?? '',
+          refreshToken: tokenData['refresh_token'] ?? '',
+          email: data['email'] ?? '',
+        );
+      }
+      return response;
+    } on ApiException {
+      rethrow;
+    } catch (e) {
+      throw ApiException(message: e.toString());
+    }
+  }
+
   Future<AuthResponse> sendOtp(String mobile) async {
     try {
       final request = OtpSendRequest(mobile: mobile);

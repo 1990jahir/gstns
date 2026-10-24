@@ -78,7 +78,7 @@ class StringManager {
   static const String reports = 'Reports';
   static const String footerCopyright = '2026 © GSTSOF is a product by GOOASK DIGITAL PRIVATE LIMITED.';
 
-  // Profile strings
+  // Profile / Settings strings
   static const String profileDetailsTitle = 'Profile Details';
   static const String profileNameLabel = 'Profile Name';
   static const String profileNameValue = 'SB USER4';
@@ -103,6 +103,63 @@ class StringManager {
   static const String supportCodeCopied = 'Support code copied';
   static const String changePasswordTriggered = 'Change password triggered';
   static const String loggedOutSuccessfully = 'Logged out successfully';
+
+  static const String settingsTitle = 'Settings';
+  static const String accountSettingsTab = 'Account Settings';
+  static const String accountSettingsSubtitle = 'Manage your account details';
+  static const String companySettingsTab = 'Company Settings';
+  static const String companySettingsSubtitle = 'Update your company details';
+  static const String invoiceSettingsTab = 'Invoice Settings';
+  static const String invoiceSettingsSubtitle = 'Customize your invoice preferences';
+  static const String irnEwbGstinTab = 'IRN, EWB & GSTIN Settings';
+  static const String irnEwbGstinSubtitle = 'Manage IRN, EWB and GSTIN';
+  static const String invoiceTemplatesTab = 'Invoice Templates';
+  static const String invoiceTemplatesSubtitle = 'Customize invoice templates';
+  static const String planBillingTab = 'Plan & Billing';
+  static const String planBillingSubtitle = 'Manage subscription and billing';
+  static const String apiCallHistoryTab = 'API Call History';
+  static const String apiCallHistorySubtitle = 'View your API call history and logs';
+  static const String profileInformationTitle = 'Profile Information';
+  static const String updatePersonalDetails = 'Update your personal details and profile information';
+  static const String uploadPhoto = 'Upload Photo';
+  static const String adminBadge = 'Admin';
+  static const String firstNameLabel = 'First Name *';
+  static const String lastNameLabel = 'Last Name *';
+  static const String emailLabelProfile = 'Email *';
+  static const String mobileNumberLabel = 'Mobile Number *';
+  static const String genderLabel = 'Gender *';
+  static const String dobLabel = 'Date of Birth *';
+  static const String preferredLanguageLabel = 'Preferred Language *';
+  static const String timeZoneLabel = 'Time Zone *';
+  static const String changeBtn = 'Change';
+  static const String saveChangesBtn = 'Save Changes';
+
+  // Company Settings strings
+  static const String companySettingsTitle = 'Company Settings';
+  static const String updateCompanyDetails = 'Update your company details and business information';
+  static const String uploadLogo = 'Upload Logo';
+  static const String recommendedLogoSize = 'Recommended: 180x180px - JPG, PNG, SVG';
+  static const String businessInformationTitle = 'Business Information';
+  static const String registrationTypeLabel = 'Registration Type *';
+  static const String panLabel = 'PAN *';
+  static const String typeOfOrganizationLabel = 'Type Of Organization *';
+  static const String industriesTypeLabel = 'Industries Type *';
+  static const String businessTypeLabel = 'Business Type *';
+  static const String authorizedSignatoryPan = 'Authorized Signatory PAN';
+  static const String aadhaarNo = 'Aadhaar No.';
+  static const String tanLabel = 'TAN';
+  static const String cinLabel = 'CIN';
+  static const String cinValidityLabel = 'CIN Validity';
+  static const String addressInformationTitle = 'Address Information';
+  static const String addressLine1Label = 'Address Line 1 *';
+  static const String addressLine2Label = 'Address Line 2';
+  static const String placeLabelCompany = 'Place *';
+  static const String cityLabelCompany = 'City';
+  static const String stateLabelCompany = 'State *';
+  static const String pincodeLabelCompany = 'Pincode *';
+  static const String rubberBoardQuery = 'Do you want to download Rubber Board H2 And L report?';
+  static const String rubberBoardSubtitle = 'You can download and file Rubber Board returns directly from GSTSOF.';
+  static const String cancelBtn = 'Cancel';
 
   // Customers strings
   static const String manageCustomers = 'Manage Customers';
@@ -155,7 +212,6 @@ class StringManager {
   static const String quantityLabel = 'Quantity *';
   static const String transporterNameLabel = 'Transporter Name';
   static const String distanceLabel = 'Distance (KM) *';
-  static const String cancelBtn = 'Cancel';
   static const String saveInvoice = 'Save Invoice';
   static const String invoiceDateHeader = 'Invoice Date';
   static const String taxableAmountHeader = 'Taxable Amount';

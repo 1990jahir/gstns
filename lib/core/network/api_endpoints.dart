@@ -7,6 +7,15 @@ class ApiEndpoints {
   static const String verifyOtp = '/api/v1/auth/otp/verify';
   static const String me = '/api/v1/auth/me';
 
+  // Registration & Challenge endpoints from API specification
+  static const String register = '/api/v1/register';
+  static const String challenge = '/api/v1/auth/challenge';
+
+  // Feature endpoints
+  static const String customers = '/api/v1/customers';
+  static const String invoices = '/api/v1/invoices';
+  static const String reportsProfitLoss = '/api/v1/reports/profit-loss';
+
   // Exact Postman/Apidog generated Basic Auth token and credentials
   static const String basicAuthToken = 'MDFhMTRlM2MtY2Y2Mi03MjcxLWI2NWUtOWE4MjJhNDJiZDI3OnlNZTF0bjNtVDcxUFl4NGlSNUhZQWVZZDFMTWp1Y0hkMVZ0SXhycms=';
   static const String defaultClientId = '01a14e3c-cf62-7271-b65e-9a822a42bd27';
