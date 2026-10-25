@@ -36,6 +36,8 @@ class ProfilePage extends ConsumerWidget {
         iconTheme: IconThemeData(color: isDark ? ColorManager.white : ColorManager.black),
       ),
       body: SafeArea(
+        top: false,
+        bottom: true,
         child: SingleChildScrollView(
           padding: const EdgeInsets.fromLTRB(20, 16, 20, 100), // Bottom padding for floating navbar
           child: Center(

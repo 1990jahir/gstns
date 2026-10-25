@@ -74,6 +74,8 @@ class _ProfileSettingsPageState extends ConsumerState<ProfileSettingsPage> {
         elevation: 0,
       ),
       body: SafeArea(
+        top: false,
+        bottom: true,
         child: isWide
             ? Row(
                 crossAxisAlignment: CrossAxisAlignment.start,

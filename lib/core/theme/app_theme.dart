@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../res/color_manager.dart';
 import '../res/font_manager.dart';
 import '../res/styles_manager.dart';
@@ -20,6 +21,15 @@ class AppTheme {
         headlineMedium: getBoldStyle(fontSize: FontManager.s24, color: ColorManager.lightTextPrimary),
         bodyLarge: getRegularStyle(fontSize: FontManager.s16, color: ColorManager.lightTextPrimary),
         bodyMedium: getRegularStyle(fontSize: FontManager.s14, color: ColorManager.lightTextSecondary),
+      ),
+      appBarTheme: const AppBarTheme(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        systemOverlayStyle: SystemUiOverlayStyle(
+          statusBarColor: Colors.transparent,
+          statusBarIconBrightness: Brightness.dark,
+          statusBarBrightness: Brightness.light,
+        ),
       ),
       textSelectionTheme: TextSelectionThemeData(
         cursorColor: ColorManager.primaryGreen,
@@ -79,6 +89,15 @@ class AppTheme {
         headlineMedium: getBoldStyle(fontSize: FontManager.s24, color: ColorManager.darkTextPrimary),
         bodyLarge: getRegularStyle(fontSize: FontManager.s16, color: ColorManager.darkTextPrimary),
         bodyMedium: getRegularStyle(fontSize: FontManager.s14, color: ColorManager.darkTextSecondary),
+      ),
+      appBarTheme: const AppBarTheme(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        systemOverlayStyle: SystemUiOverlayStyle(
+          statusBarColor: Colors.transparent,
+          statusBarIconBrightness: Brightness.light,
+          statusBarBrightness: Brightness.dark,
+        ),
       ),
       textSelectionTheme: TextSelectionThemeData(
         cursorColor: ColorManager.primaryGreen,

@@ -5,17 +5,20 @@ import '../res/string_manager.dart';
 class ApiException implements Exception {
   final String message;
   final int? statusCode;
+  final String? code;
   final dynamic error;
 
   ApiException({
     required this.message,
     this.statusCode,
+    this.code,
     this.error,
   });
 
   factory ApiException.fromDioException(DioException dioException) {
     String message = StringManager.unexpectedError;
     int? statusCode = dioException.response?.statusCode;
+    String? code;
 
     switch (dioException.type) {
       case DioExceptionType.connectionTimeout:
@@ -26,10 +29,17 @@ class ApiException implements Exception {
       case DioExceptionType.badResponse:
         try {
           final data = dioException.response?.data;
-          if (data is Map && data.containsKey('message')) {
-            message = data['message'].toString();
+          if (data is Map) {
+            if (data.containsKey('message')) {
+              message = data['message'].toString();
+            } else {
+              message = '\ (\)';
+            }
+            if (data.containsKey('code')) {
+              code = data['code'].toString();
+            }
           } else {
-            message = '${StringManager.serverError} (${dioException.response?.statusCode})';
+            message = '\ (\)';
           }
         } catch (_) {
           message = StringManager.serverErrorOccurred;
@@ -53,6 +63,7 @@ class ApiException implements Exception {
     return ApiException(
       message: message,
       statusCode: statusCode,
+      code: code,
       error: dioException.error,
     );
   }

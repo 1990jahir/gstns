@@ -123,6 +123,8 @@ class _CustomersPageState extends ConsumerState<CustomersPage> {
         label: Text('Add Customer', style: getBoldStyle(fontSize: FontManager.s14, color: Colors.white)),
       ),
       body: SafeArea(
+        top: false,
+        bottom: true,
         child: Column(
           children: [
             // Search & Import Bar

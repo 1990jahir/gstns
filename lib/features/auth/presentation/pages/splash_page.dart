@@ -72,6 +72,8 @@ class _SplashPageState extends State<SplashPage> with SingleTickerProviderStateM
           ),
         ),
         child: SafeArea(
+          top: false,
+          bottom: true,
           child: Center(
             child: FadeTransition(
               opacity: _fadeAnimation,

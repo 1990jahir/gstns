@@ -135,6 +135,8 @@ class _AddCustomerPageState extends ConsumerState<AddCustomerPage> {
         ],
       ),
       body: SafeArea(
+        top: false,
+        bottom: true,
         child: Form(
           key: _formKey,
           child: ListView(

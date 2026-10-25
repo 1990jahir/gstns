@@ -5,6 +5,7 @@ import '../../../../core/res/color_manager.dart';
 import '../../../../core/res/string_manager.dart';
 import '../../../../core/router/app_router.dart';
 import '../../../../core/utils/extensions.dart';
+import '../../data/models/register_flow_models.dart';
 import '../providers/register_provider.dart';
 import '../widgets/business_id_card_preview.dart';
 import '../widgets/password_strength_meter.dart';
@@ -110,6 +111,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
         _isGstinVerified = false;
         _gstinErrorMessage = null;
         _isGstinMessageOk = false;
+        ref.read(registerNotifierProvider.notifier).resetGstinVerification();
       });
     }
 
@@ -169,25 +171,44 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
     }
   }
 
-  void _handleVerifyGstin() {
+  void _handleVerifyGstin() async {
     final gstin = _gstinController.text.trim().toUpperCase();
-    if (!_gstRegex.hasMatch(gstin)) return;
+    if (!_gstRegex.hasMatch(gstin)) {
+      setState(() {
+        _gstinErrorMessage = 'This GSTIN isn’t valid. Check the characters and try again.';
+        _isGstinMessageOk = false;
+      });
+      return;
+    }
 
     setState(() {
       _isVerifyingGstin = true;
+      _gstinErrorMessage = null;
     });
 
-    Future.delayed(const Duration(milliseconds: 900), () {
-      if (!mounted) return;
+    final data = await ref.read(registerNotifierProvider.notifier).lookupRegisterGstin(gstin);
+
+    if (!mounted) return;
+
+    if (data != null) {
       setState(() {
         _isVerifyingGstin = false;
         _isGstinVerified = true;
-        _gstinErrorMessage = 'Business details filled in';
+        _gstinErrorMessage = '✓ GST verified: ${data.effectiveCompanyName}';
         _isGstinMessageOk = true;
         _triggerShine = true;
-        if (_companyController.text.trim().isEmpty) {
-          _companyController.text = 'Sample Traders Pvt Ltd';
-          _companyErrorMessage = null;
+
+        // Auto-populate company name and owner name fields from API
+        _companyController.text = data.effectiveCompanyName;
+        _companyErrorMessage = null;
+
+        if (data.firstName.isNotEmpty) {
+          _firstNameController.text = data.firstName;
+          _firstNameErrorMessage = null;
+        }
+        if (data.lastName.isNotEmpty) {
+          _lastNameController.text = data.lastName;
+          _lastNameErrorMessage = null;
         }
       });
 
@@ -195,7 +216,15 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
       Future.delayed(const Duration(milliseconds: 1000), () {
         if (mounted) setState(() => _triggerShine = false);
       });
-    });
+    } else {
+      final regState = ref.read(registerNotifierProvider);
+      setState(() {
+        _isVerifyingGstin = false;
+        _isGstinVerified = false;
+        _gstinErrorMessage = regState.gstinMessage ?? 'GSTIN verification failed. Please check and try again.';
+        _isGstinMessageOk = false;
+      });
+    }
   }
 
   void _handleStep1Continue() {
@@ -280,31 +309,36 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
 
     if (hasError) return;
 
-    final panNo = _accountType == 'Registered' && _gstinController.text.length >= 12
-        ? _gstinController.text.substring(2, 12).toUpperCase()
-        : 'ABCDE1234F';
+    final gstinText = _gstinController.text.trim().toUpperCase();
+    final panNo = _accountType == 'Registered' && gstinText.length >= 12
+        ? gstinText.substring(2, 12).toUpperCase()
+        : (ref.read(registerNotifierProvider).gstinData?.pan ?? 'ABCDE1234F');
 
-    final success = await ref.read(registerNotifierProvider.notifier).register(
-          signupToken: 'token_dummy_123',
-          panNo: panNo,
-          companyName: _companyController.text.trim(),
-          firstName: _firstNameController.text.trim(),
-          lastName: _lastNameController.text.trim(),
-          email: email,
-          password: pw,
-          passwordConfirmation: pw2,
-          referralCode: _referralController.text.trim(),
+    final payload = RegisterPayload(
+      signupToken: '',
+      userType: _accountType == 'Registered' ? 3 : 7,
+      companyName: _companyController.text.trim(),
+      firstName: _firstNameController.text.trim(),
+      lastName: _lastNameController.text.trim(),
+      email: email,
+      password: pw,
+      passwordConfirmation: pw2,
+      referralCode: _referralController.text.trim(),
+      gstin: _accountType == 'Registered' ? gstinText : null,
+      panNo: _accountType == 'Registered' ? null : panNo,
+    );
+
+    final success = await ref.read(registerNotifierProvider.notifier).sendRegisterOtp(
+          mobile: phone,
+          payload: payload,
         );
 
     if (!mounted) return;
 
     if (success) {
-      setState(() {
-        _step = 3;
-      });
-      ref.read(registerNotifierProvider.notifier).setStep(2);
+      context.push(AppRouter.verifyOtp, extra: phone);
     } else {
-      final err = ref.read(registerNotifierProvider).errorMessage ?? 'Registration failed. Please try again.';
+      final err = ref.read(registerNotifierProvider).errorMessage ?? 'Failed to send WhatsApp OTP. Please try again.';
       context.showSnackBar(err, isError: true);
     }
   }
@@ -337,6 +371,8 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
     return Scaffold(
       backgroundColor: bg,
       body: SafeArea(
+        top: false,
+        bottom: true,
         child: Center(
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 440),

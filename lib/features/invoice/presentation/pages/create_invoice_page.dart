@@ -81,6 +81,8 @@ class _CreateInvoicePageState extends ConsumerState<CreateInvoicePage> {
         ],
       ),
       body: SafeArea(
+        top: false,
+        bottom: true,
         child: Form(
           key: _formKey,
           child: ListView(

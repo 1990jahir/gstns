@@ -68,12 +68,14 @@ class _OnboardingPageState extends State<OnboardingPage> {
     return Scaffold(
       backgroundColor: isDark ? ColorManager.darkSurface : const Color(0xFFF7F8FA),
       body: SafeArea(
+        top: false,
+        bottom: true,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             // Top Brand Header & Skip Button
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
+              padding: EdgeInsets.fromLTRB(24.0, MediaQuery.paddingOf(context).top + 12.0, 24.0, 12.0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [

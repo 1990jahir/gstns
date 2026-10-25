@@ -1,18 +1,36 @@
+import 'package:flutter/foundation.dart';
 import '../../../../core/network/api_exception.dart';
 import '../../../../core/network/interceptors/auth_interceptor.dart';
 import '../../../../core/services/cache_service.dart';
+import '../../../../core/services/challenge_service.dart';
 import '../../data/datasources/auth_remote_data_source.dart';
 import '../../data/models/auth_models.dart';
+import '../../data/models/gstin_lookup_model.dart';
+import '../../data/models/register_flow_models.dart';
 
-/// Repository managing authentication operations and local token caching.
+/// Repository managing authentication operations, bot-check challenges, and local token caching.
 class AuthRepository {
   final AuthRemoteDataSource _remoteDataSource = AuthRemoteDataSource();
   final CacheService _cacheService = CacheService();
+  final ChallengeService _challengeService = ChallengeService();
 
+  /// Standard Email & Password Login with Bot-Check PoW Challenge
   Future<AuthResponse> login(String email, String password) async {
     try {
+      // 1. Solve Proof-of-Work bot-check challenge
+      ChallengeSolution? solution;
+      try {
+        solution = await _challengeService.getSolvedChallenge();
+      } catch (e) {
+        debugPrint('[GSTSOF_AUTH] Challenge failed: ');
+      }
+
       final request = LoginRequest(email: email, password: password);
-      final response = await _remoteDataSource.login(request);
+      final response = await _remoteDataSource.login(
+        request,
+        challenge: solution?.challenge,
+        challengeNonce: solution?.nonce,
+      );
       
       if (response.status == 'success' && response.data != null) {
         AuthInterceptor.setTokens(
@@ -33,9 +51,23 @@ class AuthRepository {
     }
   }
 
-  Future<Map<String, dynamic>> verifyGstin(String gstin) async {
+  /// Solves the bot-check Proof-of-Work challenge off-thread and queries the registration GSTIN lookup API
+  Future<GstinLookupData> lookupRegisterGstin(String gstin) async {
     try {
-      return await _remoteDataSource.verifyGstin(gstin);
+      // 1. Obtain solved bot-check challenge
+      final solution = await _challengeService.getSolvedChallenge();
+
+      // 2. Query GSTIN Lookup API with challenge headers
+      final res = await _remoteDataSource.lookupRegisterGstin(
+        gstin: gstin.trim().toUpperCase(),
+        challenge: solution.challenge,
+        nonce: solution.nonce,
+      );
+
+      if (res['data'] != null) {
+        return GstinLookupData.fromJson(res['data'] as Map<String, dynamic>);
+      }
+      throw ApiException(message: res['message'] ?? 'GSTIN lookup failed');
     } on ApiException {
       rethrow;
     } catch (e) {
@@ -43,19 +75,113 @@ class AuthRepository {
     }
   }
 
+  /// Sign-up Step 1: Request a fresh PoW challenge and send WhatsApp OTP
+  Future<RegisterOtpSendData> sendRegisterOtp(String mobile) async {
+    try {
+      // 1. Ensure E.164 phone format (+91 followed by 10 digits)
+      final clean = mobile.replaceAll(RegExp(r'[^0-9+]'), '');
+      final formatted = clean.startsWith('+91')
+          ? clean
+          : (clean.startsWith('91') ? '+' : '+91');
+
+      // 2. Obtain fresh solved bot-check challenge
+      final solution = await _challengeService.getSolvedChallenge();
+
+      // 3. Send WhatsApp OTP
+      final res = await _remoteDataSource.sendRegisterOtp(
+        mobile: formatted,
+        challenge: solution.challenge,
+        nonce: solution.nonce,
+      );
+
+      if (res['data'] != null) {
+        return RegisterOtpSendData.fromJson(res['data'] as Map<String, dynamic>);
+      }
+      throw ApiException(message: res['message'] ?? 'Failed to send WhatsApp OTP');
+    } on ApiException {
+      rethrow;
+    } catch (e) {
+      throw ApiException(message: e.toString());
+    }
+  }
+
+  /// Sign-up Step 2: Request a fresh PoW challenge and verify WhatsApp OTP
+  Future<RegisterOtpVerifyData> verifyRegisterOtp({
+    required String otpSessionToken,
+    required String otp,
+  }) async {
+    try {
+      // 1. Obtain fresh solved bot-check challenge
+      final solution = await _challengeService.getSolvedChallenge();
+
+      // 2. Verify WhatsApp OTP
+      final res = await _remoteDataSource.verifyRegisterOtp(
+        otpSessionToken: otpSessionToken,
+        otp: otp.trim(),
+        challenge: solution.challenge,
+        nonce: solution.nonce,
+      );
+
+      if (res['data'] != null) {
+        return RegisterOtpVerifyData.fromJson(res['data'] as Map<String, dynamic>);
+      }
+      throw ApiException(message: res['message'] ?? 'Failed to verify WhatsApp OTP');
+    } on ApiException {
+      rethrow;
+    } catch (e) {
+      throw ApiException(message: e.toString());
+    }
+  }
+
+  /// Sign-up Step 3: Request a fresh PoW challenge and create the account
+  Future<RegisterAccountResponse> registerAccount(RegisterPayload payload) async {
+    try {
+      // 1. Obtain fresh solved bot-check challenge
+      final solution = await _challengeService.getSolvedChallenge();
+
+      // 2. Create Account
+      final res = await _remoteDataSource.register(
+        payload.toJson(),
+        challenge: solution.challenge,
+        challengeNonce: solution.nonce,
+      );
+
+      final accountRes = RegisterAccountResponse.fromJson(res);
+
+      // If login_required is false, session tokens are provided immediately
+      if (!accountRes.loginRequired && accountRes.accessToken != null && accountRes.accessToken!.isNotEmpty) {
+        AuthInterceptor.setTokens(
+          access: accountRes.accessToken!,
+          refresh: accountRes.refreshToken ?? '',
+        );
+        await _cacheService.saveAuthSession(
+          accessToken: accountRes.accessToken!,
+          refreshToken: accountRes.refreshToken ?? '',
+          email: payload.email,
+        );
+      }
+
+      return accountRes;
+    } on ApiException {
+      rethrow;
+    } catch (e) {
+      throw ApiException(message: e.toString());
+    }
+  }
+
+  /// Legacy helper for backward compatibility
   Future<Map<String, dynamic>> register(Map<String, dynamic> data) async {
     try {
-      String? challenge;
-      String? challengeNonce;
+      ChallengeSolution? solution;
       try {
-        final challengeRes = await _remoteDataSource.getChallenge();
-        if (challengeRes['data'] != null) {
-          challenge = challengeRes['data']['challenge'];
-          challengeNonce = challengeRes['data']['nonce'];
-        }
+        solution = await _challengeService.getSolvedChallenge();
       } catch (_) {}
 
-      final response = await _remoteDataSource.register(data, challenge: challenge, challengeNonce: challengeNonce);
+      final response = await _remoteDataSource.register(
+        data,
+        challenge: solution?.challenge ?? '',
+        challengeNonce: solution?.nonce ?? '',
+      );
 
       if (response['status'] == 'success' && response['data'] != null && response['data']['login_required'] == false) {
         final tokenData = response['data'];
@@ -72,6 +198,21 @@ class AuthRepository {
         );
       }
       return response;
+    } on ApiException {
+      rethrow;
+    } catch (e) {
+      throw ApiException(message: e.toString());
+    }
+  }
+
+  /// Legacy helper for backward compatibility
+  Future<Map<String, dynamic>> verifyGstin(String gstin) async {
+    try {
+      final data = await lookupRegisterGstin(gstin);
+      return {
+        'status': 'success',
+        'data': data.toJson(),
+      };
     } on ApiException {
       rethrow;
     } catch (e) {

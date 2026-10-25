@@ -7,17 +7,24 @@ class ApiEndpoints {
   static const String verifyOtp = '/api/v1/auth/otp/verify';
   static const String me = '/api/v1/auth/me';
 
-  // Registration & Challenge & GSTIN endpoints from API specification
-  static const String register = '/api/v1/register';
+  // Registration & Challenge & GSTIN endpoints from API specification v1.1
   static const String challenge = '/api/v1/auth/challenge';
-  static const String verifyGstin = '/api/v1/gstin/verify';
+  static const String registerCheck = '/api/v1/register/check';
+  static const String registerGstinLookup = '/api/v1/register/gstin-lookup';
+  static const String registerOtpSend = '/api/v1/register/otp/send';
+  static const String registerOtpVerify = '/api/v1/register/otp/verify';
+  static const String register = '/api/v1/register';
+  static const String gstinLookup = '/api/v1/gstin/lookup';
+
+  // Legacy alias for backward compatibility
+  static const String verifyGstin = '/api/v1/register/gstin-lookup';
 
   // Feature endpoints
   static const String customers = '/api/v1/customers';
   static const String invoices = '/api/v1/invoices';
   static const String reportsProfitLoss = '/api/v1/reports/profit-loss';
 
-  // Correct working Basic Auth token from register cURL specification
+  // Correct working Basic Auth credentials from API specification
   static const String basicAuthToken = 'MDFhMTNhN2UtNjViNS03MWJlLWExNGYtZDNmOTk3OTY0MjAxOkM3TzliTXFlbWtab2t3RERGRzJpTng1UDNsVHBJOUJwUTVKVXpFTGM=';
   static const String defaultClientId = '01a13a7e-65b5-71be-a14f-d3f997964201';
   static const String defaultClientSecret = 'C7O9bMqemkZokwDDFG2iNx5P3lTpI9BpQ5JUzETLc';

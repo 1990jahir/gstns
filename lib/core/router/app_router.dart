@@ -53,7 +53,10 @@ class AppRouter {
       GoRoute(
         path: verifyOtp,
         name: 'verify_otp',
-        builder: (context, state) => const VerifyOtpPage(),
+        builder: (context, state) {
+          final mobile = state.extra as String?;
+          return VerifyOtpPage(mobile: mobile ?? '');
+        },
       ),
       GoRoute(
         path: dashboard,

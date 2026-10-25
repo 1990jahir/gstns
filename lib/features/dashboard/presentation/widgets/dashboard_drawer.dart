@@ -22,6 +22,8 @@ class DashboardDrawer extends StatelessWidget {
     return Drawer(
       backgroundColor: isDark ? ColorManager.darkSurface : ColorManager.white,
       child: SafeArea(
+        top: false,
+        bottom: true,
         child: Column(
           children: [
             Padding(

@@ -58,6 +58,8 @@ class _CompanySettingsPageState extends ConsumerState<CompanySettingsPage> {
         elevation: 0,
       ),
       body: SafeArea(
+        top: false,
+        bottom: true,
         child: isWide
             ? Row(
                 crossAxisAlignment: CrossAxisAlignment.start,

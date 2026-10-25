@@ -60,6 +60,8 @@ class _InvoicesPageState extends ConsumerState<InvoicesPage> with SingleTickerPr
         ),
       ),
       body: SafeArea(
+        top: false,
+        bottom: true,
         child: TabBarView(
           controller: _tabController,
           children: const [

@@ -26,7 +26,12 @@ class RegisterTopBar extends StatelessWidget {
     final stepText = currentStep > 2 ? 'Done' : '$currentStep / 2';
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+      padding: EdgeInsets.only(
+        top: MediaQuery.paddingOf(context).top + 10.0,
+        left: 20.0,
+        right: 20.0,
+        bottom: 10.0,
+      ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,

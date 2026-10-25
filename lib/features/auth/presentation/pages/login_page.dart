@@ -61,9 +61,11 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     return Scaffold(
       backgroundColor: isDark ? ColorManager.darkBackgroundApp : ColorManager.lightBackgroundApp,
       body: SafeArea(
+        top: false,
+        bottom: true,
         child: Center(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 24.0),
+            padding: EdgeInsets.fromLTRB(24.0, MediaQuery.paddingOf(context).top + 16.0, 24.0, 24.0),
             child: ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 440),
               child: Column(

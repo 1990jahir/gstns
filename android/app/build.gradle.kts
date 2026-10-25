@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    namespace = "com.gsts.new_code"
+    namespace = "com.gsts.gstsof"
     compileSdk = 34
     buildToolsVersion = "34.0.0"
     ndkVersion = flutter.ndkVersion
@@ -21,7 +21,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.gsts.new_code"
+        applicationId = "com.gsts.gstsof"
         minSdk = flutter.minSdkVersion
         targetSdk = 34
         versionCode = flutter.versionCode
