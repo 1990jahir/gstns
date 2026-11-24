@@ -15,8 +15,8 @@ class AuthRemoteDataSource {
         data: request.toJson(),
         options: Options(
           headers: {
-            if (challenge != null) 'X-Challenge': challenge,
-            if (challengeNonce != null) 'X-Challenge-Nonce': challengeNonce,
+            'X-Challenge': ?challenge,
+            'X-Challenge-Nonce': ?challengeNonce,
           },
         ),
       );

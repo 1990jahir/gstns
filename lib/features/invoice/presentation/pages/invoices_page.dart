@@ -1,72 +1,103 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import '../../../../core/res/color_manager.dart';
 import '../../../../core/res/font_manager.dart';
+import '../../../../core/res/string_manager.dart';
 import '../../../../core/res/styles_manager.dart';
+import '../../../../core/router/app_router.dart';
 import '../../../../core/utils/extensions.dart';
-import '../widgets/incoming_invoices_tab.dart';
-import '../widgets/purchase_invoices_tab.dart';
+import '../../../../core/widgets/web_empty_state.dart';
+import '../../../../core/widgets/web_filter_toolbar.dart';
+import '../../../../core/widgets/web_refresh_button.dart';
+import '../../../../core/widgets/web_section_banner.dart';
+import '../providers/invoice_provider.dart';
+import '../widgets/invoice_card.dart';
 
-/// Professional Invoices Page with two tabs (Purchase Invoice & Incoming Invoice).
-class InvoicesPage extends ConsumerStatefulWidget {
+/// Modern Sales Invoices Page matching the GSTSOF web portal design:
+/// - Screen title: Manage Invoices
+/// - Top right: Refresh button (Blue pill with sync icon)
+/// - Filter Toolbar: Show [50], Start Date, End Date, [ Q green button ], Search By [ Invoice No. v ], Search [ input Q ]
+/// - Section Banner: Green box icon, "Tax Invoices", subtitle, action button: "+ Create Invoice"
+/// - Table list with exact web fields: SL. No, Action, Date, Invoice No., Customer Name, GSTIN, Taxable Amount, Total Tax, Invoice Amount, Status, Due Date
+class InvoicesPage extends ConsumerWidget {
   const InvoicesPage({super.key});
 
   @override
-  ConsumerState<InvoicesPage> createState() => _InvoicesPageState();
-}
-
-class _InvoicesPageState extends ConsumerState<InvoicesPage> with SingleTickerProviderStateMixin {
-  late TabController _tabController;
-
-  @override
-  void initState() {
-    super.initState();
-    _tabController = TabController(length: 2, vsync: this);
-  }
-
-  @override
-  void dispose() {
-    _tabController.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final isDark = context.theme.brightness == Brightness.dark;
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final invoices = ref.watch(filteredInvoicesProvider);
+    final entriesPerPage = ref.watch(invoiceEntriesPerPageProvider);
+    final searchBy = ref.watch(invoiceSearchByProvider);
+    final searchQuery = ref.watch(invoiceSearchQueryProvider);
+    final startDate = ref.watch(invoiceStartDateProvider);
+    final endDate = ref.watch(invoiceEndDateProvider);
 
     return Scaffold(
-      backgroundColor: isDark ? const Color(0xFF0F172A) : const Color(0xFFF7F8FA),
+      backgroundColor: isDark ? const Color(0xFF0F172A) : const Color(0xFFF8FAFC),
       appBar: AppBar(
         title: Text(
-          'Manage Invoices',
+          StringManager.manageInvoices,
           style: getBoldStyle(
-            fontSize: FontManager.s20,
+            fontSize: FontManager.s18,
             color: isDark ? ColorManager.darkTextPrimary : ColorManager.lightTextPrimary,
           ),
         ),
         backgroundColor: isDark ? ColorManager.darkCard : Colors.white,
         elevation: 0,
-        bottom: TabBar(
-          controller: _tabController,
-          labelColor: ColorManager.primaryGreen,
-          unselectedLabelColor: isDark ? ColorManager.darkTextSecondary : ColorManager.lightTextSecondary,
-          indicatorColor: ColorManager.primaryGreen,
-          labelStyle: getBoldStyle(fontSize: FontManager.s14, color: ColorManager.primaryGreen),
-          unselectedLabelStyle: getMediumStyle(fontSize: FontManager.s14, color: ColorManager.grey),
-          tabs: const [
-            Tab(text: 'Purchase Invoices'),
-            Tab(text: 'Incoming Invoices'),
-          ],
-        ),
+        actions: [
+          WebRefreshButton(
+            onRefresh: () => context.showSnackBar('Refreshing invoices from server...'),
+          ),
+        ],
       ),
       body: SafeArea(
         top: false,
         bottom: true,
-        child: TabBarView(
-          controller: _tabController,
-          children: const [
-            PurchaseInvoicesTab(),
-            IncomingInvoicesTab(),
+        child: Column(
+          children: [
+            // Filter Toolbar: Show [50], Start Date, End Date, Search By, Search Input
+            WebFilterToolbar(
+              entriesPerPage: entriesPerPage,
+              onEntriesPerPageChanged: (val) {
+                if (val != null) ref.read(invoiceEntriesPerPageProvider.notifier).state = val;
+              },
+              startDate: startDate,
+              onStartDateChanged: (val) => ref.read(invoiceStartDateProvider.notifier).state = val,
+              endDate: endDate,
+              onEndDateChanged: (val) => ref.read(invoiceEndDateProvider.notifier).state = val,
+              onDateSearchPressed: () => context.showSnackBar('Applying invoice date filters...'),
+              searchBy: searchBy,
+              searchByOptions: const ['Invoice No.', 'Customer Name', 'GSTIN'],
+              onSearchByChanged: (val) {
+                if (val != null) ref.read(invoiceSearchByProvider.notifier).state = val;
+              },
+              searchQuery: searchQuery,
+              onSearchQueryChanged: (val) => ref.read(invoiceSearchQueryProvider.notifier).state = val,
+              searchHint: 'Search invoices...',
+            ),
+
+            // Green Box Section Header Banner
+            WebSectionBanner(
+              icon: Icons.receipt_long_rounded,
+              title: 'Tax Invoices',
+              subtitle: StringManager.invoicesSubtitle,
+              actionLabel: StringManager.createInvoice,
+              onActionPressed: () => context.push(AppRouter.createInvoice),
+            ),
+
+            // Invoices List or Empty State
+            Expanded(
+              child: invoices.isEmpty
+                  ? const WebEmptyState()
+                  : ListView.builder(
+                      padding: const EdgeInsets.fromLTRB(16, 4, 16, 80),
+                      itemCount: invoices.length,
+                      itemBuilder: (context, index) {
+                        return InvoiceCard(invoice: invoices[index]);
+                      },
+                    ),
+            ),
           ],
         ),
       ),

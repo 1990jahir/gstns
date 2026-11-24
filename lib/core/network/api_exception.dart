@@ -33,13 +33,13 @@ class ApiException implements Exception {
             if (data.containsKey('message')) {
               message = data['message'].toString();
             } else {
-              message = '\ (\)';
+              message = '${dioException.response?.statusMessage ?? StringManager.serverError} (${dioException.response?.statusCode})';
             }
             if (data.containsKey('code')) {
               code = data['code'].toString();
             }
           } else {
-            message = '\ (\)';
+            message = '${dioException.response?.statusMessage ?? StringManager.serverError} (${dioException.response?.statusCode})';
           }
         } catch (_) {
           message = StringManager.serverErrorOccurred;

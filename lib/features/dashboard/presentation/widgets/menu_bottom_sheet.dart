@@ -288,7 +288,68 @@ class MenuBottomSheet extends ConsumerWidget {
                   child: InkWell(
                     onTap: () {
                       Navigator.pop(context);
-                      context.showSnackBar('Selected: $title > $sub');
+                      switch (sub) {
+                        case 'Item List':
+                          context.push(AppRouter.items);
+                          break;
+                        case 'Item Group':
+                        case 'Item Category':
+                          context.push(AppRouter.itemCategories);
+                          break;
+                        case 'Transporters':
+                          context.push(AppRouter.transporters);
+                          break;
+                        case 'Customers':
+                          context.push(AppRouter.customers);
+                          break;
+                        case 'Invoices':
+                          context.push(AppRouter.invoices);
+                          break;
+                        case 'Credit Notes/Sales Return':
+                          context.push(AppRouter.creditNotes);
+                          break;
+                        case 'Delivery Challan':
+                          context.push(AppRouter.deliveryChallans);
+                          break;
+                        case 'Vendors':
+                          context.push(AppRouter.vendors);
+                          break;
+                        case 'Purchase Invoice':
+                          context.push(AppRouter.purchaseInvoices);
+                          break;
+                        case 'Incoming Invoice':
+                          context.push(AppRouter.incomingInvoices);
+                          break;
+                        case 'Debit Notes':
+                          context.push(AppRouter.debitNotes);
+                          break;
+                        case 'Bank Accounts':
+                          context.push(AppRouter.bankAccounts);
+                          break;
+                        case 'Transactions':
+                          context.push(AppRouter.bankTransactions);
+                          break;
+                        case 'Expenses':
+                          context.push(AppRouter.expenses);
+                          break;
+                        case 'Income':
+                          context.push(AppRouter.income);
+                          break;
+                        case 'GSTR-1':
+                          context.push(AppRouter.gstr1);
+                          break;
+                        case 'GSTR-3B':
+                          context.push(AppRouter.gstr3b);
+                          break;
+                        case 'Profit & Loss':
+                          context.push(AppRouter.profitLoss);
+                          break;
+                        case 'Balance Sheet':
+                          context.push(AppRouter.balanceSheet);
+                          break;
+                        default:
+                          context.showSnackBar('Selected: $title > $sub');
+                      }
                     },
                     borderRadius: BorderRadius.circular(12),
                     child: Container(

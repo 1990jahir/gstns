@@ -4,9 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/res/color_manager.dart';
-import '../../../../core/res/font_manager.dart';
 import '../../../../core/res/string_manager.dart';
-import '../../../../core/res/styles_manager.dart';
 import '../../../../core/router/app_router.dart';
 import '../../../../core/utils/extensions.dart';
 import '../../../../core/widgets/custom_button.dart';
@@ -224,7 +222,7 @@ class _VerifyOtpPageState extends ConsumerState<VerifyOtpPage> {
                             'assets/png_images/whatsapp.png',
                             width: 34,
                             height: 34,
-                            errorBuilder: (_, __, ___) => const Icon(
+                            errorBuilder: (context, error, stackTrace) => const Icon(
                               Icons.message_rounded,
                               size: 32,
                               color: Color(0xFF25D366),

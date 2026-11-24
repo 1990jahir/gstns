@@ -150,7 +150,7 @@ class RegisterNotifier extends StateNotifier<RegisterState> {
       state = state.copyWith(
         isVerifyingGstin: false,
         isGstinVerified: true,
-        gstinMessage: '✓ GST verified: ',
+        gstinMessage: '✓ GST verified: ${data.effectiveCompanyName}',
         isGstinMessageOk: true,
         gstinData: data,
       );
@@ -167,6 +167,11 @@ class RegisterNotifier extends StateNotifier<RegisterState> {
     }
   }
 
+  /// Bridge method matching register_page.dart call to verifyGstin
+  Future<GstinLookupData?> verifyGstin(String gstin) async {
+    return await lookupRegisterGstin(gstin);
+  }
+
   /// Sign-up Step 1: Request PoW challenge and send WhatsApp OTP
   Future<bool> sendRegisterOtp({
     required String mobile,
@@ -174,12 +179,16 @@ class RegisterNotifier extends StateNotifier<RegisterState> {
   }) async {
     state = state.copyWith(isLoading: true, errorMessage: null);
     try {
-      final data = await _repository.sendRegisterOtp(mobile);
+      final digits = mobile.replaceAll(RegExp(r'[^0-9]'), '');
+      final last10 = digits.length >= 10 ? digits.substring(digits.length - 10) : digits;
+      final formatted = '+91$last10';
+
+      final data = await _repository.sendRegisterOtp(formatted);
       state = state.copyWith(
         isLoading: false,
         otpSessionToken: data.otpSessionToken,
         resendIn: data.resendIn,
-        registeredMobile: mobile,
+        registeredMobile: formatted,
         pendingPayload: payload,
       );
       return true;
@@ -264,9 +273,9 @@ class RegisterNotifier extends StateNotifier<RegisterState> {
     }
   }
 
-  /// Legacy register method
+  /// Legacy register method with optional signupToken
   Future<bool> register({
-    required String signupToken,
+    String signupToken = 'token_dummy_123',
     required String panNo,
     required String companyName,
     required String firstName,

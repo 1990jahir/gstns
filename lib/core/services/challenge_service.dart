@@ -3,6 +3,7 @@ import 'dart:isolate';
 import 'package:crypto/crypto.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
+import '../network/api_client.dart';
 import '../network/api_endpoints.dart';
 import '../network/api_exception.dart';
 
@@ -49,20 +50,9 @@ class ChallengeService {
   static final ChallengeService _instance = ChallengeService._internal();
   factory ChallengeService() => _instance;
 
-  final Dio _dio;
+  final Dio _dio = ApiClient().dio;
 
-  ChallengeService._internal()
-      : _dio = Dio(
-          BaseOptions(
-            baseUrl: ApiEndpoints.baseUrl,
-            connectTimeout: const Duration(seconds: 15),
-            receiveTimeout: const Duration(seconds: 15),
-            headers: {
-              'Accept': 'application/json',
-              'Authorization': 'Basic ${ApiEndpoints.basicAuthToken}',
-            },
-          ),
-        );
+  ChallengeService._internal();
 
   /// Requests a fresh challenge from /api/v1/auth/challenge and solves it in a background Isolate.
   Future<ChallengeSolution> getSolvedChallenge() async {

@@ -3,10 +3,19 @@ import '../../../../core/res/string_manager.dart';
 
 /// High-fidelity Login Header widget with logo glow/gradient aura.
 class LoginHeader extends StatelessWidget {
-  const LoginHeader({super.key});
+  final String? title;
+  final String? subtitle;
+
+  const LoginHeader({
+    super.key,
+    this.title,
+    this.subtitle,
+  });
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Column(
       children: [
         // Logo with Glow / Gradient Aura
@@ -31,7 +40,7 @@ class LoginHeader extends StatelessWidget {
               width: 72,
               height: 72,
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: isDark ? const Color(0xFF1E293B) : Colors.white,
                 shape: BoxShape.circle,
                 boxShadow: [
                   BoxShadow(
@@ -64,22 +73,24 @@ class LoginHeader extends StatelessWidget {
           ],
         ),
         const SizedBox(height: 20),
-        const Text(
-          StringManager.welcomeBack,
+        Text(
+          title ?? StringManager.welcomeBack,
           style: TextStyle(
-            fontSize: 26,
+            fontSize: 24,
             fontWeight: FontWeight.w700,
-            color: Color(0xFF1F2937),
+            color: isDark ? Colors.white : const Color(0xFF1F2937),
             letterSpacing: -0.5,
           ),
+          textAlign: TextAlign.center,
         ),
         const SizedBox(height: 6),
-        const Text(
-          StringManager.signInSubtitle,
+        Text(
+          subtitle ?? StringManager.signInSubtitle,
           style: TextStyle(
-            fontSize: 14,
-            color: Color(0xFF6B7280),
+            fontSize: 13,
+            color: isDark ? const Color(0xFF94A3B8) : const Color(0xFF6B7280),
           ),
+          textAlign: TextAlign.center,
         ),
       ],
     );

@@ -24,7 +24,7 @@ class ApiEndpoints {
   static const String invoices = '/api/v1/invoices';
   static const String reportsProfitLoss = '/api/v1/reports/profit-loss';
 
-  // Correct working Basic Auth credentials from API specification
+  // Working Basic Auth credentials verified in Apidog (matches active server environment)
   static const String basicAuthToken = 'MDFhMTNhN2UtNjViNS03MWJlLWExNGYtZDNmOTk3OTY0MjAxOkM3TzliTXFlbWtab2t3RERGRzJpTng1UDNsVHBJOUJwUTVKVXpFTGM=';
   static const String defaultClientId = '01a13a7e-65b5-71be-a14f-d3f997964201';
   static const String defaultClientSecret = 'C7O9bMqemkZokwDDFG2iNx5P3lTpI9BpQ5JUzETLc';

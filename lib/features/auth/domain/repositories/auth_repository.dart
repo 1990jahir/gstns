@@ -79,10 +79,9 @@ class AuthRepository {
   Future<RegisterOtpSendData> sendRegisterOtp(String mobile) async {
     try {
       // 1. Ensure E.164 phone format (+91 followed by 10 digits)
-      final clean = mobile.replaceAll(RegExp(r'[^0-9+]'), '');
-      final formatted = clean.startsWith('+91')
-          ? clean
-          : (clean.startsWith('91') ? '+' : '+91');
+      final digits = mobile.replaceAll(RegExp(r'[^0-9]'), '');
+      final last10 = digits.length >= 10 ? digits.substring(digits.length - 10) : digits;
+      final formatted = '+91$last10';
 
       // 2. Obtain fresh solved bot-check challenge
       final solution = await _challengeService.getSolvedChallenge();

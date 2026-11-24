@@ -17,10 +17,18 @@ class RegisterTopBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final surfaceColor = isDark ? ColorManager.authSurfaceDark : ColorManager.authSurfaceLight;
-    final lineColor = isDark ? ColorManager.authLineDark : ColorManager.authLineLight;
-    final textColor = isDark ? ColorManager.authTextDark : ColorManager.authTextLight;
-    final mutedColor = isDark ? ColorManager.authMutedDark : ColorManager.authMutedLight;
+    final surfaceColor = isDark
+        ? ColorManager.authSurfaceDark
+        : ColorManager.authSurfaceLight;
+    final lineColor = isDark
+        ? ColorManager.authLineDark
+        : ColorManager.authLineLight;
+    final textColor = isDark
+        ? ColorManager.authTextDark
+        : ColorManager.authTextLight;
+    final mutedColor = isDark
+        ? ColorManager.authMutedDark
+        : ColorManager.authMutedLight;
 
     final showBack = currentStep == 2;
     final stepText = currentStep > 2 ? 'Done' : '$currentStep / 2';

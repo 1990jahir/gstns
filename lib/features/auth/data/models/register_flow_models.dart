@@ -1,4 +1,4 @@
-/// Models for Registration OTP & Sign-up Flow per GSTSOF API Specification v1.1
+// Models for Registration OTP & Sign-up Flow per GSTSOF API Specification v1.1
 
 /// Response from POST /api/v1/register/otp/send
 class RegisterOtpSendData {
@@ -135,3 +135,4 @@ class RegisterAccountResponse {
     );
   }
 }
+

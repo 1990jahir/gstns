@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import '../../../../core/res/color_manager.dart';
 import '../../../../core/res/font_manager.dart';
 import '../../../../core/res/styles_manager.dart';
+import '../../../../core/router/app_router.dart';
 import '../../../../core/utils/extensions.dart';
 
 /// Client-Choice Quick Actions & Import Banner Card
@@ -94,7 +96,23 @@ class QuickActionsCard extends StatelessWidget {
                     return Padding(
                       padding: const EdgeInsets.only(right: 18.0),
                       child: InkWell(
-                        onTap: () => context.showSnackBar('$label clicked'),
+                        onTap: () {
+                          if (label.contains('Invoice')) {
+                            context.push(AppRouter.createInvoice);
+                          } else if (label.contains('Purchase')) {
+                            context.push(AppRouter.purchaseInvoices);
+                          } else if (label.contains('Payment')) {
+                            context.push(AppRouter.recordPayment);
+                          } else if (label.contains('Expense')) {
+                            context.push(AppRouter.expenses);
+                          } else if (label.contains('GST')) {
+                            context.push(AppRouter.gstr1);
+                          } else if (label.contains('E-Way')) {
+                            context.push(AppRouter.transporters);
+                          } else {
+                            context.showSnackBar('$label clicked');
+                          }
+                        },
                         borderRadius: BorderRadius.circular(16),
                         child: Column(
                           mainAxisSize: MainAxisSize.min,

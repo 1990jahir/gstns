@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../core/res/color_manager.dart';
+import '../../../../core/res/string_manager.dart';
 
 /// Bottom Dock containing the Primary Action Button and Login Navigation
 /// Styled in alignment with the app's official Forest Green theme:
@@ -11,6 +12,9 @@ class RegisterBottomDock extends StatelessWidget {
   final bool isLoading;
   final VoidCallback onCtaPressed;
   final VoidCallback onSignInTap;
+  final String? customCtaText;
+  final String? customFooterLabel;
+  final String? customFooterAction;
 
   const RegisterBottomDock({
     super.key,
@@ -18,6 +22,9 @@ class RegisterBottomDock extends StatelessWidget {
     this.isLoading = false,
     required this.onCtaPressed,
     required this.onSignInTap,
+    this.customCtaText,
+    this.customFooterLabel,
+    this.customFooterAction,
   });
 
   @override
@@ -27,13 +34,15 @@ class RegisterBottomDock extends StatelessWidget {
 
     String ctaText;
     if (isLoading) {
-      ctaText = 'Creating…';
+      ctaText = 'Processing...';
+    } else if (customCtaText != null) {
+      ctaText = customCtaText!;
     } else if (currentStep == 1) {
-      ctaText = 'Continue';
+      ctaText = StringManager.continueBtn;
     } else if (currentStep == 2) {
-      ctaText = 'Create account';
+      ctaText = StringManager.registerBtn;
     } else {
-      ctaText = 'Go to sign in';
+      ctaText = StringManager.signInLink;
     }
 
     return Container(
@@ -109,7 +118,7 @@ class RegisterBottomDock extends StatelessWidget {
             ),
           ),
 
-          // Sign In Footer Link (Only shown on Steps 1 & 2)
+          // Sign In Footer Link (Only shown on Steps 1 & 2 or Partner Mode)
           if (currentStep < 3) ...[
             const SizedBox(height: 12),
             GestureDetector(
@@ -124,11 +133,11 @@ class RegisterBottomDock extends StatelessWidget {
                       color: muted,
                       fontFamily: 'Inter',
                     ),
-                    children: const [
-                      TextSpan(text: 'Already have an account? '),
+                    children: [
+                      TextSpan(text: customFooterLabel ?? StringManager.alreadyHaveAccount),
                       TextSpan(
-                        text: 'Sign in',
-                        style: TextStyle(
+                        text: customFooterAction ?? StringManager.signInLink,
+                        style: const TextStyle(
                           color: ColorManager.primaryGreen,
                           fontWeight: FontWeight.w700,
                         ),

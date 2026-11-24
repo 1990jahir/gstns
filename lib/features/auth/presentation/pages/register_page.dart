@@ -7,33 +7,33 @@ import '../../../../core/router/app_router.dart';
 import '../../../../core/utils/extensions.dart';
 import '../../data/models/register_flow_models.dart';
 import '../providers/register_provider.dart';
+import '../widgets/auth_role_segmented_switch.dart';
 import '../widgets/business_id_card_preview.dart';
 import '../widgets/password_strength_meter.dart';
 import '../widgets/register_bottom_dock.dart';
 import '../widgets/register_business_pane.dart';
 import '../widgets/register_header_new.dart';
+import '../widgets/register_partner_pane.dart';
 import '../widgets/register_security_pane.dart';
-import '../widgets/register_success_pane.dart';
 import '../widgets/register_top_bar.dart';
 
-/// Modern Revamped Multi-step Register Page
-/// Based on the latest professional HTML design reference:
-/// - Real-time Digital Business ID / GST Card preview with interactive shimmer
-/// - Clean modular widgets and Plus Jakarta Sans / Sora / Inter typography
-/// - Segmented control, GSTIN verification chip, 4-bar password strength meter, match validator
-/// - Smooth step transitions and sticky dock with orange 'Go' action button
+/// Modern Revamped Multi-step Register Page supporting both Business Client and CA/Tax Partner roles.
 class RegisterPage extends ConsumerStatefulWidget {
-  const RegisterPage({super.key});
+  final String? initialRole;
+  const RegisterPage({super.key, this.initialRole});
 
   @override
   ConsumerState<RegisterPage> createState() => _RegisterPageState();
 }
 
 class _RegisterPageState extends ConsumerState<RegisterPage> {
-  // Step tracker: 1 = Business, 2 = Security, 3 = Success
+  // Role switcher: 0 = Client, 1 = Partner (CA/Tax Professional)
+  late int _roleIndex;
+
+  // Step tracker: 1 = Business Info, 2 = Security Credentials
   int _step = 1;
 
-  // Controllers
+  // Client Controllers
   final _gstinController = TextEditingController();
   final _companyController = TextEditingController();
   final _firstNameController = TextEditingController();
@@ -44,7 +44,21 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
   final _confirmPasswordController = TextEditingController();
   final _referralController = TextEditingController();
 
-  // Step 1 Validation & Card State
+  // Partner Controllers
+  final _partnerFullNameController = TextEditingController();
+  final _partnerFirmNameController = TextEditingController();
+  final _partnerMembershipController = TextEditingController();
+  final _partnerEmailController = TextEditingController();
+  final _partnerPhoneController = TextEditingController();
+  final _partnerPasswordController = TextEditingController();
+  final _partnerConfirmPasswordController = TextEditingController();
+  final _partnerCityController = TextEditingController();
+  final _partnerStateController = TextEditingController();
+
+  // Partner State
+  String _partnerProfession = 'Chartered Accountant (CA)';
+
+  // Client Step 1 Validation & Card State
   String _accountType = 'Registered';
   bool _isGstinVerified = false;
   bool _isVerifyingGstin = false;
@@ -55,12 +69,24 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
   String? _firstNameErrorMessage;
   String? _lastNameErrorMessage;
 
-  // Step 2 Validation & State
+  // Client Step 2 Validation & State
   String? _emailErrorMessage;
   String? _phoneErrorMessage;
   String? _passwordErrorMessage;
   String? _confirmPasswordMessage;
   bool _isConfirmPasswordOk = false;
+
+  // Partner Validation & State
+  String? _partnerProfessionError;
+  String? _partnerMembershipError;
+  String? _partnerFirmNameError;
+  String? _partnerCityError;
+  String? _partnerStateError;
+  String? _partnerFullNameError;
+  String? _partnerEmailError;
+  String? _partnerPhoneError;
+  String? _partnerPasswordError;
+  String? _partnerConfirmPasswordError;
 
   static final RegExp _gstRegex = RegExp(r'^\d{2}[A-Z]{5}\d{4}[A-Z][1-9A-Z]Z[0-9A-Z]$');
   static final RegExp _emailRegex = RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$');
@@ -69,6 +95,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
   @override
   void initState() {
     super.initState();
+    _roleIndex = widget.initialRole == 'partner' ? 1 : 0;
     _gstinController.addListener(_onGstinChanged);
     _companyController.addListener(_onFieldChanged);
     _firstNameController.addListener(_onFieldChanged);
@@ -97,6 +124,16 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
     _passwordController.dispose();
     _confirmPasswordController.dispose();
     _referralController.dispose();
+
+    _partnerFullNameController.dispose();
+    _partnerFirmNameController.dispose();
+    _partnerMembershipController.dispose();
+    _partnerEmailController.dispose();
+    _partnerPhoneController.dispose();
+    _partnerPasswordController.dispose();
+    _partnerConfirmPasswordController.dispose();
+    _partnerCityController.dispose();
+    _partnerStateController.dispose();
     super.dispose();
   }
 
@@ -111,7 +148,6 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
         _isGstinVerified = false;
         _gstinErrorMessage = null;
         _isGstinMessageOk = false;
-        ref.read(registerNotifierProvider.notifier).resetGstinVerification();
       });
     }
 
@@ -125,7 +161,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
     final isOk = _gstRegex.hasMatch(v);
     if (v.length == 15 && !isOk) {
       setState(() {
-        _gstinErrorMessage = 'This GSTIN isn’t valid. Check the characters and try again.';
+        _gstinErrorMessage = StringManager.gstinFormatError;
         _isGstinMessageOk = false;
       });
     } else if (v.length < 15) {
@@ -160,22 +196,22 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
 
     if (p1 == p2) {
       setState(() {
-        _confirmPasswordMessage = 'Passwords match';
+        _confirmPasswordMessage = StringManager.passwordsDoNotMatch;
         _isConfirmPasswordOk = true;
       });
     } else {
       setState(() {
-        _confirmPasswordMessage = 'Passwords don’t match yet';
+        _confirmPasswordMessage = StringManager.passwordsDoNotMatch;
         _isConfirmPasswordOk = false;
       });
     }
   }
 
-  void _handleVerifyGstin() async {
+  Future<void> _handleVerifyGstin() async {
     final gstin = _gstinController.text.trim().toUpperCase();
-    if (!_gstRegex.hasMatch(gstin)) {
+    if (gstin.length != 15 || !_gstRegex.hasMatch(gstin)) {
       setState(() {
-        _gstinErrorMessage = 'This GSTIN isn’t valid. Check the characters and try again.';
+        _gstinErrorMessage = StringManager.gstinFormatError;
         _isGstinMessageOk = false;
       });
       return;
@@ -186,43 +222,36 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
       _gstinErrorMessage = null;
     });
 
-    final data = await ref.read(registerNotifierProvider.notifier).lookupRegisterGstin(gstin);
+    final details = await ref.read(registerNotifierProvider.notifier).verifyGstin(gstin);
 
     if (!mounted) return;
 
-    if (data != null) {
-      setState(() {
-        _isVerifyingGstin = false;
+    setState(() {
+      _isVerifyingGstin = false;
+      if (details != null) {
         _isGstinVerified = true;
-        _gstinErrorMessage = '✓ GST verified: ${data.effectiveCompanyName}';
+        _gstinErrorMessage = StringManager.gstinVerifiedSuccessfully;
         _isGstinMessageOk = true;
         _triggerShine = true;
 
-        // Auto-populate company name and owner name fields from API
-        _companyController.text = data.effectiveCompanyName;
+        if (details.companyName.isNotEmpty) {
+          _companyController.text = details.companyName;
+        } else if (details.tradeName.isNotEmpty) {
+          _companyController.text = details.tradeName;
+        } else if (details.legalName.isNotEmpty) {
+          _companyController.text = details.legalName;
+        }
         _companyErrorMessage = null;
+      } else {
+        final regState = ref.read(registerNotifierProvider);
+        _gstinErrorMessage = regState.gstinMessage ?? 'Could not verify GSTIN';
+        _isGstinMessageOk = false;
+      }
+    });
 
-        if (data.firstName.isNotEmpty) {
-          _firstNameController.text = data.firstName;
-          _firstNameErrorMessage = null;
-        }
-        if (data.lastName.isNotEmpty) {
-          _lastNameController.text = data.lastName;
-          _lastNameErrorMessage = null;
-        }
-      });
-
-      // Reset shine trigger for future re-triggers
+    if (_triggerShine) {
       Future.delayed(const Duration(milliseconds: 1000), () {
         if (mounted) setState(() => _triggerShine = false);
-      });
-    } else {
-      final regState = ref.read(registerNotifierProvider);
-      setState(() {
-        _isVerifyingGstin = false;
-        _isGstinVerified = false;
-        _gstinErrorMessage = regState.gstinMessage ?? 'GSTIN verification failed. Please check and try again.';
-        _isGstinMessageOk = false;
       });
     }
   }
@@ -234,7 +263,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
       final gstin = _gstinController.text.trim().toUpperCase();
       if (!_gstRegex.hasMatch(gstin)) {
         setState(() {
-          _gstinErrorMessage = 'Enter your 15-character GSTIN, or choose Unregistered';
+          _gstinErrorMessage = StringManager.gstinFormatError;
           _isGstinMessageOk = false;
         });
         hasError = true;
@@ -242,21 +271,21 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
     }
 
     if (_companyController.text.trim().isEmpty) {
-      setState(() => _companyErrorMessage = 'Enter company name');
+      setState(() => _companyErrorMessage = StringManager.fieldRequired);
       hasError = true;
     } else {
       setState(() => _companyErrorMessage = null);
     }
 
     if (_firstNameController.text.trim().isEmpty) {
-      setState(() => _firstNameErrorMessage = 'Enter first name');
+      setState(() => _firstNameErrorMessage = StringManager.fieldRequired);
       hasError = true;
     } else {
       setState(() => _firstNameErrorMessage = null);
     }
 
     if (_lastNameController.text.trim().isEmpty) {
-      setState(() => _lastNameErrorMessage = 'Enter last name');
+      setState(() => _lastNameErrorMessage = StringManager.fieldRequired);
       hasError = true;
     } else {
       setState(() => _lastNameErrorMessage = null);
@@ -275,7 +304,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
 
     final email = _emailController.text.trim();
     if (!_emailRegex.hasMatch(email)) {
-      setState(() => _emailErrorMessage = 'Enter a valid email like you@company.com');
+      setState(() => _emailErrorMessage = StringManager.emailInvalid);
       hasError = true;
     } else {
       setState(() => _emailErrorMessage = null);
@@ -283,7 +312,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
 
     final phone = _phoneController.text.trim();
     if (!_phoneRegex.hasMatch(phone)) {
-      setState(() => _phoneErrorMessage = 'Enter a 10-digit mobile number');
+      setState(() => _phoneErrorMessage = StringManager.enterValidPhone);
       hasError = true;
     } else {
       setState(() => _phoneErrorMessage = null);
@@ -292,7 +321,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
     final pw = _passwordController.text;
     final strength = PasswordStrengthMeter.calculateStrength(pw);
     if (strength < 2) {
-      setState(() => _passwordErrorMessage = 'Password is too weak. Use 8+ characters with a number or symbol.');
+      setState(() => _passwordErrorMessage = StringManager.passwordTooShort);
       hasError = true;
     } else {
       setState(() => _passwordErrorMessage = null);
@@ -301,7 +330,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
     final pw2 = _confirmPasswordController.text;
     if (pw != pw2) {
       setState(() {
-        _confirmPasswordMessage = 'Passwords don’t match yet';
+        _confirmPasswordMessage = StringManager.passwordsDoNotMatch;
         _isConfirmPasswordOk = false;
       });
       hasError = true;
@@ -310,12 +339,10 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
     if (hasError) return;
 
     final gstinText = _gstinController.text.trim().toUpperCase();
-    final panNo = _accountType == 'Registered' && gstinText.length >= 12
-        ? gstinText.substring(2, 12).toUpperCase()
-        : (ref.read(registerNotifierProvider).gstinData?.pan ?? 'ABCDE1234F');
+    final panNo = gstinText.length >= 12 ? gstinText.substring(2, 12) : null;
 
     final payload = RegisterPayload(
-      signupToken: '',
+      signupToken: 'token_dummy_123',
       userType: _accountType == 'Registered' ? 3 : 7,
       companyName: _companyController.text.trim(),
       firstName: _firstNameController.text.trim(),
@@ -328,15 +355,138 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
       panNo: _accountType == 'Registered' ? null : panNo,
     );
 
+    final digits = phone.replaceAll(RegExp(r'[^0-9]'), '');
+    final last10 = digits.length >= 10 ? digits.substring(digits.length - 10) : digits;
+    final formattedMobile = '+91$last10';
+
     final success = await ref.read(registerNotifierProvider.notifier).sendRegisterOtp(
-          mobile: phone,
+          mobile: formattedMobile,
           payload: payload,
         );
 
     if (!mounted) return;
 
     if (success) {
-      context.push(AppRouter.verifyOtp, extra: phone);
+      context.push(AppRouter.verifyOtp, extra: formattedMobile);
+    } else {
+      final err = ref.read(registerNotifierProvider).errorMessage ?? 'Failed to send WhatsApp OTP. Please try again.';
+      context.showSnackBar(err, isError: true);
+    }
+  }
+
+  Future<void> _handlePartnerRegister() async {
+    bool hasError = false;
+
+    if (_partnerProfession.trim().isEmpty) {
+      _partnerProfessionError = StringManager.professionRequired;
+      hasError = true;
+    } else {
+      _partnerProfessionError = null;
+    }
+
+    if (_partnerMembershipController.text.trim().isEmpty) {
+      _partnerMembershipError = StringManager.membershipRequired;
+      hasError = true;
+    } else {
+      _partnerMembershipError = null;
+    }
+
+    if (_partnerFirmNameController.text.trim().isEmpty) {
+      _partnerFirmNameError = StringManager.firmNameRequired;
+      hasError = true;
+    } else {
+      _partnerFirmNameError = null;
+    }
+
+    if (_partnerCityController.text.trim().isEmpty) {
+      _partnerCityError = StringManager.cityRequired;
+      hasError = true;
+    } else {
+      _partnerCityError = null;
+    }
+
+    if (_partnerStateController.text.trim().isEmpty) {
+      _partnerStateError = StringManager.stateRequired;
+      hasError = true;
+    } else {
+      _partnerStateError = null;
+    }
+
+    final partnerName = _partnerFullNameController.text.trim();
+    if (partnerName.isEmpty) {
+      _partnerFullNameError = StringManager.partnerNameRequired;
+      hasError = true;
+    } else {
+      _partnerFullNameError = null;
+    }
+
+    final email = _partnerEmailController.text.trim();
+    if (email.isEmpty || !_emailRegex.hasMatch(email)) {
+      _partnerEmailError = StringManager.emailInvalid;
+      hasError = true;
+    } else {
+      _partnerEmailError = null;
+    }
+
+    final phone = _partnerPhoneController.text.trim();
+    if (phone.isEmpty || !_phoneRegex.hasMatch(phone)) {
+      _partnerPhoneError = StringManager.enterValidPhone;
+      hasError = true;
+    } else {
+      _partnerPhoneError = null;
+    }
+
+    final pw = _partnerPasswordController.text;
+    if (pw.isEmpty || pw.length < 6) {
+      _partnerPasswordError = StringManager.passwordTooShort;
+      hasError = true;
+    } else {
+      _partnerPasswordError = null;
+    }
+
+    final pw2 = _partnerConfirmPasswordController.text;
+    if (pw2 != pw) {
+      _partnerConfirmPasswordError = StringManager.passwordsDoNotMatch;
+      hasError = true;
+    } else {
+      _partnerConfirmPasswordError = null;
+    }
+
+    setState(() {});
+
+    if (hasError) return;
+
+    final nameParts = partnerName.split(' ');
+    final firstName = nameParts.first;
+    final lastName = nameParts.length > 1 ? nameParts.sublist(1).join(' ') : 'Partner';
+
+    final payload = RegisterPayload(
+      signupToken: 'token_dummy_123',
+      userType: 3, // Partner role / CA
+      companyName: _partnerFirmNameController.text.trim(),
+      firstName: firstName,
+      lastName: lastName,
+      email: email,
+      password: pw,
+      passwordConfirmation: pw2,
+      referralCode: _partnerMembershipController.text.trim(),
+      gstin: null,
+      panNo: null,
+    );
+
+    final digits = phone.replaceAll(RegExp(r'[^0-9]'), '');
+    final last10 = digits.length >= 10 ? digits.substring(digits.length - 10) : digits;
+    final formattedMobile = '+91$last10';
+
+    final success = await ref.read(registerNotifierProvider.notifier).sendRegisterOtp(
+          mobile: formattedMobile,
+          payload: payload,
+        );
+
+    if (!mounted) return;
+
+    if (success) {
+      context.push(AppRouter.verifyOtp, extra: formattedMobile);
     } else {
       final err = ref.read(registerNotifierProvider).errorMessage ?? 'Failed to send WhatsApp OTP. Please try again.';
       context.showSnackBar(err, isError: true);
@@ -344,21 +494,30 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
   }
 
   void _onCtaPressed() {
+    if (_roleIndex == 1) {
+      _handlePartnerRegister();
+      return;
+    }
+
     if (_step == 1) {
       _handleStep1Continue();
-    } else if (_step == 2) {
-      _handleStep2Register();
     } else {
-      context.go(AppRouter.login);
+      _handleStep2Register();
     }
   }
 
   void _onBack() {
+    if (_roleIndex == 1) {
+      setState(() => _roleIndex = 0);
+      return;
+    }
     if (_step > 1) {
       setState(() {
         _step--;
       });
       ref.read(registerNotifierProvider.notifier).setStep(_step - 1);
+    } else {
+      context.go(AppRouter.login);
     }
   }
 
@@ -371,8 +530,6 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
     return Scaffold(
       backgroundColor: bg,
       body: SafeArea(
-        top: false,
-        bottom: true,
         child: Center(
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 440),
@@ -386,13 +543,27 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                   onBack: _onBack,
                 ),
 
-                // Header (Title & Subtitle)
-                RegisterHeaderNew(
-                  currentStep: _step,
+                // Role Switcher Segmented Control (Business Client vs CA/Tax Partner)
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 6.0),
+                  child: AuthRoleSegmentedSwitch(
+                    selectedRole: _roleIndex == 1 ? 'partner' : 'client',
+                    onRoleChanged: (role) {
+                      setState(() {
+                        _roleIndex = role == 'partner' ? 1 : 0;
+                        _step = 1;
+                      });
+                    },
+                  ),
                 ),
 
-                // Live Digital Business ID / GST Card Preview (Steps 1 & 2)
-                if (_step < 3)
+                // Header (Title & Subtitle)
+                RegisterHeaderNew(
+                  currentStep: _roleIndex == 1 ? 1 : _step,
+                ),
+
+                // Live Digital Business ID / GST Card Preview (Client Step 1 & 2)
+                if (_roleIndex == 0 && _step < 3)
                   BusinessIdCardPreview(
                     companyName: _companyController.text,
                     gstin: _gstinController.text,
@@ -424,34 +595,62 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                           ),
                         );
                       },
-                      child: _step == 1
-                          ? RegisterBusinessPane(
-                              key: const ValueKey(1),
-                              gstinController: _gstinController,
-                              companyController: _companyController,
-                              firstNameController: _firstNameController,
-                              lastNameController: _lastNameController,
-                              accountType: _accountType,
-                              onAccountTypeChanged: (type) {
-                                setState(() {
-                                  _accountType = type;
-                                  if (type == 'Unregistered') {
-                                    _gstinErrorMessage = null;
-                                  }
-                                });
-                                ref.read(registerNotifierProvider.notifier).setAccountType(type);
-                              },
-                              isGstinVerified: _isGstinVerified,
-                              isVerifyingGstin: _isVerifyingGstin,
-                              onVerifyGstin: _handleVerifyGstin,
-                              gstinErrorMessage: _gstinErrorMessage,
-                              isGstinMessageOk: _isGstinMessageOk,
-                              companyErrorMessage: _companyErrorMessage,
-                              firstNameErrorMessage: _firstNameErrorMessage,
-                              lastNameErrorMessage: _lastNameErrorMessage,
+                      child: _roleIndex == 1
+                          ? RegisterPartnerPane(
+                              key: const ValueKey('partner_pane'),
+                              fullNameController: _partnerFullNameController,
+                              firmNameController: _partnerFirmNameController,
+                              membershipController: _partnerMembershipController,
+                              emailController: _partnerEmailController,
+                              phoneController: _partnerPhoneController,
+                              passwordController: _partnerPasswordController,
+                              confirmPasswordController: _partnerConfirmPasswordController,
+                              cityController: _partnerCityController,
+                              stateController: _partnerStateController,
+                              selectedProfession: _partnerProfession,
+                              onProfessionChanged: (prof) => setState(() => _partnerProfession = prof),
+                              obscurePassword: regState.obscurePassword,
+                              obscureConfirmPassword: regState.obscureConfirmPassword,
+                              onTogglePassword: () => ref.read(registerNotifierProvider.notifier).toggleObscurePassword(),
+                              onToggleConfirmPassword: () => ref.read(registerNotifierProvider.notifier).toggleObscureConfirmPassword(),
+                              fullNameError: _partnerFullNameError,
+                              professionError: _partnerProfessionError,
+                              firmNameError: _partnerFirmNameError,
+                              membershipError: _partnerMembershipError,
+                              emailError: _partnerEmailError,
+                              phoneError: _partnerPhoneError,
+                              passwordError: _partnerPasswordError,
+                              confirmPasswordError: _partnerConfirmPasswordError,
+                              cityError: _partnerCityError,
+                              stateError: _partnerStateError,
                             )
-                          : _step == 2
-                              ? RegisterSecurityPane(
+                          : _step == 1
+                              ? RegisterBusinessPane(
+                                  key: const ValueKey(1),
+                                  gstinController: _gstinController,
+                                  companyController: _companyController,
+                                  firstNameController: _firstNameController,
+                                  lastNameController: _lastNameController,
+                                  accountType: _accountType,
+                                  onAccountTypeChanged: (type) {
+                                    setState(() {
+                                      _accountType = type;
+                                      if (type == 'Unregistered') {
+                                        _gstinErrorMessage = null;
+                                      }
+                                    });
+                                    ref.read(registerNotifierProvider.notifier).setAccountType(type);
+                                  },
+                                  isGstinVerified: _isGstinVerified,
+                                  isVerifyingGstin: _isVerifyingGstin,
+                                  onVerifyGstin: _handleVerifyGstin,
+                                  gstinErrorMessage: _gstinErrorMessage,
+                                  isGstinMessageOk: _isGstinMessageOk,
+                                  companyErrorMessage: _companyErrorMessage,
+                                  firstNameErrorMessage: _firstNameErrorMessage,
+                                  lastNameErrorMessage: _lastNameErrorMessage,
+                                )
+                              : RegisterSecurityPane(
                                   key: const ValueKey(2),
                                   emailController: _emailController,
                                   phoneController: _phoneController,
@@ -471,11 +670,6 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                                   passwordErrorMessage: _passwordErrorMessage,
                                   confirmPasswordMessage: _confirmPasswordMessage,
                                   isConfirmPasswordOk: _isConfirmPasswordOk,
-                                )
-                              : RegisterSuccessPane(
-                                  key: const ValueKey(3),
-                                  firstName: _firstNameController.text,
-                                  companyName: _companyController.text,
                                 ),
                     ),
                   ),
@@ -483,7 +677,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
 
                 // Sticky Bottom Dock with stylized button & sign in link
                 RegisterBottomDock(
-                  currentStep: _step,
+                  currentStep: _roleIndex == 1 ? 1 : _step,
                   isLoading: regState.isLoading,
                   onCtaPressed: _onCtaPressed,
                   onSignInTap: () => context.go(AppRouter.login),
